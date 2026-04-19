@@ -91,14 +91,10 @@ const ACCESS_INFO = {
 };
 
 const ACCESS_CARDS = [
-  { key: "silla",      desc: "Acceso en silla de ruedas, rampas, ascensores y plazas PMR reservadas."   },
-  { key: "signos",     desc: "Intérpretes de lengua de signos certificados presentes en el evento."     },
-  { key: "audio",      desc: "Narración en tiempo real de elementos visuales para personas ciegas."     },
-  { key: "subtitulos", desc: "Subtitulado en tiempo real mediante estenotipia computarizada."           },
-  { key: "bucle",      desc: "Sistema de inducción magnética para audífonos e implantes cocleares."     },
-  { key: "braille",    desc: "Materiales y señalización táctil en braille en el recinto cultural."      },
-  { key: "lectura",    desc: "Contenidos en lenguaje claro y pictogramas para discapacidad cognitiva." },
-  { key: "tranquilo",  desc: "Sesiones con estimulación sensorial reducida, especialmente para TEA."   },
+  { key: "silla",   desc: "Acceso en silla de ruedas, rampas, ascensores y plazas PMR reservadas."  },
+  { key: "signos",  desc: "Intérpretes de lengua de signos certificados presentes en el evento."    },
+  { key: "braille", desc: "Materiales y señalización táctil en braille en el recinto cultural."     },
+  { key: "bucle",   desc: "Sistema de inducción magnética para audífonos e implantes cocleares."    },
 ];
 
 /* ─── Componente ──────────────────────────────────────────────────────────── */
