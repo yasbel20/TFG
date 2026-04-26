@@ -373,28 +373,6 @@ export default function INCLUGOHome() {
           <EventsGrid />
         </div>
 
-        {/* ── API INFO ── */}
-        <aside className="api-info-sec" aria-label="Información sobre la fuente de datos">
-          <div className="api-info-inner">
-            <p className="api-badge">
-              <span className="api-dot" aria-hidden="true"/>
-              API en tiempo real · Ayuntamiento de Madrid
-            </p>
-            <p className="api-text">
-              Datos obtenidos de la{" "}
-              <a
-                href="https://datos.madrid.es/egob/catalogo/206974-0-agenda-eventos-culturales-100.json"
-                target="_blank"
-                rel="noreferrer noopener"
-                aria-label="API Agenda de Eventos Culturales del Ayuntamiento de Madrid (abre en nueva pestaña)"
-              >
-                API Agenda de Eventos Culturales
-              </a>{" "}
-              del Portal de Datos Abiertos del Ayuntamiento de Madrid.
-            </p>
-          </div>
-        </aside>
-
         {/* ── ACCESIBILIDAD ── */}
         <section className="access-sec" aria-labelledby="access-heading">
           <div className="access-inner">
