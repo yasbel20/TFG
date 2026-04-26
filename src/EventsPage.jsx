@@ -24,6 +24,7 @@ const CAT_HERO = {
   "Deporte":    "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1400&q=80",
   "Todos":      "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1400&q=80",
 };
+
 // ─── Iconos ───────────────────────────────────────────────────────────────────
 const CalendarIcon = () => (
   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -63,7 +64,6 @@ const ArrowLeftIcon = () => (
 );
 
 // ─── Parser ───────────────────────────────────────────────────────────────────
-// ─── Parser idéntico al de EventsGrid ────────────────────────────────────────
 function parseEvent(item, i) {
   const desc = ((item.description || "") + " " + (item.organization?.["organization-name"] || "")).toLowerCase();
   const t = (item.title || "").toLowerCase();
@@ -75,7 +75,6 @@ function parseEvent(item, i) {
   else if (/danza|baile|flamenco/.test(t + desc))                      cat = "Danza";
   else if (/deporte|sport|carrera|maratón/.test(t + desc))             cat = "Deporte";
 
-  // Campo real confirmado: item.organization["accesibility"] (typo oficial del Ayuntamiento)
   const accRaw = item.organization?.["accesibility"] || "";
   const codes  = accRaw.toString().split(",").map(c => c.trim()).filter(Boolean);
   const access = [];
@@ -83,7 +82,6 @@ function parseEvent(item, i) {
   if (codes.includes("4"))                         access.push("signos");
   if (codes.includes("5"))                         access.push("braille");
   if (codes.includes("6"))                         access.push("bucle");
-  // códigos 0 y 3 → access queda vacío → evento se filtra fuera
 
   let price = "Gratis";
   const fee = item["event-free"] ?? item.free;
@@ -123,7 +121,7 @@ function parseEvent(item, i) {
   };
 }
 
-// ─── Datos de muestra idénticos a EventsGrid ─────────────────────────────────
+// ─── Datos de muestra ─────────────────────────────────────────────────────────
 const SAMPLE = [
   { id:1, title:"Jazz en el Conde Duque",       cat:"Música",     dateShort:"12 ABR",       venue:"C.C. Conde Duque",        district:"Centro",   price:"Gratis",    access:["silla","signos"], image:null, url:"#" },
   { id:2, title:"Picasso: Miradas múltiples",   cat:"Exposición", dateShort:"HASTA 30 ABR", venue:"Museo Reina Sofía",       district:"Atocha",   price:"12 €",      access:["silla","audio"],  image:null, url:"#" },
@@ -135,7 +133,7 @@ const SAMPLE = [
   { id:8, title:"Exposición: Carteles Madrid",  cat:"Exposición", dateShort:"TODO ABR",     venue:"Círculo de Bellas Artes", district:"Centro",   price:"Gratis",    access:["silla"],          image:null, url:"#" },
 ];
 
-// ─── Hook idéntico al de EventsGrid ──────────────────────────────────────────
+// ─── Hook ─────────────────────────────────────────────────────────────────────
 function useEvents() {
   const [allEvents, setAllEvents] = useState([]);
   const [loading, setLoading]     = useState(true);
@@ -165,7 +163,7 @@ function useEvents() {
   return { byCategory, loading, total: allEvents.length };
 }
 
-// ─── Tarjeta idéntica a EventsGrid ───────────────────────────────────────────
+// ─── Tarjeta ──────────────────────────────────────────────────────────────────
 function GridCard({ ev }) {
   const colors = CAT_COLORS[ev.cat] || CAT_COLORS["Cultura"];
   const [imgOk, setImgOk] = useState(!!ev.image);
@@ -229,8 +227,16 @@ function SkeletonCard() {
   );
 }
 
-// ─── Nav Header (igual que home) ─────────────────────────────────────────────
+// ─── Nav dropdowns ───────────────────────────────────────────────────────────
 const EP_CATS_ALL = ["Todos los eventos", "Música", "Teatro", "Exposición", "Cine", "Danza", "Cultura"];
+
+const EP_ACCESS_CATS = [
+  "Toda la accesibilidad",
+  "Silla de ruedas",
+  "Lengua de signos",
+  "Braille",
+  "Bucle magnético",
+];
 
 const ChevronDownIcon = ({ size = 12 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
@@ -275,14 +281,48 @@ function EventsDropdownNav({ activeCategory, onSelect }) {
   );
 }
 
+function AccessibilityDropdownNav() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div className="ep-nav-dropdown-wrap" ref={ref}>
+      <button
+        className={`ep-nav-link ep-nav-link--arrow${open ? " ep-nav-active" : ""}`}
+        onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+      >
+        Accesibilidad <ChevronDownIcon/>
+      </button>
+      {open && (
+        <div className="ep-nav-dropdown">
+          {EP_ACCESS_CATS.map(cat => (
+            <button
+              key={cat}
+              className="ep-nav-dropdown-item"
+              onClick={() => setOpen(false)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Página principal ─────────────────────────────────────────────────────────
 export default function EventsPage({ initialCategory = "Todos", onBack }) {
   const [activeCategory, setActiveCategory] = useState(initialCategory);
   const { byCategory, loading } = useEvents();
-  const ref = useRef(null);
 
   const filtered = byCategory(activeCategory);
-
   const catLabel = activeCategory === "Todos" ? "Todos los eventos" : activeCategory;
 
   return (
@@ -300,7 +340,9 @@ export default function EventsPage({ initialCategory = "Todos", onBack }) {
               <li>
                 <EventsDropdownNav activeCategory={activeCategory} onSelect={setActiveCategory} />
               </li>
-              <li><button className="ep-nav-link">Accesibilidad</button></li>
+              <li>
+                <AccessibilityDropdownNav />
+              </li>
               <li><button className="ep-nav-link">Acerca de</button></li>
             </ul>
             <button className="ep-nav-cta" onClick={onBack}>
@@ -309,7 +351,7 @@ export default function EventsPage({ initialCategory = "Todos", onBack }) {
           </nav>
         </header>
 
-        {/* ── Foto categoría (sin texto encima) ── */}
+        {/* ── Foto categoría ── */}
         <div
           className="ep-cat-photo"
           style={{ backgroundImage: `url(${CAT_HERO[activeCategory] || CAT_HERO["Todos"]})` }}
@@ -347,7 +389,7 @@ const css = `
     font-family: 'Inter', sans-serif;
   }
 
-  /* ── NAV (igual que home) ── */
+  /* ── NAV ── */
   .ep-nav {
     width: 100%;
     background: #ffffff;

@@ -67,6 +67,7 @@ const ChevronLeftIcon = () => (
  * API: https://datos.madrid.es/egob/catalogo/206974-0-agenda-eventos-culturales-100.json
  * Documentación: https://datos.madrid.es/portal/site/egob
  */
+// ─── Parsear eventos de la API del Ayuntamiento de Madrid ─────────────────────
 function parseEvent(item, i) {
   const desc = ((item.description || "") + " " + (item.organization?.["organization-name"] || "")).toLowerCase();
 
@@ -80,25 +81,21 @@ function parseEvent(item, i) {
   else if (/danza|baile|flamenco/.test(t + desc))                      cat = "Danza";
   else if (/deporte|sport|carrera|maratón/.test(t + desc))             cat = "Deporte";
 
-  // Accesibilidad — campo real confirmado: item.organization["accesibility"]
-  // (typo oficial del Ayuntamiento: una sola "c")
+  // Accesibilidad
   const accRaw = item.organization?.["accesibility"] || "";
   const codes  = accRaw.toString().split(",").map(c => c.trim()).filter(Boolean);
 
   const access = [];
-  if (codes.includes("1") || codes.includes("2")) access.push("silla");   // Accesible / Parcialmente accesible PMR
+  if (codes.includes("1") || codes.includes("2")) access.push("silla");   // Accesible PMR
   if (codes.includes("4"))                         access.push("signos");  // Lengua de signos
   if (codes.includes("5"))                         access.push("braille"); // Señalización podotáctil
-  if (codes.includes("6"))                         access.push("bucle");   // Bucle de inducción magnético
-  // códigos 0 y 3 → access queda vacío → evento se filtra fuera en useEvents
+  if (codes.includes("6"))                         access.push("bucle");   // Bucle magnético
 
   // Precio
   let price = "Gratis";
   const fee = item["event-free"] ?? item.free;
   if (fee === false || fee === "false" || fee === 0 || fee === "0") {
     const raw = String(item["event-fee"] || item.price || "").trim();
-    // Solo usar el valor si parece un número (ej: "5", "12.50")
-    // Si es texto libre del Ayuntamiento, mostrar "Ver precio"
     price = /^\d+([.,]\d+)?$/.test(raw) ? `Desde ${raw.replace(",", ".")} €` : "Ver precio";
   }
 
@@ -117,13 +114,17 @@ function parseEvent(item, i) {
     }
   }
 
-  // Imagen: la API devuelve a veces una URL en item.media o item.image
+  // Obtener la imagen de la API del Ayuntamiento
   let image = null;
-  if (item.media?.["@id"]) image = item.media["@id"];
-  else if (item.image)     image = item.image;
-  else if (item.media?.url) image = item.media.url;
+  if (item.media?.["@id"])  image = item.media["@id"];  // Usar imagen de la API si existe
+  else if (item.image)      image = item.image;         // Usar otra imagen si está disponible
+  else if (item.media?.url) image = item.media.url;     // Usar URL directa si está disponible
 
-  // Lugar
+  // Si no hay imagen de la API, usar la imagen por fallback
+  if (!image) {
+    image = poolImg(cat, item.id);  // Imagen de fallback de la pool
+  }
+
   const venue = item.location?.["street-address"]
     || item.organization?.["organization-name"]
     || item["event-location"]?.["@id"]
@@ -139,12 +140,11 @@ function parseEvent(item, i) {
     district: item.address?.["locality"] || "Madrid",
     price,
     access,
-    image,
+    image,  // Se utiliza la imagen obtenida de la API o de fallback
     url:     item.link || "#",
     desc:    (item.description || "").replace(/<[^>]+>/g, "").slice(0, 100),
   };
 }
-
 // ─── Datos de muestra si la API falla ────────────────────────────────────────
 const SAMPLE = [
   { id:1, title:"Jazz en el Conde Duque",       cat:"Música",     dateShort:"12 ABR",         date:"12 de abril de 2026",   venue:"C.C. Conde Duque",       district:"Centro",   price:"Gratis",    access:["silla","signos"],    image:null, url:"#" },

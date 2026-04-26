@@ -98,13 +98,6 @@ const ACCESS_CARDS = [
   { key: "bucle",   desc: "Sistema de inducción magnética para audífonos e implantes cocleares."    },
 ];
 
-/* ─── Componente ──────────────────────────────────────────────────────────── */
-const EVENT_CATS = ["Música","Teatro","Exposición","Cine","Danza","Cultura"];
-
-function toSlug(s) {
-  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-}
-
 const ChevronDownIcon = ({ size = 12 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
@@ -113,6 +106,14 @@ const ChevronDownIcon = ({ size = 12 }) => (
 );
 
 const EVENT_CATS_ALL = ["Todos los eventos", "Música", "Teatro", "Exposición", "Cine", "Danza", "Cultura"];
+
+const ACCESS_CATS = [
+  "Toda la accesibilidad",
+  "Silla de ruedas",
+  "Lengua de signos",
+  "Braille",
+  "Bucle magnético",
+];
 
 /* ── Dropdown Eventos ── */
 function EventsDropdown({ onSelect }) {
@@ -153,18 +154,54 @@ function EventsDropdown({ onSelect }) {
   );
 }
 
+/* ── Dropdown Accesibilidad ── */
+function AccessibilityDropdown() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div className="nav-dropdown-wrap" ref={ref}>
+      <button
+        className={`nav-link nav-link--arrow${open ? " active" : ""}`}
+        onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+      >
+        Accesibilidad <ChevronDownIcon/>
+      </button>
+      {open && (
+        <div className="nav-dropdown" role="listbox">
+          {ACCESS_CATS.map(cat => (
+            <button
+              key={cat}
+              className="nav-dropdown-item"
+              role="option"
+              onClick={() => setOpen(false)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── Componente principal ── */
 export default function INCLUGOHome() {
   const [inputVal, setInputVal] = useState("");
-  const [eventsPage, setEventsPage] = useState(null); // null = home, string = categoría
+  const [eventsPage, setEventsPage] = useState(null);
   const evRef = useRef(null);
 
-  // Calcula la duración del ticker según su ancho real
-  // 80px/s = velocidad cómoda para leer sin esfuerzo
   useEffect(() => {
     const el = document.getElementById("ticker-inner");
     if (!el) return;
-    // El inner tiene 2 copias → el loop recorre la mitad del ancho
     const halfWidth = el.scrollWidth / 2;
     const pxPerSecond = 80;
     const duration = Math.round(halfWidth / pxPerSecond);
@@ -179,7 +216,6 @@ export default function INCLUGOHome() {
     scrollToEvents();
   };
 
-  // Si hay página de eventos activa, renderizar EventsPage
   if (eventsPage !== null) {
     return <EventsPage initialCategory={eventsPage} onBack={() => setEventsPage(null)} />;
   }
@@ -201,7 +237,7 @@ export default function INCLUGOHome() {
 
           <ul className="nav-links" role="list">
             <li><EventsDropdown onSelect={(cat) => setEventsPage(cat)} /></li>
-            <li><button className="nav-link">Accesibilidad</button></li>
+            <li><AccessibilityDropdown /></li>
             <li><button className="nav-link">Acerca de</button></li>
           </ul>
 
@@ -280,8 +316,6 @@ export default function INCLUGOHome() {
             </div>
           </div>
         </section>
-
-
 
         {/* ── STATS ── */}
         <section className="stats" aria-label="Cifras clave de INCLUGO">
