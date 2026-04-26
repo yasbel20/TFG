@@ -97,27 +97,21 @@ const ACCESS_CARDS = [
   { key: "bucle",   desc: "Sistema de inducción magnética para audífonos e implantes cocleares."    },
 ];
 
-
-
-/* ── Componente principal ── */
+/* ─── Componente ──────────────────────────────────────────────────────────── */
 export default function INCLUGOHome() {
   const [inputVal, setInputVal] = useState("");
   const evRef = useRef(null);
 
-  // Calcula la duración del ticker según su ancho real
-  // 80px/s = velocidad cómoda para leer sin esfuerzo
-  useEffect(() => {
-    const el = document.getElementById("ticker-inner");
-    if (!el) return;
-    // El inner tiene 2 copias → el loop recorre la mitad del ancho
-    const halfWidth = el.scrollWidth / 2;
-    const pxPerSecond = 80;
-    const duration = Math.round(halfWidth / pxPerSecond);
-    el.style.animationDuration = `${duration}s`;
-  }, []);
-
   const scrollToEvents = () =>
     evRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (dropRef.current && !dropRef.current.contains(e.target)) setDropOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const handleHint = (hint) => {
     setInputVal(hint);
@@ -140,9 +134,17 @@ export default function INCLUGOHome() {
           </button>
 
           <ul className="nav-links" role="list">
-            <li><button className="nav-link" onClick={scrollToEvents}>Eventos</button></li>
-            <li><button className="nav-link">Accesibilidad</button></li>
-            <li><button className="nav-link">Acerca de</button></li>
+            <li>
+              <button className="nav-link" onClick={scrollToEvents}>
+                Eventos
+              </button>
+            </li>
+            <li>
+              <button className="nav-link">Accesibilidad</button>
+            </li>
+            <li>
+              <button className="nav-link">Acerca de</button>
+            </li>
           </ul>
 
           <button className="nav-cta" onClick={scrollToEvents}>
