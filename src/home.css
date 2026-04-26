@@ -106,6 +106,57 @@ body {
 }
 .nav-link:hover { color: var(--b); text-decoration: underline; }
 
+/* ── Dropdown Eventos ── */
+.nav-drop-wrap {
+  position: relative;
+}
+.nav-drop-btn {
+  gap: .35rem;
+}
+.nav-drop-chevron {
+  transition: transform .18s;
+  flex-shrink: 0;
+}
+.nav-drop-btn.open .nav-drop-chevron {
+  transform: rotate(180deg);
+}
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 200px;
+  background: var(--c);
+  border: 1.5px solid var(--n);
+  border-radius: 4px;
+  padding: .375rem 0;
+  list-style: none;
+  margin: 0;
+  z-index: 200;
+  box-shadow: 0 8px 24px rgba(26,35,126,.12);
+}
+.nav-drop-item {
+  display: block;
+  padding: .55rem 1.25rem;
+  font-size: .8rem;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--n);
+  text-decoration: none;
+  font-family: 'DM Sans', sans-serif;
+  transition: background .12s, color .12s;
+}
+.nav-drop-item:hover {
+  background: var(--n);
+  color: var(--y);
+}
+.nav-dropdown li:first-child .nav-drop-item {
+  font-weight: 700;
+  border-bottom: 1px solid rgba(26,35,126,.15);
+  padding-bottom: .65rem;
+  margin-bottom: .25rem;
+}
+
 .nav-cta {
   background: var(--n); color: var(--y); border: 2px solid var(--n);
   padding: .625rem 1.5rem; border-radius: 3px; min-height: 44px;

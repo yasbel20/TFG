@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import EventsGrid from "./eventsgrid";
 import "./home.css";
 
@@ -98,12 +98,28 @@ const ACCESS_CARDS = [
 ];
 
 /* ─── Componente ──────────────────────────────────────────────────────────── */
+const EVENT_CATS = ["Música","Teatro","Exposición","Cine","Danza","Cultura"];
+
+function toSlug(s) {
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
 export default function INCLUGOHome() {
   const [inputVal, setInputVal] = useState("");
-  const evRef = useRef(null);
+  const [dropOpen, setDropOpen] = useState(false);
+  const evRef   = useRef(null);
+  const dropRef = useRef(null);
 
   const scrollToEvents = () =>
     evRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (dropRef.current && !dropRef.current.contains(e.target)) setDropOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const handleHint = (hint) => {
     setInputVal(hint);
@@ -129,10 +145,34 @@ export default function INCLUGOHome() {
 
           {/* Lista de navegación semántica */}
           <ul className="nav-links" role="list">
-            <li>
-              <button className="nav-link" onClick={scrollToEvents}>
+            <li ref={dropRef} className="nav-drop-wrap">
+              <button
+                className={`nav-link nav-drop-btn${dropOpen ? " open" : ""}`}
+                onClick={() => setDropOpen(o => !o)}
+                aria-expanded={dropOpen}
+                aria-haspopup="menu"
+              >
                 Eventos
+                <svg className="nav-drop-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                  <path d="m6 9 6 6 6-6"/>
+                </svg>
               </button>
+              {dropOpen && (
+                <ul className="nav-dropdown" role="menu">
+                  <li role="none">
+                    <a className="nav-drop-item" href="/eventos" role="menuitem" onClick={() => setDropOpen(false)}>
+                      Todos los eventos
+                    </a>
+                  </li>
+                  {EVENT_CATS.map(cat => (
+                    <li key={cat} role="none">
+                      <a className="nav-drop-item" href={`/eventos/${toSlug(cat)}`} role="menuitem" onClick={() => setDropOpen(false)}>
+                        {cat}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
             <li>
               <button className="nav-link">Accesibilidad</button>
