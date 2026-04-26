@@ -2,13 +2,13 @@ import { useState, useEffect, useRef } from "react";
 
 // ─── Categorías y colores de fallback ────────────────────────────────────────
 const CAT_COLORS = {
-  "Música":     { bg: "#1A1A1A", accent: "#C9D11A" },
-  "Teatro":     { bg: "#141414", accent: "#C9D11A" },
-  "Exposición": { bg: "#111111", accent: "#C9D11A" },
-  "Cine":       { bg: "#1A1A1A", accent: "#C9D11A" },
-  "Danza":      { bg: "#141414", accent: "#C9D11A" },
-  "Cultura":    { bg: "#111111", accent: "#C9D11A" },
-  "Deporte":    { bg: "#1A1A1A", accent: "#C9D11A" },
+  "Música":     { bg: "#1A1A1A", accent: "#111111" },
+  "Teatro":     { bg: "#141414", accent: "#111111" },
+  "Exposición": { bg: "#111111", accent: "#111111" },
+  "Cine":       { bg: "#1A1A1A", accent: "#111111" },
+  "Danza":      { bg: "#141414", accent: "#111111" },
+  "Cultura":    { bg: "#111111", accent: "#111111" },
+  "Deporte":    { bg: "#1A1A1A", accent: "#111111" },
 };
 
 const CATEGORIES = ["Todos", "Música", "Teatro", "Exposición", "Cine", "Danza", "Cultura"];
@@ -164,14 +164,15 @@ function useEvents(activeCategory) {
   const [fromApi, setFromApi]     = useState(false);
 
   useEffect(() => {
-    const API = "https://datos.madrid.es/egob/catalogo/206974-0-agenda-eventos-culturales-100.json";
+    const API = "/api-madrid/egob/catalogo/206974-0-agenda-eventos-culturales-100.json";
     fetch(API)
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then(data => {
-        // Parsear primero, luego filtrar solo los que tienen al menos un tipo de accesibilidad
-        const parsed = (data["@graph"] || [])
-          .map(parseEvent)
-          .filter(e => e.access.length > 0);
+        const all = (data["@graph"] || []).map(parseEvent);
+        const parsed = all.filter(e => e.access.length > 0);
+        const porcategoria = {};
+        parsed.forEach(e => { porcategoria[e.cat] = (porcategoria[e.cat] || 0) + 1; });
+        console.log(`[DEBUG] total API: ${all.length} | accesibles: ${parsed.length}`, porcategoria);
         setAllEvents(parsed);
         setFromApi(true);
         setLoading(false);
@@ -238,7 +239,7 @@ function EventCard({ ev }) {
 
       {/* Info */}
       <div className="eg-info">
-        <span className="eg-cat" style={{ color: "#C9D11A" }}>{ev.cat}</span>
+        <span className="eg-cat" style={{ color: "#111111" }}>{ev.cat}</span>
         <h3 className="eg-title">{ev.title}</h3>
         <div className="eg-meta">
           <span className="eg-meta-row"><CalIcon/> {ev.dateShort}</span>
@@ -312,7 +313,7 @@ function SkeletonRow() {
 // ─── Estilos ──────────────────────────────────────────────────────────────────
 const css = `
   .eg-wrap {
-    background: #F5F3EC;
+    background: #FFFFFF;
     padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(3rem, 7vw, 6rem);
     border-top: 1.5px solid #111111;
     width: 100%;
@@ -363,7 +364,7 @@ const css = `
   .eg-api-dot {
     width: 7px; height: 7px;
     border-radius: 50%;
-    background: #A8AE15;
+    background: #111111;
     animation: egpulse 2s infinite;
     flex-shrink: 0;
   }
@@ -388,8 +389,8 @@ const css = `
     cursor: pointer;
     transition: all .12s;
   }
-  .eg-fbtn:hover { background: #111111; color: #C9D11A; border-color: #111111; }
-  .eg-fbtn.active { background: #111111; color: #C9D11A; border-color: #111111; font-weight: 700; }
+  .eg-fbtn:hover { background: #111111; color: #111111; border-color: #111111; }
+  .eg-fbtn.active { background: #111111; color: #111111; border-color: #111111; font-weight: 700; }
 
   /* Fila por categoría */
   .eg-row-section { margin-bottom: 3rem; }
@@ -404,7 +405,7 @@ const css = `
   .eg-row-cat-dot {
     width: 10px; height: 10px;
     border-radius: 50%;
-    background: #A8AE15;
+    background: #111111;
     border: 2px solid #111111;
     flex-shrink: 0;
   }
@@ -434,7 +435,7 @@ const css = `
     transition: all .12s;
     padding: 0;
   }
-  .eg-scroll-btn:hover { background: #111111; color: #C9D11A; }
+  .eg-scroll-btn:hover { background: #111111; color: #111111; }
 
   /* Fila horizontal */
   .eg-row {
@@ -455,7 +456,7 @@ const css = `
     border-radius: 0;
     overflow: hidden;
     border: 1.5px solid #CCCAC0;
-    background: #EDEAE0;
+    background: #FFFFFF;
     scroll-snap-align: start;
     text-decoration: none;
     display: flex;
@@ -509,7 +510,7 @@ const css = `
     font-weight: 400;
     font-size: 1.2rem;
     letter-spacing: .04em;
-    color: #C9D11A;
+    color: #ffffff;
     line-height: 1.15;
   }
 
@@ -520,8 +521,8 @@ const css = `
     right: .625rem;
   }
   .eg-badge-free {
-    background: #C9D11A;
-    color: #111111;
+    background: #111111;
+    color: #ffffff;
     font-size: .65rem;
     font-weight: 700;
     padding: 3px 8px;
@@ -531,8 +532,8 @@ const css = `
     text-transform: uppercase;
   }
   .eg-badge-price {
-    background: #C9D11A;
-    color: #111111;
+    background: #111111;
+    color: #ffffff;
     font-size: .65rem;
     font-weight: 700;
     padding: 3px 8px;
@@ -543,8 +544,8 @@ const css = `
     position: absolute;
     bottom: .5rem;
     left: .5rem;
-    background: rgba(26,35,126,.85);
-    color: #C9D11A;
+    background: rgba(17,17,17,.85);
+    color: #ffffff;
     font-size: .6rem;
     font-weight: 600;
     padding: 3px 7px;
@@ -588,7 +589,7 @@ const css = `
 
   /* Skeleton */
   .eg-skel {
-    background: linear-gradient(90deg, #E4E1D6 25%, #EDEAE0 50%, #E4E1D6 75%);
+    background: linear-gradient(90deg, #EBEBEB 25%, #F5F5F5 50%, #EBEBEB 75%);
     background-size: 200%;
     animation: egskel 1.4s infinite;
     border-radius: 2px;

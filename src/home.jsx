@@ -97,21 +97,39 @@ const ACCESS_CARDS = [
   { key: "bucle",   desc: "Sistema de inducción magnética para audífonos e implantes cocleares."    },
 ];
 
+<<<<<<<<< Temporary merge branch 1
 /* ─── Componente ──────────────────────────────────────────────────────────── */
+const EVENT_CATS = ["Música","Teatro","Exposición","Cine","Danza","Cultura"];
+
+function toSlug(s) {
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
+=========
+
+
+/* ── Componente principal ── */
+>>>>>>>>> Temporary merge branch 2
 export default function INCLUGOHome() {
   const [inputVal, setInputVal] = useState("");
-  const evRef = useRef(null);
+  const [dropOpen, setDropOpen] = useState(false);
+  const evRef   = useRef(null);
+  const dropRef = useRef(null);
+
+  // Calcula la duración del ticker según su ancho real
+  // 80px/s = velocidad cómoda para leer sin esfuerzo
+  useEffect(() => {
+    const el = document.getElementById("ticker-inner");
+    if (!el) return;
+    // El inner tiene 2 copias → el loop recorre la mitad del ancho
+    const halfWidth = el.scrollWidth / 2;
+    const pxPerSecond = 80;
+    const duration = Math.round(halfWidth / pxPerSecond);
+    el.style.animationDuration = `${duration}s`;
+  }, []);
 
   const scrollToEvents = () =>
     evRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-
-  useEffect(() => {
-    const handler = (e) => {
-      if (dropRef.current && !dropRef.current.contains(e.target)) setDropOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
 
   const handleHint = (hint) => {
     setInputVal(hint);
@@ -134,17 +152,51 @@ export default function INCLUGOHome() {
           </button>
 
           <ul className="nav-links" role="list">
-            <li>
-              <button className="nav-link" onClick={scrollToEvents}>
+<<<<<<<<< Temporary merge branch 1
+            <li ref={dropRef} className="nav-drop-wrap">
+              <button
+                className={`nav-link nav-drop-btn${dropOpen ? " open" : ""}`}
+                onClick={() => setDropOpen(o => !o)}
+                aria-expanded={dropOpen}
+                aria-haspopup="menu"
+              >
                 Eventos
               </button>
             </li>
-            <li>
-              <button className="nav-link">Accesibilidad</button>
+            <li ref={accRef} className="nav-drop-wrap">
+              <button
+                className={`nav-link nav-drop-btn${accOpen ? " open" : ""}`}
+                onClick={() => setAccOpen(o => !o)}
+                aria-expanded={accOpen}
+                aria-haspopup="menu"
+              >
+                Accesibilidad
+                <svg className="nav-drop-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                  <path d="m6 9 6 6 6-6"/>
+                </svg>
+              </button>
+              {accOpen && (
+                <ul className="nav-dropdown" role="menu">
+                  <li role="none">
+                    <a className="nav-drop-item" href="/eventos" role="menuitem" onClick={() => setAccOpen(false)}>
+                      Toda la accesibilidad
+                    </a>
+                  </li>
+                  {ACCESS_TYPES.map(({ key, label }) => (
+                    <li key={key} role="none">
+                      <a className="nav-drop-item" href={`/eventos?accesibilidad=${key}`} role="menuitem" onClick={() => setAccOpen(false)}>
+                        {label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
-            <li>
-              <button className="nav-link">Acerca de</button>
-            </li>
+=========
+            <li><button className="nav-link" onClick={scrollToEvents}>Eventos</button></li>
+            <li><button className="nav-link">Accesibilidad</button></li>
+            <li><button className="nav-link">Acerca de</button></li>
+>>>>>>>>> Temporary merge branch 2
           </ul>
 
           <button className="nav-cta" onClick={scrollToEvents}>
@@ -292,28 +344,6 @@ export default function INCLUGOHome() {
         <div ref={evRef} tabIndex={-1}>
           <EventsGrid />
         </div>
-
-        {/* ── API INFO ── */}
-        <aside className="api-info-sec" aria-label="Información sobre la fuente de datos">
-          <div className="api-info-inner">
-            <p className="api-badge">
-              <span className="api-dot" aria-hidden="true"/>
-              API en tiempo real · Ayuntamiento de Madrid
-            </p>
-            <p className="api-text">
-              Datos obtenidos de la{" "}
-              <a
-                href="https://datos.madrid.es/egob/catalogo/206974-0-agenda-eventos-culturales-100.json"
-                target="_blank"
-                rel="noreferrer noopener"
-                aria-label="API Agenda de Eventos Culturales del Ayuntamiento de Madrid (abre en nueva pestaña)"
-              >
-                API Agenda de Eventos Culturales
-              </a>{" "}
-              del Portal de Datos Abiertos del Ayuntamiento de Madrid.
-            </p>
-          </div>
-        </aside>
 
         {/* ── ACCESIBILIDAD ── */}
         <section className="access-sec" aria-labelledby="access-heading">
