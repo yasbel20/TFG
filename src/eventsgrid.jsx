@@ -2,13 +2,13 @@ import { useState, useEffect, useRef } from "react";
 
 // ─── Categorías y colores de fallback ────────────────────────────────────────
 const CAT_COLORS = {
-  "Música":     { bg: "#1A237E", accent: "#C9D11A" },
-  "Teatro":     { bg: "#2E3A8C", accent: "#C9D11A" },
-  "Exposición": { bg: "#0E1355", accent: "#3D47C8" },
-  "Cine":       { bg: "#1A237E", accent: "#C9D11A" },
-  "Danza":      { bg: "#2E3A8C", accent: "#C9D11A" },
-  "Cultura":    { bg: "#0E1355", accent: "#3D47C8" },
-  "Deporte":    { bg: "#1A237E", accent: "#C9D11A" },
+  "Música":     { bg: "#1A1A1A", accent: "#C9D11A" },
+  "Teatro":     { bg: "#141414", accent: "#C9D11A" },
+  "Exposición": { bg: "#111111", accent: "#C9D11A" },
+  "Cine":       { bg: "#1A1A1A", accent: "#C9D11A" },
+  "Danza":      { bg: "#141414", accent: "#C9D11A" },
+  "Cultura":    { bg: "#111111", accent: "#C9D11A" },
+  "Deporte":    { bg: "#1A1A1A", accent: "#C9D11A" },
 };
 
 const CATEGORIES = ["Todos", "Música", "Teatro", "Exposición", "Cine", "Danza", "Cultura"];
@@ -210,7 +210,7 @@ function EventCard({ ev }) {
 
       {/* Info */}
       <div className="eg-info">
-        <span className="eg-cat" style={{ color: "#3D47C8" }}>{ev.cat}</span>
+        <span className="eg-cat" style={{ color: "#C9D11A" }}>{ev.cat}</span>
         <h3 className="eg-title">{ev.title}</h3>
         <div className="eg-meta">
           <span className="eg-meta-row"><CalIcon/> {ev.dateShort}</span>
@@ -284,14 +284,15 @@ function SkeletonRow() {
 // ─── Estilos ──────────────────────────────────────────────────────────────────
 const css = `
   .eg-wrap {
-    background: #F2F0E6;
-    padding: 4rem 0 5rem;
-    border-top: 1.5px solid #1A237E;
+    background: #F5F3EC;
+    padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(3rem, 7vw, 6rem);
+    border-top: 1.5px solid #111111;
+    width: 100%;
   }
   .eg-inner {
-    max-width: 1200px;
+    max-width: 1120px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 clamp(1rem, 5vw, 4rem);
   }
 
   /* Cabecera sección */
@@ -299,7 +300,7 @@ const css = `
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    border-bottom: 1.5px solid #1A237E;
+    border-bottom: 1.5px solid #111111;
     padding-bottom: 1.25rem;
     margin-bottom: 2.5rem;
   }
@@ -308,33 +309,33 @@ const css = `
     font-weight: 700;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: #3D47C8;
+    color: #555555;
     margin-bottom: .35rem;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
   .eg-section-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 2.25rem;
-    letter-spacing: -.025em;
-    color: #1A237E;
-    line-height: 1.05;
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    letter-spacing: .04em;
+    color: #111111;
+    line-height: 1;
   }
   .eg-api-badge {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    border: 1px solid rgba(61,71,200,.25);
-    border-radius: 3px;
+    border: 1px solid #CCCAC0;
+    border-radius: 2px;
     padding: .4rem .875rem;
     font-size: .72rem;
-    color: rgba(26,35,126,.55);
-    font-family: 'DM Sans', sans-serif;
+    color: #555555;
+    font-family: 'Inter', sans-serif;
   }
   .eg-api-dot {
     width: 7px; height: 7px;
     border-radius: 50%;
-    background: #3D47C8;
+    background: #A8AE15;
     animation: egpulse 2s infinite;
     flex-shrink: 0;
   }
@@ -349,18 +350,18 @@ const css = `
   }
   .eg-fbtn {
     padding: .38rem 1rem;
-    border: 1.5px solid #1A237E;
+    border: 1.5px solid #CCCAC0;
     border-radius: 2px;
     background: transparent;
-    color: #1A237E;
-    font-family: 'DM Sans', sans-serif;
+    color: #555555;
+    font-family: 'Inter', sans-serif;
     font-size: .75rem;
     font-weight: 500;
     cursor: pointer;
     transition: all .12s;
   }
-  .eg-fbtn:hover { background: #1A237E; color: #C9D11A; }
-  .eg-fbtn.active { background: #C9D11A; color: #1A237E; border-color: #b8c016; font-weight: 700; }
+  .eg-fbtn:hover { background: #111111; color: #C9D11A; border-color: #111111; }
+  .eg-fbtn.active { background: #111111; color: #C9D11A; border-color: #111111; font-weight: 700; }
 
   /* Fila por categoría */
   .eg-row-section { margin-bottom: 3rem; }
@@ -375,36 +376,37 @@ const css = `
   .eg-row-cat-dot {
     width: 10px; height: 10px;
     border-radius: 50%;
-    background: #C9D11A;
-    border: 2px solid #1A237E;
+    background: #A8AE15;
+    border: 2px solid #111111;
     flex-shrink: 0;
   }
   .eg-row-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: #1A237E;
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: 400;
+    font-size: 1.3rem;
+    letter-spacing: .06em;
+    color: #111111;
     margin: 0;
   }
   .eg-row-count {
     font-size: .7rem;
-    color: rgba(26,35,126,.4);
-    font-family: 'DM Sans', sans-serif;
+    color: #777777;
+    font-family: 'Inter', sans-serif;
     letter-spacing: .05em;
   }
   .eg-row-controls { display: flex; gap: .375rem; }
   .eg-scroll-btn {
     width: 32px; height: 32px;
-    border: 1.5px solid #1A237E;
+    border: 1.5px solid #111111;
     border-radius: 2px;
     background: transparent;
-    color: #1A237E;
+    color: #111111;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     transition: all .12s;
     padding: 0;
   }
-  .eg-scroll-btn:hover { background: #1A237E; color: #C9D11A; }
+  .eg-scroll-btn:hover { background: #111111; color: #C9D11A; }
 
   /* Fila horizontal */
   .eg-row {
@@ -422,10 +424,10 @@ const css = `
   .eg-card {
     flex-shrink: 0;
     width: 260px;
-    border-radius: 6px;
+    border-radius: 0;
     overflow: hidden;
-    border: 1.5px solid #1A237E;
-    background: #F2F0E6;
+    border: 1.5px solid #CCCAC0;
+    background: #EDEAE0;
     scroll-snap-align: start;
     text-decoration: none;
     display: flex;
@@ -434,8 +436,9 @@ const css = `
     cursor: pointer;
   }
   .eg-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 32px rgba(26,35,126,.18);
+    transform: translateY(-5px);
+    box-shadow: 4px 4px 0 #111111;
+    border-color: #111111;
   }
 
   /* Imagen */
@@ -474,11 +477,12 @@ const css = `
     text-transform: uppercase;
   }
   .eg-fallback-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: .95rem;
-    color: #fff;
-    line-height: 1.2;
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: 400;
+    font-size: 1.2rem;
+    letter-spacing: .04em;
+    color: #C9D11A;
+    line-height: 1.15;
   }
 
   /* Badges sobre imagen */
@@ -489,18 +493,18 @@ const css = `
   }
   .eg-badge-free {
     background: #C9D11A;
-    color: #1A237E;
+    color: #111111;
     font-size: .65rem;
     font-weight: 700;
     padding: 3px 8px;
     border-radius: 2px;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     letter-spacing: .04em;
     text-transform: uppercase;
   }
   .eg-badge-price {
-    background: #1A237E;
-    color: #C9D11A;
+    background: #C9D11A;
+    color: #111111;
     font-size: .65rem;
     font-weight: 700;
     padding: 3px 8px;
@@ -511,7 +515,7 @@ const css = `
     position: absolute;
     bottom: .5rem;
     left: .5rem;
-    background: rgba(26,35,126,.85);
+    background: rgba(0,0,0,.75);
     color: #C9D11A;
     font-size: .6rem;
     font-weight: 600;
@@ -531,14 +535,15 @@ const css = `
     font-weight: 700;
     letter-spacing: .1em;
     text-transform: uppercase;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
   .eg-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: .95rem;
-    color: #1A237E;
-    line-height: 1.25;
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: 400;
+    font-size: 1.1rem;
+    letter-spacing: .04em;
+    color: #111111;
+    line-height: 1.15;
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -549,13 +554,13 @@ const css = `
   .eg-meta-row {
     display: flex; align-items: center; gap: 4px;
     font-size: .7rem;
-    color: rgba(26,35,126,.5);
-    font-family: 'DM Sans', sans-serif;
+    color: #777777;
+    font-family: 'Inter', sans-serif;
   }
 
   /* Skeleton */
   .eg-skel {
-    background: linear-gradient(90deg, #E8E6D8 25%, #F2F0E6 50%, #E8E6D8 75%);
+    background: linear-gradient(90deg, #E4E1D6 25%, #EDEAE0 50%, #E4E1D6 75%);
     background-size: 200%;
     animation: egskel 1.4s infinite;
     border-radius: 2px;
@@ -567,18 +572,25 @@ const css = `
   .eg-notice {
     margin-bottom: 1.5rem;
     padding: .5rem 1rem;
-    background: rgba(61,71,200,.07);
-    border-left: 3px solid #3D47C8;
+    background: rgba(0,0,0,.04);
+    border-left: 3px solid #111111;
     font-size: .75rem;
-    color: rgba(26,35,126,.65);
+    color: #555555;
     border-radius: 0 3px 3px 0;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     .eg-section-head { flex-direction: column; align-items: flex-start; gap: .75rem; }
-    .eg-card { width: 220px; }
-    .eg-img-wrap { height: 130px; }
+    .eg-card { width: 230px; }
+    .eg-img-wrap { height: 140px; }
+  }
+  @media (max-width: 640px) {
+    .eg-card { width: 200px; }
+    .eg-img-wrap { height: 120px; }
+    .eg-section-title { font-size: 1.75rem; }
+    .eg-filters { gap: .25rem; }
+    .eg-fbtn { font-size: .7rem; padding: .3rem .75rem; }
   }
 `;
 

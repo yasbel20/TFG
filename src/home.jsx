@@ -1,9 +1,9 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import EventsGrid from "./eventsgrid";
 import "./home.css";
 
-/* ─── Iconos SVG — todos con aria-hidden="true" porque el texto los acompaña ── */
-const WheelIcon = ({ size = 16 }) => (
+/* ── Iconos SVG (aria-hidden en todos — el texto los acompaña) ── */
+const WheelIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round"
     aria-hidden="true" focusable="false">
@@ -12,22 +12,22 @@ const WheelIcon = ({ size = 16 }) => (
     <path d="M6 16a6 6 0 1 0 12 0" strokeWidth="2"/>
   </svg>
 );
-const HandsIcon = ({ size = 16 }) => (
+const HandsIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor"
     aria-hidden="true" focusable="false">
     <path d="M7 4v6L5 8V5a1 1 0 0 1 2 0v3l1.5.75V4a1 1 0 0 1 2 0v6.5L9 9V4zM13 10c0-1 .9-1.8 2-1.8s2 .8 2 1.8v5c0 2.5-1.8 4.3-4 4.3S9 17.5 9 15v-4.5l4 4V12z"/>
   </svg>
 );
-const AudioIcon = ({ size = 16 }) => (
+const AudioIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round"
     aria-hidden="true" focusable="false">
     <circle cx="12" cy="12" r="3" fill="currentColor"/>
     <circle cx="12" cy="12" r="7" fill="none"/>
-    <circle cx="12" cy="12" r="11" fill="none" strokeOpacity=".4"/>
+    <circle cx="12" cy="12" r="11" fill="none" strokeOpacity=".35"/>
   </svg>
 );
-const SubIcon = ({ size = 16 }) => (
+const SubIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor"
     aria-hidden="true" focusable="false">
     <rect x="2" y="6" width="20" height="12" rx="2.5" fill="none" stroke="currentColor" strokeWidth="2"/>
@@ -36,7 +36,7 @@ const SubIcon = ({ size = 16 }) => (
     <rect x="4" y="15" width="10" height="2" rx="1"/>
   </svg>
 );
-const LoopIcon = ({ size = 16 }) => (
+const LoopIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor"
     aria-hidden="true" focusable="false">
     <rect x="2" y="9" width="3" height="6" rx="1"/>
@@ -45,14 +45,14 @@ const LoopIcon = ({ size = 16 }) => (
     <path d="M5 14c0 3 2.5 5 7 5s7-2 7-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
   </svg>
 );
-const BrailleIcon = ({ size = 16 }) => (
+const BrailleIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor"
     aria-hidden="true" focusable="false">
     {[6,11].map(x => [5,10,15].map(y => <circle key={`${x}${y}`} cx={x} cy={y} r="1.8"/>))}
     {[15,20].map(x => [5,10,15].map(y => <circle key={`r${x}${y}`} cx={x} cy={y} r="1.8"/>))}
   </svg>
 );
-const EasyIcon = ({ size = 16 }) => (
+const EasyIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor"
     aria-hidden="true" focusable="false">
     <rect x="3" y="5" width="18" height="3" rx="1.5"/>
@@ -60,7 +60,7 @@ const EasyIcon = ({ size = 16 }) => (
     <rect x="3" y="16" width="10" height="3" rx="1.5"/>
   </svg>
 );
-const QuietIcon = ({ size = 16 }) => (
+const QuietIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round"
     aria-hidden="true" focusable="false">
@@ -78,7 +78,7 @@ const SearchIcon = ({ size = 18 }) => (
   </svg>
 );
 
-/* ─── Datos estáticos ─────────────────────────────────────────────────────── */
+/* ── Datos estáticos ── */
 const ACCESS_INFO = {
   silla:      { label: "Silla de ruedas",   Icon: WheelIcon   },
   signos:     { label: "Lengua de signos",  Icon: HandsIcon   },
@@ -101,10 +101,24 @@ const ACCESS_CARDS = [
   { key: "tranquilo",  desc: "Sesiones con estimulación sensorial reducida, especialmente para TEA."   },
 ];
 
-/* ─── Componente ──────────────────────────────────────────────────────────── */
+
+
+/* ── Componente principal ── */
 export default function INCLUGOHome() {
   const [inputVal, setInputVal] = useState("");
   const evRef = useRef(null);
+
+  // Calcula la duración del ticker según su ancho real
+  // 80px/s = velocidad cómoda para leer sin esfuerzo
+  useEffect(() => {
+    const el = document.getElementById("ticker-inner");
+    if (!el) return;
+    // El inner tiene 2 copias → el loop recorre la mitad del ancho
+    const halfWidth = el.scrollWidth / 2;
+    const pxPerSecond = 80;
+    const duration = Math.round(halfWidth / pxPerSecond);
+    el.style.animationDuration = `${duration}s`;
+  }, []);
 
   const scrollToEvents = () =>
     evRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -115,10 +129,9 @@ export default function INCLUGOHome() {
   };
 
   return (
-    /* lang se pone en index.html, aquí solo el contenido */
     <div className="ir">
 
-      {/* Skip link — WCAG 2.4.1: saltar al contenido principal */}
+      {/* Skip link — WCAG 2.4.1 */}
       <a href="#main-content" className="skip-link">
         Saltar al contenido principal
       </a>
@@ -126,24 +139,14 @@ export default function INCLUGOHome() {
       {/* ── NAV ── */}
       <header role="banner">
         <nav className="nav" aria-label="Navegación principal">
-          {/* Logo como button porque hace scroll/navigate */}
           <button className="logo" onClick={scrollToEvents} aria-label="INCLUGO — ir al inicio">
             INCLU<em>GO</em>
           </button>
 
-          {/* Lista de navegación semántica */}
           <ul className="nav-links" role="list">
-            <li>
-              <button className="nav-link" onClick={scrollToEvents}>
-                Eventos
-              </button>
-            </li>
-            <li>
-              <button className="nav-link">Accesibilidad</button>
-            </li>
-            <li>
-              <button className="nav-link">Acerca de</button>
-            </li>
+            <li><button className="nav-link" onClick={scrollToEvents}>Eventos</button></li>
+            <li><button className="nav-link">Accesibilidad</button></li>
+            <li><button className="nav-link">Acerca de</button></li>
           </ul>
 
           <button className="nav-cta" onClick={scrollToEvents}>
@@ -157,18 +160,15 @@ export default function INCLUGOHome() {
 
         {/* ── HERO ── */}
         <section className="hero" aria-labelledby="hero-heading">
-          {/* Elementos decorativos — ocultos a lectores de pantalla */}
-          <div className="hero-bg-circle" aria-hidden="true"/>
-          <div className="hero-bg-sq"     aria-hidden="true"/>
-
           <div className="hero-inner">
-            {/* Texto decorativo — no es heading */}
-            <p className="hero-pill" aria-hidden="true">
+            <p className="hero-eyebrow" aria-hidden="true">
               Madrid · Cultura Accesible
             </p>
 
             <h1 id="hero-heading" className="hero-h1">
-              Cultura sin barreras.
+              CULTURA<br/>
+              <span className="hl">SIN</span><br/>
+              BARRERAS
             </h1>
 
             <p className="hero-sub">
@@ -176,13 +176,12 @@ export default function INCLUGOHome() {
               y disfruta de la ciudad en igualdad de condiciones.
             </p>
 
-            {/* Formulario de búsqueda con label asociado */}
+            {/* Buscador con label accesible */}
             <div className="search-wrap" role="search">
               <div className="search-bar">
                 <span className="search-icon-wrap" aria-hidden="true">
                   <SearchIcon/>
                 </span>
-                {/* Label oculto visualmente pero leído por lectores de pantalla */}
                 <label htmlFor="search-input" className="sr-only">
                   Buscar evento, lugar o categoría
                 </label>
@@ -205,13 +204,12 @@ export default function INCLUGOHome() {
                 </button>
               </div>
 
-              {/* Sugerencias como botones reales */}
               <div className="search-hint" aria-label="Búsquedas sugeridas">
                 {[
-                  { label: "Conciertos", query: "concierto" },
-                  { label: "Teatro",     query: "teatro"    },
-                  { label: "Exposiciones", query: "exposición" },
-                  { label: "Gratis",     query: "gratis"    },
+                  { label: "Conciertos",    query: "concierto"   },
+                  { label: "Teatro",        query: "teatro"      },
+                  { label: "Exposiciones",  query: "exposición"  },
+                  { label: "Gratis",        query: "gratis"      },
                 ].map(({ label, query }) => (
                   <button
                     key={query}
@@ -227,50 +225,43 @@ export default function INCLUGOHome() {
           </div>
         </section>
 
-        {/* ── STATS — aria-label para cada cifra ── */}
+
+
+        {/* ── STATS ── */}
         <section className="stats" aria-label="Cifras clave de INCLUGO">
           <div className="stats-grid">
             <div className="stat">
-              {/* aria-label da el número completo, el visual puede ser abreviado */}
-              <p className="stat-num" aria-label="500.000">
-                500<sup aria-hidden="true">k</sup>
-              </p>
-              <p className="stat-label">Personas con discapacidad en Madrid</p>
+              <span className="stat-num" aria-label="500.000">
+                500<sup aria-hidden="true">K</sup>
+              </span>
+              <span className="stat-label">Personas con discapacidad en Madrid</span>
             </div>
             <div className="stat">
-              <p className="stat-num" aria-label="Más de 800">
+              <span className="stat-num" aria-label="Más de 800">
                 800<sup aria-hidden="true">+</sup>
-              </p>
-              <p className="stat-label">Eventos culturales activos</p>
+              </span>
+              <span className="stat-label">Eventos culturales activos</span>
             </div>
             <div className="stat">
-              <p className="stat-num">8</p>
-              <p className="stat-label">Tipos de accesibilidad cubiertos</p>
+              <span className="stat-num">8</span>
+              <span className="stat-label">Tipos de accesibilidad cubiertos</span>
             </div>
           </div>
         </section>
 
         {/* ── HOW ── */}
-        <section
-          className="sec"
-          style={{ background: "var(--c)" }}
-          aria-labelledby="how-heading"
-        >
-          <div className="sec-inner">
-            <div className="sec-head">
-              <div>
-                <p className="sec-label" aria-hidden="true">¿Cómo funciona?</p>
-                <h2 id="how-heading" className="sec-title">
-                  Tres pasos, sin barreras
-                </h2>
-              </div>
-            </div>
+        <section className="how-sec" aria-labelledby="how-heading">
+          <div className="how-inner">
+            <p className="sec-eyebrow" aria-hidden="true">¿Cómo funciona?</p>
+            <h2 id="how-heading" className="how-heading">
+              TRES PASOS,<br/>
+              <span className="hl">SIN BARRERAS</span>
+            </h2>
 
-            {/* Lista ordenada — los pasos tienen orden lógico */}
             <ol className="steps" aria-label="Pasos para usar INCLUGO">
               <li className="step">
-                {/* Número decorativo — el li da el orden */}
-                <p className="step-num" aria-hidden="true">01</p>
+                <span className="step-num-bg" aria-hidden="true">01</span>
+                <span className="step-num-label" aria-hidden="true">— 01</span>
                 <h3 className="step-title">Elige tus filtros</h3>
                 <p className="step-desc">
                   Selecciona los recursos de accesibilidad que necesitas: silla de ruedas,
@@ -278,7 +269,8 @@ export default function INCLUGOHome() {
                 </p>
               </li>
               <li className="step">
-                <p className="step-num" aria-hidden="true">02</p>
+                <span className="step-num-bg" aria-hidden="true">02</span>
+                <span className="step-num-label" aria-hidden="true">— 02</span>
                 <h3 className="step-title">Explora eventos</h3>
                 <p className="step-desc">
                   Visualiza únicamente los eventos de Madrid que cumplen tus criterios,
@@ -286,7 +278,8 @@ export default function INCLUGOHome() {
                 </p>
               </li>
               <li className="step">
-                <p className="step-num" aria-hidden="true">03</p>
+                <span className="step-num-bg" aria-hidden="true">03</span>
+                <span className="step-num-label" aria-hidden="true">— 03</span>
                 <h3 className="step-title">Ve y disfruta</h3>
                 <p className="step-desc">
                   Consulta información del recinto, transporte accesible cercano
@@ -297,12 +290,12 @@ export default function INCLUGOHome() {
           </div>
         </section>
 
-        {/* ── EVENTS GRID — componente separado ── */}
+        {/* ── EVENTS GRID ── */}
         <div ref={evRef} tabIndex={-1}>
           <EventsGrid />
         </div>
 
-        {/* ── API INFO BANNER ── */}
+        {/* ── API INFO ── */}
         <aside className="api-info-sec" aria-label="Información sobre la fuente de datos">
           <div className="api-info-inner">
             <p className="api-badge">
@@ -320,30 +313,26 @@ export default function INCLUGOHome() {
                 API Agenda de Eventos Culturales
               </a>{" "}
               del Portal de Datos Abiertos del Ayuntamiento de Madrid.
-              Actualización diaria automática.
             </p>
           </div>
         </aside>
 
-        {/* ── ACCESIBILIDAD TIPOS ── */}
+        {/* ── ACCESIBILIDAD ── */}
         <section className="access-sec" aria-labelledby="access-heading">
-          <div className="sec-inner">
-            <div className="sec-head">
-              <div>
-                <p className="sec-label" aria-hidden="true">Accesibilidad</p>
-                <h2 id="access-heading" className="sec-title">
-                  Todo tipo de accesibilidad, cubierta
-                </h2>
-              </div>
+          <div className="access-inner">
+            <div className="access-head">
+              <p className="sec-eyebrow" aria-hidden="true">Accesibilidad</p>
+              <h2 id="access-heading" className="access-heading">
+                TODO TIPO<br/>
+                <span className="hl">CUBIERTO</span>
+              </h2>
             </div>
 
-            {/* Lista de tipos de accesibilidad */}
             <ul className="ac-grid" role="list" aria-label="Tipos de accesibilidad disponibles">
               {ACCESS_CARDS.map(item => {
                 const info = ACCESS_INFO[item.key];
                 return (
                   <li key={item.key} className="ac-card">
-                    {/* Icono decorativo — el título lo describe */}
                     <div className="ac-icon" aria-hidden="true">
                       {info && <info.Icon size={22}/>}
                     </div>
@@ -358,24 +347,26 @@ export default function INCLUGOHome() {
 
         {/* ── CTA ── */}
         <section className="cta-sec" aria-labelledby="cta-heading">
-          <h2 id="cta-heading" className="cta-h2">
-            ¿Listo para descubrir Madrid?
-          </h2>
-          <p className="cta-sub">
-            Más de 800 eventos culturales accesibles al alcance de todos.
-            Sin barreras, sin frustraciones.
-          </p>
-          <div className="cta-btns">
-            <button className="btn-p" onClick={scrollToEvents}>
-              Explorar eventos
-            </button>
-            <button className="btn-s">
-              Saber más
-            </button>
+          <div className="cta-inner">
+            <h2 id="cta-heading" className="cta-h2">
+              DESCUBRE<br/>MADRID
+            </h2>
+            <p className="cta-sub">
+              Más de 800 eventos culturales accesibles al alcance de todos.
+              Sin barreras, sin frustraciones.
+            </p>
+            <div className="cta-btns">
+              <button className="btn-p" onClick={scrollToEvents}>
+                Explorar eventos
+              </button>
+              <button className="btn-s">
+                Saber más
+              </button>
+            </div>
           </div>
         </section>
 
-      </main>{/* /main */}
+      </main>
 
       {/* ── FOOTER ── */}
       <footer className="footer" role="contentinfo">
@@ -395,7 +386,7 @@ export default function INCLUGOHome() {
 
         <p className="footer-copy">
           TFG DAW · ILERNA Madrid · 2025/2026 ·{" "}
-          <span lang="es">Datos: Ayuntamiento de Madrid (datos abiertos)</span>
+          <span lang="es">Datos: Ayuntamiento de Madrid</span>
         </p>
       </footer>
 
