@@ -107,6 +107,43 @@ body {
 }
 .nav-link:hover { color: var(--ink); }
 
+/* ── Dropdown Eventos ── */
+.nav-drop-wrap { position: relative; }
+.nav-drop-btn { gap: .35rem; }
+.nav-drop-chevron { transition: transform .18s; flex-shrink: 0; }
+.nav-drop-btn.open .nav-drop-chevron { transform: rotate(180deg); }
+
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 200px;
+  background: var(--bg);
+  border: 1.5px solid var(--ink);
+  padding: .375rem 0;
+  list-style: none; margin: 0;
+  z-index: 400;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+.nav-drop-item {
+  display: block;
+  padding: .55rem 1.25rem;
+  font-size: .78rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  transition: background .12s, color .12s;
+}
+.nav-drop-item:hover { background: var(--ink); color: var(--y); }
+.nav-dropdown li:first-child .nav-drop-item {
+  font-weight: 700;
+  color: var(--ink);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: .65rem;
+  margin-bottom: .25rem;
+}
+
 .nav-cta {
   background: var(--ink); color: var(--y);
   border: none;
