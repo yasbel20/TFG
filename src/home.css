@@ -588,3 +588,47 @@ h1.hero-h1 .hl {
   .footer { padding: 2rem 1.25rem; }
   .step-num-bg { display: none; }
 }
+/* ── Dropdown Eventos ── */
+.nav-dropdown-wrap {
+  position: relative;
+}
+.nav-link--arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.nav-link--arrow.active {
+  opacity: 1;
+}
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border: 1.5px solid #111111;
+  min-width: 200px;
+  z-index: 100;
+  box-shadow: 4px 4px 0 #111111;
+  display: flex;
+  flex-direction: column;
+}
+.nav-dropdown-item {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #eeeeee;
+  padding: .75rem 1.25rem;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: #111111;
+  cursor: pointer;
+  transition: background .1s, color .1s;
+}
+.nav-dropdown-item:last-child { border-bottom: none; }
+.nav-dropdown-item:hover {
+  background: #111111;
+  color: #ffffff;
+}

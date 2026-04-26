@@ -203,7 +203,7 @@ function EventCard({ ev }) {
       rel="noreferrer"
       aria-label={ev.title}
     >
-      {/* Imagen o fallback de color */}
+      {/* Portada limpia — placeholder sin texto dentro */}
       <div className="eg-img-wrap">
         {ev.image && imgOk ? (
           <img
@@ -215,35 +215,32 @@ function EventCard({ ev }) {
           />
         ) : (
           <div className="eg-img-fallback" style={{ background: colors.bg }}>
-            <span className="eg-fallback-cat" style={{ color: colors.accent }}>{ev.cat}</span>
-            <span className="eg-fallback-title">{ev.title}</span>
-          </div>
-        )}
-        {/* Badge de precio encima */}
-        <div className="eg-price-badge">
-          {ev.price === "Gratis"
-            ? <span className="eg-badge-free">Gratis</span>
-            : <span className="eg-badge-price">{ev.price}</span>
-          }
-        </div>
-        {/* Badges de accesibilidad */}
-        {ev.access.length > 0 && (
-          <div className="eg-access-badges">
-            {ev.access.includes("silla")      && <span title="Accesible en silla de ruedas"><WheelIcon/> PMR</span>}
-            {ev.access.includes("signos")     && <span title="Lengua de signos"><SignosIcon/> Signos</span>}
-            {ev.access.includes("bucle")      && <span title="Bucle de inducción magnético"><BucleIcon/> Bucle</span>}
-            {ev.access.includes("podotactil") && <span title="Señalización podotáctil"><PodoIcon/> Podo</span>}
+            <div className="eg-fallback-pattern"/>
           </div>
         )}
       </div>
 
-      {/* Info */}
+      {/* Info DEBAJO — estilo editorial */}
       <div className="eg-info">
-        <span className="eg-cat" style={{ color: "#111111" }}>{ev.cat}</span>
+        <span className="eg-cat">{ev.cat}</span>
         <h3 className="eg-title">{ev.title}</h3>
-        <div className="eg-meta">
-          <span className="eg-meta-row"><CalIcon/> {ev.dateShort}</span>
-          <span className="eg-meta-row"><PinIcon/> {ev.venue}</span>
+        {ev.access.length > 0 && (
+          <div className="eg-access-badges">
+            {ev.access.includes("silla")      && <span className="eg-access-chip"><WheelIcon/> PMR</span>}
+            {ev.access.includes("signos")     && <span className="eg-access-chip"><SignosIcon/> Signos</span>}
+            {ev.access.includes("bucle")      && <span className="eg-access-chip"><BucleIcon/> Bucle</span>}
+            {ev.access.includes("podotactil") && <span className="eg-access-chip"><PodoIcon/> Podotáctil</span>}
+          </div>
+        )}
+        <div className="eg-meta-block">
+          <span className="eg-meta-row eg-meta-date"><CalIcon/> {ev.dateShort}</span>
+          <span className="eg-meta-row eg-meta-venue"><PinIcon/> {ev.venue}</span>
+        </div>
+        <div className="eg-bottom-row">
+          {ev.price === "Gratis"
+            ? <span className="eg-price-free">Gratis</span>
+            : <span className="eg-price-paid">{ev.price}</span>
+          }
         </div>
       </div>
     </a>
@@ -452,29 +449,25 @@ const css = `
   /* Tarjeta */
   .eg-card {
     flex-shrink: 0;
-    width: 260px;
+    width: 220px;
     border-radius: 0;
-    overflow: hidden;
-    border: 1.5px solid #CCCAC0;
-    background: #FFFFFF;
+    overflow: visible;
+    border: none;
+    background: transparent;
     scroll-snap-align: start;
     text-decoration: none;
     display: flex;
     flex-direction: column;
-    transition: transform .2s, box-shadow .2s;
+    transition: transform .2s;
     cursor: pointer;
   }
-  .eg-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 4px 4px 0 #111111;
-    border-color: #111111;
-  }
+  .eg-card:hover { transform: translateY(-4px); }
 
   /* Imagen */
   .eg-img-wrap {
     position: relative;
     width: 100%;
-    height: 160px;
+    height: 290px;
     overflow: hidden;
     flex-shrink: 0;
   }
@@ -485,106 +478,110 @@ const css = `
     transition: transform .35s ease;
     display: block;
   }
-  .eg-card:hover .eg-img { transform: scale(1.07); }
+  .eg-card:hover .eg-img { transform: scale(1.04); }
 
   .eg-img-fallback {
     width: 100%; height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-end;
-    padding: 1rem;
-    gap: .375rem;
+    align-items: center;
+    justify-content: center;
     transition: filter .35s;
   }
-  .eg-card:hover .eg-img-fallback { filter: brightness(1.08); }
-  .eg-fallback-cat {
-    font-family: 'DM Sans', sans-serif;
-    font-size: .65rem;
-    font-weight: 700;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-  }
-  .eg-fallback-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-weight: 400;
-    font-size: 1.2rem;
-    letter-spacing: .04em;
-    color: #ffffff;
-    line-height: 1.15;
+  .eg-card:hover .eg-img-fallback { filter: brightness(1.1); }
+  .eg-fallback-pattern {
+    width: 100%; height: 100%;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 18px,
+      rgba(255,255,255,.04) 18px,
+      rgba(255,255,255,.04) 19px
+    );
   }
 
-  /* Badges sobre imagen */
-  .eg-price-badge {
-    position: absolute;
-    top: .625rem;
-    right: .625rem;
-  }
-  .eg-badge-free {
-    background: #111111;
-    color: #ffffff;
-    font-size: .65rem;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 2px;
-    font-family: 'Inter', sans-serif;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-  }
-  .eg-badge-price {
-    background: #111111;
-    color: #ffffff;
-    font-size: .65rem;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 2px;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .eg-access-badges {
-    position: absolute;
-    bottom: .5rem;
-    left: .5rem;
-    background: rgba(17,17,17,.85);
-    color: #ffffff;
-    font-size: .6rem;
-    font-weight: 600;
-    padding: 3px 7px;
-    border-radius: 2px;
+  /* ── Info editorial debajo de la imagen ─────────────────────── */
+  .eg-info {
+    padding: .75rem 0 .5rem;
     display: flex;
-    align-items: center;
-    gap: 3px;
-    font-family: 'DM Sans', sans-serif;
-    backdrop-filter: blur(4px);
+    flex-direction: column;
+    gap: 0;
   }
-
-  /* Info */
-  .eg-info { padding: .875rem 1rem 1rem; display: flex; flex-direction: column; gap: .3rem; flex: 1; }
   .eg-cat {
-    font-size: .65rem;
-    font-weight: 700;
-    letter-spacing: .1em;
-    text-transform: uppercase;
     font-family: 'Inter', sans-serif;
+    font-size: .6rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #999999;
+    margin-bottom: .3rem;
   }
   .eg-title {
     font-family: 'Bebas Neue', sans-serif;
     font-weight: 400;
-    font-size: 1.1rem;
-    letter-spacing: .04em;
+    font-size: 1.2rem;
+    letter-spacing: .03em;
     color: #111111;
     line-height: 1.15;
-    margin: 0;
+    margin: 0 0 .5rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  .eg-meta { display: flex; flex-direction: column; gap: 3px; margin-top: auto; padding-top: .5rem; }
+  .eg-meta-block {
+    display: flex;
+    flex-direction: column;
+    gap: .18rem;
+    margin-bottom: .5rem;
+  }
   .eg-meta-row {
-    display: flex; align-items: center; gap: 4px;
-    font-size: .7rem;
-    color: #777777;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .67rem;
     font-family: 'Inter', sans-serif;
+    color: #888888;
+  }
+  .eg-meta-date { color: #555555; font-weight: 600; }
+  .eg-meta-venue { color: #999999; }
+  .eg-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: .4rem;
+    border-top: 1px solid #EBEBEB;
+  }
+  .eg-price-free {
+    font-family: 'Inter', sans-serif;
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #111111;
+  }
+  .eg-price-paid {
+    font-family: 'Inter', sans-serif;
+    font-size: .65rem;
+    font-weight: 700;
+    color: #111111;
+  }
+  .eg-access-badges {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: .45rem;
+  }
+  .eg-access-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-family: 'Inter', sans-serif;
+    font-size: .62rem;
+    font-weight: 500;
+    color: #888888;
+    line-height: 1;
   }
 
   /* Skeleton */
@@ -611,12 +608,12 @@ const css = `
 
   @media (max-width: 900px) {
     .eg-section-head { flex-direction: column; align-items: flex-start; gap: .75rem; }
-    .eg-card { width: 230px; }
-    .eg-img-wrap { height: 140px; }
+    .eg-card { width: 190px; }
+    .eg-img-wrap { height: 250px; }
   }
   @media (max-width: 640px) {
-    .eg-card { width: 200px; }
-    .eg-img-wrap { height: 120px; }
+    .eg-card { width: 165px; }
+    .eg-img-wrap { height: 215px; }
     .eg-section-title { font-size: 1.75rem; }
     .eg-filters { gap: .25rem; }
     .eg-fbtn { font-size: .7rem; padding: .3rem .75rem; }

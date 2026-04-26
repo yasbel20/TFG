@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import EventsGrid from "./eventsgrid";
+import EventsPage from "./EventsPage";
 import "./home.css";
 
 /* ── Iconos SVG (aria-hidden en todos — el texto los acompaña) ── */
@@ -104,9 +105,58 @@ function toSlug(s) {
   return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
 
+const ChevronDownIcon = ({ size = 12 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+    <path d="m6 9 6 6 6-6"/>
+  </svg>
+);
+
+const EVENT_CATS_ALL = ["Todos los eventos", "Música", "Teatro", "Exposición", "Cine", "Danza", "Cultura"];
+
+/* ── Dropdown Eventos ── */
+function EventsDropdown({ onSelect }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div className="nav-dropdown-wrap" ref={ref}>
+      <button
+        className={`nav-link nav-link--arrow${open ? " active" : ""}`}
+        onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+      >
+        Eventos <ChevronDownIcon/>
+      </button>
+      {open && (
+        <div className="nav-dropdown" role="listbox">
+          {EVENT_CATS_ALL.map(cat => (
+            <button
+              key={cat}
+              className="nav-dropdown-item"
+              role="option"
+              onClick={() => { setOpen(false); onSelect(cat === "Todos los eventos" ? "Todos" : cat); }}
+            >
+              {cat.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── Componente principal ── */
 export default function INCLUGOHome() {
   const [inputVal, setInputVal] = useState("");
+  const [eventsPage, setEventsPage] = useState(null); // null = home, string = categoría
   const evRef = useRef(null);
 
   // Calcula la duración del ticker según su ancho real
@@ -129,6 +179,11 @@ export default function INCLUGOHome() {
     scrollToEvents();
   };
 
+  // Si hay página de eventos activa, renderizar EventsPage
+  if (eventsPage !== null) {
+    return <EventsPage initialCategory={eventsPage} onBack={() => setEventsPage(null)} />;
+  }
+
   return (
     <div className="ir">
 
@@ -145,7 +200,7 @@ export default function INCLUGOHome() {
           </button>
 
           <ul className="nav-links" role="list">
-            <li><button className="nav-link" onClick={scrollToEvents}>Eventos</button></li>
+            <li><EventsDropdown onSelect={(cat) => setEventsPage(cat)} /></li>
             <li><button className="nav-link">Accesibilidad</button></li>
             <li><button className="nav-link">Acerca de</button></li>
           </ul>
