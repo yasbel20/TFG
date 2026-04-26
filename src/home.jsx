@@ -97,7 +97,6 @@ const ACCESS_CARDS = [
   { key: "bucle",   desc: "Sistema de inducción magnética para audífonos e implantes cocleares."    },
 ];
 
-<<<<<<<<< Temporary merge branch 1
 /* ─── Componente ──────────────────────────────────────────────────────────── */
 const EVENT_CATS = ["Música","Teatro","Exposición","Cine","Danza","Cultura"];
 
@@ -105,16 +104,10 @@ function toSlug(s) {
   return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
 
-=========
-
-
 /* ── Componente principal ── */
->>>>>>>>> Temporary merge branch 2
 export default function INCLUGOHome() {
   const [inputVal, setInputVal] = useState("");
-  const [dropOpen, setDropOpen] = useState(false);
-  const evRef   = useRef(null);
-  const dropRef = useRef(null);
+  const evRef = useRef(null);
 
   // Calcula la duración del ticker según su ancho real
   // 80px/s = velocidad cómoda para leer sin esfuerzo
@@ -152,51 +145,9 @@ export default function INCLUGOHome() {
           </button>
 
           <ul className="nav-links" role="list">
-<<<<<<<<< Temporary merge branch 1
-            <li ref={dropRef} className="nav-drop-wrap">
-              <button
-                className={`nav-link nav-drop-btn${dropOpen ? " open" : ""}`}
-                onClick={() => setDropOpen(o => !o)}
-                aria-expanded={dropOpen}
-                aria-haspopup="menu"
-              >
-                Eventos
-              </button>
-            </li>
-            <li ref={accRef} className="nav-drop-wrap">
-              <button
-                className={`nav-link nav-drop-btn${accOpen ? " open" : ""}`}
-                onClick={() => setAccOpen(o => !o)}
-                aria-expanded={accOpen}
-                aria-haspopup="menu"
-              >
-                Accesibilidad
-                <svg className="nav-drop-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
-                  <path d="m6 9 6 6 6-6"/>
-                </svg>
-              </button>
-              {accOpen && (
-                <ul className="nav-dropdown" role="menu">
-                  <li role="none">
-                    <a className="nav-drop-item" href="/eventos" role="menuitem" onClick={() => setAccOpen(false)}>
-                      Toda la accesibilidad
-                    </a>
-                  </li>
-                  {ACCESS_TYPES.map(({ key, label }) => (
-                    <li key={key} role="none">
-                      <a className="nav-drop-item" href={`/eventos?accesibilidad=${key}`} role="menuitem" onClick={() => setAccOpen(false)}>
-                        {label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-=========
             <li><button className="nav-link" onClick={scrollToEvents}>Eventos</button></li>
             <li><button className="nav-link">Accesibilidad</button></li>
             <li><button className="nav-link">Acerca de</button></li>
->>>>>>>>> Temporary merge branch 2
           </ul>
 
           <button className="nav-cta" onClick={scrollToEvents}>
