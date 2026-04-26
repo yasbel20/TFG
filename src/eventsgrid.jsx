@@ -35,6 +35,22 @@ const AccessIcon = () => (
     <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm1 14.93V17a1 1 0 0 1-2 0v-.07A8.001 8.001 0 0 1 4.07 11H5a1 1 0 0 1 0 2h-.93A8.001 8.001 0 0 1 11 4.07V5a1 1 0 0 1 2 0v-.93A8.001 8.001 0 0 1 19.93 11H19a1 1 0 0 1 0-2h.93A8.001 8.001 0 0 1 13 16.93z"/>
   </svg>
 );
+const SignosIcon = () => (
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M5 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm14 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM3 9v5h2v7h4v-7h2V9H3zm14 0v5h2v7h4v-7h2V9h-8z"/>
+  </svg>
+);
+const BucleIcon = () => (
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9-4-9-9-9zm0 16a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm-1-9v5l4-2.5L11 10z"/>
+  </svg>
+);
+const PodoIcon = () => (
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+  </svg>
+);
+
 const ChevronRightIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
     <path d="m9 18 6-6-6-6"/>
@@ -64,20 +80,26 @@ function parseEvent(item, i) {
   else if (/danza|baile|flamenco/.test(t + desc))                      cat = "Danza";
   else if (/deporte|sport|carrera|maratón/.test(t + desc))             cat = "Deporte";
 
-  // Accesibilidad
+  // Accesibilidad — campo real confirmado: item.organization["accesibility"]
+  // (typo oficial del Ayuntamiento: una sola "c")
+  const accRaw = item.organization?.["accesibility"] || "";
+  const codes  = accRaw.toString().split(",").map(c => c.trim()).filter(Boolean);
+
   const access = [];
-  if (/silla|ruedas|pmr|accesib|rampa/.test(desc)) access.push("silla");
-  if (/signos|sord/.test(desc))                     access.push("signos");
-  if (/audiodescrip/.test(desc))                    access.push("audio");
-  if (/subtítu|subtitulad/.test(desc))              access.push("subtitulos");
-  if (access.length === 0)                          access.push("silla");
+  if (codes.includes("1") || codes.includes("2")) access.push("silla");   // Accesible / Parcialmente accesible PMR
+  if (codes.includes("4"))                         access.push("signos");  // Lengua de signos
+  if (codes.includes("5"))                         access.push("braille"); // Señalización podotáctil
+  if (codes.includes("6"))                         access.push("bucle");   // Bucle de inducción magnético
+  // códigos 0 y 3 → access queda vacío → evento se filtra fuera en useEvents
 
   // Precio
   let price = "Gratis";
   const fee = item["event-free"] ?? item.free;
   if (fee === false || fee === "false" || fee === 0 || fee === "0") {
-    const raw = item["event-fee"] || item.price || "";
-    price = raw ? `Desde ${raw} €` : "Ver precio";
+    const raw = String(item["event-fee"] || item.price || "").trim();
+    // Solo usar el valor si parece un número (ej: "5", "12.50")
+    // Si es texto libre del Ayuntamiento, mostrar "Ver precio"
+    price = /^\d+([.,]\d+)?$/.test(raw) ? `Desde ${raw.replace(",", ".")} €` : "Ver precio";
   }
 
   // Fechas
@@ -146,7 +168,10 @@ function useEvents(activeCategory) {
     fetch(API)
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then(data => {
-        const parsed = (data["@graph"] || []).map(parseEvent);
+        // Parsear primero, luego filtrar solo los que tienen al menos un tipo de accesibilidad
+        const parsed = (data["@graph"] || [])
+          .map(parseEvent)
+          .filter(e => e.access.length > 0);
         setAllEvents(parsed);
         setFromApi(true);
         setLoading(false);
@@ -200,10 +225,13 @@ function EventCard({ ev }) {
             : <span className="eg-badge-price">{ev.price}</span>
           }
         </div>
-        {/* Badge de accesibilidad */}
-        {ev.access.includes("silla") && (
-          <div className="eg-access-badge" title="Accesible en silla de ruedas">
-            <WheelIcon/> Accesible
+        {/* Badges de accesibilidad */}
+        {ev.access.length > 0 && (
+          <div className="eg-access-badges">
+            {ev.access.includes("silla")      && <span title="Accesible en silla de ruedas"><WheelIcon/> PMR</span>}
+            {ev.access.includes("signos")     && <span title="Lengua de signos"><SignosIcon/> Signos</span>}
+            {ev.access.includes("bucle")      && <span title="Bucle de inducción magnético"><BucleIcon/> Bucle</span>}
+            {ev.access.includes("podotactil") && <span title="Señalización podotáctil"><PodoIcon/> Podo</span>}
           </div>
         )}
       </div>
@@ -511,11 +539,11 @@ const css = `
     border-radius: 2px;
     font-family: 'DM Sans', sans-serif;
   }
-  .eg-access-badge {
+  .eg-access-badges {
     position: absolute;
     bottom: .5rem;
     left: .5rem;
-    background: rgba(0,0,0,.75);
+    background: rgba(26,35,126,.85);
     color: #C9D11A;
     font-size: .6rem;
     font-weight: 600;
