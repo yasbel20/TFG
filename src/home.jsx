@@ -101,6 +101,13 @@ const ACCESS_CARDS = [
 
 const EVENT_CATS = ["Música","Teatro","Exposición","Cine","Danza","Cultura"];
 
+const ACCESS_TYPES = [
+  { key: "silla",   label: "Silla de ruedas"  },
+  { key: "signos",  label: "Lengua de signos"  },
+  { key: "braille", label: "Braille"           },
+  { key: "bucle",   label: "Bucle magnético"   },
+];
+
 function toSlug(s) {
   return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
@@ -108,13 +115,16 @@ function toSlug(s) {
 /* ── Componente principal ── */
 export default function INCLUGOHome() {
   const [inputVal, setInputVal] = useState("");
-  const [dropOpen, setDropOpen] = useState(false);
-  const evRef   = useRef(null);
-  const dropRef = useRef(null);
+  const [dropOpen, setDropOpen]    = useState(false);
+  const [accOpen,  setAccOpen]     = useState(false);
+  const evRef    = useRef(null);
+  const dropRef  = useRef(null);
+  const accRef   = useRef(null);
 
   useEffect(() => {
     const handler = (e) => {
       if (dropRef.current && !dropRef.current.contains(e.target)) setDropOpen(false);
+      if (accRef.current  && !accRef.current.contains(e.target))  setAccOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -185,7 +195,35 @@ export default function INCLUGOHome() {
                 </ul>
               )}
             </li>
-            <li><button className="nav-link">Accesibilidad</button></li>
+            <li ref={accRef} className="nav-drop-wrap">
+              <button
+                className={`nav-link nav-drop-btn${accOpen ? " open" : ""}`}
+                onClick={() => setAccOpen(o => !o)}
+                aria-expanded={accOpen}
+                aria-haspopup="menu"
+              >
+                Accesibilidad
+                <svg className="nav-drop-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+                  <path d="m6 9 6 6 6-6"/>
+                </svg>
+              </button>
+              {accOpen && (
+                <ul className="nav-dropdown" role="menu">
+                  <li role="none">
+                    <a className="nav-drop-item" href="/eventos" role="menuitem" onClick={() => setAccOpen(false)}>
+                      Toda la accesibilidad
+                    </a>
+                  </li>
+                  {ACCESS_TYPES.map(({ key, label }) => (
+                    <li key={key} role="none">
+                      <a className="nav-drop-item" href={`/eventos?accesibilidad=${key}`} role="menuitem" onClick={() => setAccOpen(false)}>
+                        {label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
             <li><button className="nav-link">Acerca de</button></li>
           </ul>
 
