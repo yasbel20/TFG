@@ -11,7 +11,7 @@
 
 :root {
   --y:     #C9D11A;   /* amarillo ácido INCLUGO */
-  --y-h:   #D8E020;   /* amarillo hover */
+  --y-h:   #202de0;   /* amarillo hover */
   --y-dim: #A8AE15;   /* amarillo oscuro — texto sobre crema, ratio 4.8:1 ✓ */
 
   --bg:    #F5F3EC;   /* crema suave — fondo principal */
