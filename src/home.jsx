@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import EventsGrid from "./eventsgrid";
-import EventsPage from "./EventsPage";
+import EventsGrid  from "./eventsgrid";
+import EventsPage  from "./EventsPage";
+import EventDetail from "./EventDetail";
+import AgendaPage  from "./AgendaPage";
 import "./home.css";
 
 /* ── Iconos SVG (aria-hidden en todos — el texto los acompaña) ── */
@@ -216,6 +218,17 @@ export default function INCLUGOHome() {
     scrollToEvents();
   };
 
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showAgenda, setShowAgenda]       = useState(false);
+
+  if (selectedEvent) {
+    return <EventDetail ev={selectedEvent} onBack={() => setSelectedEvent(null)} />;
+  }
+
+  if (showAgenda) {
+    return <AgendaPage onBack={() => setShowAgenda(false)} />;
+  }
+
   if (eventsPage !== null) {
     return <EventsPage initialCategory={eventsPage} onBack={() => setEventsPage(null)} />;
   }
@@ -238,6 +251,11 @@ export default function INCLUGOHome() {
           <ul className="nav-links" role="list">
             <li><EventsDropdown onSelect={(cat) => setEventsPage(cat)} /></li>
             <li><AccessibilityDropdown /></li>
+            <li>
+              <button className="nav-link" onClick={() => setShowAgenda(true)}>
+                Agenda
+              </button>
+            </li>
             <li><button className="nav-link">Acerca de</button></li>
           </ul>
 
@@ -382,7 +400,7 @@ export default function INCLUGOHome() {
 
         {/* ── EVENTS GRID ── */}
         <div ref={evRef} tabIndex={-1}>
-          <EventsGrid />
+          <EventsGrid onOpenDetail={(ev) => setSelectedEvent(ev)} />
         </div>
 
         {/* ── ACCESIBILIDAD ── */}

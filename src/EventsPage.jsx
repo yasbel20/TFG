@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import EventDetail from "./EventDetail";
 
 // ─── Reutilizamos parseEvent y SAMPLE del proyecto ────────────────────────────
 const CAT_COLORS = {
@@ -110,14 +111,35 @@ function parseEvent(item, i) {
     || item["event-location"]?.["@id"]
     || "Madrid";
 
+  let timeStr = "";
+  if (item.dtstart) {
+    const s = new Date(item.dtstart);
+    const h = s.getHours(), m = s.getMinutes();
+    if (h !== 0 || m !== 0)
+      timeStr = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")} h`;
+  }
+
+  let date = "Consultar fecha";
+  if (item.dtstart) {
+    const s = new Date(item.dtstart);
+    const e = item.dtend ? new Date(item.dtend) : null;
+    const fmtFull = { day: "numeric", month: "long", year: "numeric" };
+    date = s.toLocaleDateString("es-ES", fmtFull);
+    if (e && e.toDateString() !== s.toDateString())
+      date = `${date} – ${e.toLocaleDateString("es-ES", fmtFull)}`;
+  }
+
   return {
     id:       item.id || `ev-${i}`,
     title:    item.title || "Evento sin título",
-    cat, dateShort, price, access, image,
+    cat, dateShort, date, timeStr, price, access, image,
     url:      item.link || "#",
     venue:    venue.length > 40 ? venue.slice(0, 38) + "…" : venue,
+    venueRaw: venue,
     district: item.address?.["locality"] || "Madrid",
-    desc:     (item.description || "").replace(/<[^>]+>/g, "").slice(0, 120),
+    org:      item.organization?.["organization-name"] || "",
+    // Descripción COMPLETA de la API, sin recortar
+    descFull: (item.description || "").replace(/<[^>]+>/g, "").trim(),
   };
 }
 
@@ -164,23 +186,21 @@ function useEvents() {
 }
 
 // ─── Tarjeta ──────────────────────────────────────────────────────────────────
-function GridCard({ ev }) {
+function GridCard({ ev, onOpenDetail }) {
   const colors = CAT_COLORS[ev.cat] || CAT_COLORS["Cultura"];
   const [imgOk, setImgOk] = useState(!!ev.image);
 
   return (
-    <a
+    <button
       className="ep-card"
-      href={ev.url !== "#" ? ev.url : undefined}
-      target={ev.url !== "#" ? "_blank" : undefined}
-      rel="noreferrer"
-      aria-label={ev.title}
+      onClick={() => onOpenDetail(ev)}
+      aria-label={`Ver detalle de ${ev.title}`}
     >
       <div className="ep-img-wrap">
         {ev.image && imgOk ? (
           <img src={ev.image} alt={ev.title} className="ep-img" onError={() => setImgOk(false)} loading="lazy"/>
         ) : (
-          <div className="ep-img-fallback" style={{ background: colors.bg }}>
+          <div className="ep-img-fallback" style={{ background: colors }}>
             <div className="ep-fallback-pattern"/>
           </div>
         )}
@@ -207,7 +227,7 @@ function GridCard({ ev }) {
           }
         </div>
       </div>
-    </a>
+    </button>
   );
 }
 
@@ -320,7 +340,18 @@ function AccessibilityDropdownNav() {
 // ─── Página principal ─────────────────────────────────────────────────────────
 export default function EventsPage({ initialCategory = "Todos", onBack }) {
   const [activeCategory, setActiveCategory] = useState(initialCategory);
+  const [selectedEvent, setSelectedEvent]   = useState(null);
   const { byCategory, loading } = useEvents();
+
+  // Si hay evento seleccionado → página de detalle
+  if (selectedEvent) {
+    return (
+      <EventDetail
+        ev={selectedEvent}
+        onBack={() => setSelectedEvent(null)}
+      />
+    );
+  }
 
   const filtered = byCategory(activeCategory);
   const catLabel = activeCategory === "Todos" ? "Todos los eventos" : activeCategory;
@@ -369,7 +400,7 @@ export default function EventsPage({ initialCategory = "Todos", onBack }) {
               ? Array.from({length: 12}).map((_, i) => <SkeletonCard key={i}/>)
               : filtered.length === 0
                 ? <p className="ep-empty">No hay eventos en esta categoría.</p>
-                : filtered.map(ev => <GridCard key={ev.id} ev={ev}/>)
+                : filtered.map(ev => <GridCard key={ev.id} ev={ev} onOpenDetail={setSelectedEvent}/>)
             }
           </div>
         </div>
@@ -589,6 +620,8 @@ const css = `
     border: none;
     background: transparent;
     overflow: visible;
+    padding: 0;
+    text-align: left;
   }
   .ep-card:hover { transform: translateY(-4px); }
 
