@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import AccessibilityBadge from "./AccessibilityBadge";
 
 // ─── Categorías y colores ─────────────────────────────────────────────────────
 const CAT_COLORS = {
@@ -74,7 +75,7 @@ function parseEvent(item, i) {
   const access = [];
   if (codes.includes("1") || codes.includes("2")) access.push("silla");
   if (codes.includes("4"))                         access.push("signos");
-  if (codes.includes("5"))                         access.push("braille");
+  if (codes.includes("5"))                         access.push("podo");
   if (codes.includes("6"))                         access.push("bucle");
 
   let price = "Gratis";
@@ -207,12 +208,7 @@ function EventCard({ ev, onOpenDetail }) {
         <span className="eg-cat">{ev.cat}</span>
         <h3 className="eg-title">{ev.title}</h3>
         {ev.access.length > 0 && (
-          <div className="eg-access-badges">
-            {ev.access.includes("silla")   && <span className="eg-access-chip"><WheelIcon/> PMR</span>}
-            {ev.access.includes("signos")  && <span className="eg-access-chip"><SignosIcon/> Signos</span>}
-            {ev.access.includes("bucle")   && <span className="eg-access-chip"><BucleIcon/> Bucle</span>}
-            {ev.access.includes("braille") && <span className="eg-access-chip"><PodoIcon/> Podotáctil</span>}
-          </div>
+          <AccessibilityBadge types={ev.access} className="eg-access-chip" />
         )}
         <div className="eg-meta-block">
           <span className="eg-meta-row eg-meta-date"><CalIcon/> {ev.dateShort}</span>

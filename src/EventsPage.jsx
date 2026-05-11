@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import EventDetail from "./EventDetail";
+import { useParams, useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
+import AccessibilityBadge from "./AccessibilityBadge";
+import FilterPanel from "./FilterPanel";
 
 // ─── Reutilizamos parseEvent y SAMPLE del proyecto ────────────────────────────
 const CAT_COLORS = {
@@ -81,7 +84,7 @@ function parseEvent(item, i) {
   const access = [];
   if (codes.includes("1") || codes.includes("2")) access.push("silla");
   if (codes.includes("4"))                         access.push("signos");
-  if (codes.includes("5"))                         access.push("braille");
+  if (codes.includes("5"))                         access.push("podo");
   if (codes.includes("6"))                         access.push("bucle");
 
   let price = "Gratis";
@@ -169,7 +172,10 @@ function useEvents() {
         const parsed = all.filter(e => e.access.length > 0);
         const porCat = {};
         parsed.forEach(e => { porCat[e.cat] = (porCat[e.cat] || 0) + 1; });
+        const porAcc = {};
+        parsed.forEach(e => e.access.forEach(a => { porAcc[a] = (porAcc[a] || 0) + 1; }));
         console.log(`[EventsPage] total API: ${all.length} | accesibles: ${parsed.length}`, porCat);
+        console.log("[EventsPage] por tipo accesibilidad:", porAcc);
         setAllEvents(parsed);
         setLoading(false);
       })
@@ -208,14 +214,7 @@ function GridCard({ ev, onOpenDetail }) {
       <div className="ep-info">
         <span className="ep-cat">{ev.cat}</span>
         <h3 className="ep-title">{ev.title}</h3>
-        {ev.access.length > 0 && (
-          <div className="ep-access-badges">
-            {ev.access.includes("silla")  && <span className="ep-access-chip"><WheelIcon/> PMR</span>}
-            {ev.access.includes("signos") && <span className="ep-access-chip"><SignosIcon/> Signos</span>}
-            {ev.access.includes("bucle")  && <span className="ep-access-chip"><BucleIcon/> Bucle</span>}
-            {ev.access.includes("braille")&& <span className="ep-access-chip"><PodoIcon/> Podotáctil</span>}
-          </div>
-        )}
+        <AccessibilityBadge types={ev.access} className="ep-access-chip" />
         <div className="ep-meta-block">
           <span className="ep-meta-row ep-meta-date"><CalendarIcon/> {ev.dateShort}</span>
           <span className="ep-meta-row ep-meta-venue"><PinIcon/> {ev.venue}</span>
@@ -254,9 +253,16 @@ const EP_ACCESS_CATS = [
   "Toda la accesibilidad",
   "Silla de ruedas",
   "Lengua de signos",
-  "Braille",
+  "Podotáctil",
   "Bucle magnético",
 ];
+
+const ACCESS_MAP = {
+  "Silla de ruedas":   "silla",
+  "Lengua de signos":  "signos",
+  "Podotáctil":        "podo",
+  "Bucle magnético":   "bucle",
+};
 
 const ChevronDownIcon = ({ size = 12 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
@@ -301,9 +307,10 @@ function EventsDropdownNav({ activeCategory, onSelect }) {
   );
 }
 
-function AccessibilityDropdownNav() {
+function AccessibilityDropdownNav({ activeAccess, onSelect }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const isFiltered = activeAccess !== "Toda la accesibilidad";
 
   useEffect(() => {
     const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
@@ -314,19 +321,19 @@ function AccessibilityDropdownNav() {
   return (
     <div className="ep-nav-dropdown-wrap" ref={ref}>
       <button
-        className={`ep-nav-link ep-nav-link--arrow${open ? " ep-nav-active" : ""}`}
+        className={`ep-nav-link ep-nav-link--arrow${open || isFiltered ? " ep-nav-active" : ""}`}
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
       >
-        Accesibilidad <ChevronDownIcon/>
+        {isFiltered ? activeAccess : "Accesibilidad"} <ChevronDownIcon/>
       </button>
       {open && (
         <div className="ep-nav-dropdown">
           {EP_ACCESS_CATS.map(cat => (
             <button
               key={cat}
-              className="ep-nav-dropdown-item"
-              onClick={() => setOpen(false)}
+              className={`ep-nav-dropdown-item${cat === activeAccess ? " ep-nav-dropdown-item--active" : ""}`}
+              onClick={() => { setOpen(false); onSelect(cat); }}
             >
               {cat}
             </button>
@@ -338,22 +345,26 @@ function AccessibilityDropdownNav() {
 }
 
 // ─── Página principal ─────────────────────────────────────────────────────────
-export default function EventsPage({ initialCategory = "Todos", onBack }) {
-  const [activeCategory, setActiveCategory] = useState(initialCategory);
+const SLUG_TO_CAT = {
+  "musica": "Música", "teatro": "Teatro", "exposicion": "Exposición",
+  "cine": "Cine", "danza": "Danza", "cultura": "Cultura",
+};
+
+export default function EventsPage() {
+  const { cat: catSlug } = useParams();
+  const navigate = useNavigate();
+  const resolvedCat = catSlug ? (SLUG_TO_CAT[catSlug] || "Todos") : "Todos";
+  const [activeCategory, setActiveCategory] = useState(resolvedCat);
+  const [activeAccess,   setActiveAccess]   = useState("Toda la accesibilidad");
   const [selectedEvent, setSelectedEvent]   = useState(null);
   const { byCategory, loading } = useEvents();
 
-  // Si hay evento seleccionado → página de detalle
-  if (selectedEvent) {
-    return (
-      <EventDetail
-        ev={selectedEvent}
-        onBack={() => setSelectedEvent(null)}
-      />
-    );
-  }
+  const openDetail = (ev) => navigate(`/evento/${ev.id}`, { state: { ev } });
 
-  const filtered = byCategory(activeCategory);
+  let filtered = byCategory(activeCategory);
+  if (activeAccess !== "Toda la accesibilidad") {
+    filtered = filtered.filter(ev => ev.access.includes(ACCESS_MAP[activeAccess]));
+  }
   const catLabel = activeCategory === "Todos" ? "Todos los eventos" : activeCategory;
 
   return (
@@ -361,26 +372,8 @@ export default function EventsPage({ initialCategory = "Todos", onBack }) {
       <style>{css}</style>
       <div className="ep-page">
 
-        {/* ── NAV HEADER ── */}
-        <header>
-          <nav className="ep-nav" aria-label="Navegación principal">
-            <button className="ep-nav-logo" onClick={onBack} aria-label="INCLUGO — ir al inicio">
-              INCLU<em>GO</em>
-            </button>
-            <ul className="ep-nav-links" role="list">
-              <li>
-                <EventsDropdownNav activeCategory={activeCategory} onSelect={setActiveCategory} />
-              </li>
-              <li>
-                <AccessibilityDropdownNav />
-              </li>
-              <li><button className="ep-nav-link">Acerca de</button></li>
-            </ul>
-            <button className="ep-nav-cta" onClick={onBack}>
-              Volver
-            </button>
-          </nav>
-        </header>
+        {/* ── NAV compartido ── */}
+        <Navbar />
 
         {/* ── Foto categoría ── */}
         <div
@@ -393,6 +386,13 @@ export default function EventsPage({ initialCategory = "Todos", onBack }) {
           </div>
         </div>
 
+        {/* ── Filtros accesibilidad ── */}
+        <div className="ep-acc-bar">
+          <div className="ep-acc-inner">
+            <FilterPanel activeAccess={activeAccess} onSelect={setActiveAccess} />
+          </div>
+        </div>
+
         {/* ── Grid ── */}
         <div className="ep-body">
           <div className="ep-grid">
@@ -400,7 +400,7 @@ export default function EventsPage({ initialCategory = "Todos", onBack }) {
               ? Array.from({length: 12}).map((_, i) => <SkeletonCard key={i}/>)
               : filtered.length === 0
                 ? <p className="ep-empty">No hay eventos en esta categoría.</p>
-                : filtered.map(ev => <GridCard key={ev.id} ev={ev} onOpenDetail={setSelectedEvent}/>)
+                : filtered.map(ev => <GridCard key={ev.id} ev={ev} onOpenDetail={openDetail}/>)
             }
           </div>
         </div>
@@ -488,6 +488,7 @@ const css = `
     transition: color .12s, background .12s;
   }
   .ep-nav-dropdown-item:hover { color: #ffffff; background: rgba(255,255,255,.06); }
+  .ep-nav-dropdown-item--active { color: #ffffff; font-weight: 700; }
 
   /* ── Foto de categoría ── */
   .ep-cat-photo {
@@ -752,6 +753,68 @@ const css = `
     margin-bottom: .5rem;
   }
   @keyframes epskel { 0%{background-position:200% 0}100%{background-position:-200% 0} }
+
+  /* ── FilterPanel ── */
+  .fp-bar {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+  }
+  .fp-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: .45rem 1.1rem;
+    border-radius: 999px;
+    border: 1.5px solid #CCCCCC;
+    background: #ffffff;
+    color: #333333;
+    font-family: 'Inter', sans-serif;
+    font-size: .78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .fp-pill:hover { border-color: #111111; color: #111111; }
+  .fp-pill--active { background: #111111; border-color: #111111; color: #ffffff; font-weight: 600; }
+
+  /* ── Pills de accesibilidad (contenedor) ── */
+  .ep-acc-bar {
+    background: #ffffff;
+    border-bottom: 1px solid #E8E8E8;
+    padding: 1rem clamp(1.25rem, 5vw, 6rem);
+  }
+  .ep-acc-inner {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+  }
+  .ep-acc-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: .45rem 1.1rem;
+    border-radius: 999px;
+    border: 1.5px solid #CCCCCC;
+    background: #ffffff;
+    color: #333333;
+    font-family: 'Inter', sans-serif;
+    font-size: .78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .ep-acc-pill:hover {
+    border-color: #111111;
+    color: #111111;
+  }
+  .ep-acc-pill--active {
+    background: #111111;
+    border-color: #111111;
+    color: #ffffff;
+    font-weight: 600;
+  }
 
   /* Responsive */
   @media (max-width: 768px) {

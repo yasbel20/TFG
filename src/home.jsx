@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import EventsGrid  from "./eventsgrid";
-import EventsPage  from "./EventsPage";
-import EventDetail from "./EventDetail";
-import AgendaPage  from "./AgendaPage";
 import { preloadUnsplashCategories } from "./useUnsplash";
+import Navbar from "./Navbar";
 import "./home.css";
 
 preloadUnsplashCategories();
@@ -154,6 +153,8 @@ const TYPE_CARDS = [
   },
 ];
 
+const toSlug = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/\s+/g,"-");
+
 /* ══════════════════════════════════════════════════
    DROPDOWN COMPONENTES
 ══════════════════════════════════════════════════ */
@@ -291,69 +292,29 @@ function FullscreenMenu({ open, onClose, onNavigate, onAgenda }) {
    COMPONENTE PRINCIPAL
 ══════════════════════════════════════════════════ */
 export default function INCLUGOHome() {
-  const [inputVal,      setInputVal]    = useState("");
-  const [eventsPage,    setEventsPage]  = useState(null);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [showAgenda,    setShowAgenda]  = useState(false);
-  const [menuOpen,      setMenuOpen]    = useState(false);
+  const navigate = useNavigate();
+  const [inputVal,  setInputVal]  = useState("");
+  const [menuOpen,  setMenuOpen]  = useState(false);
   const evRef = useRef(null);
-
-  // Ticker eliminado
 
   const scrollToEvents = () =>
     evRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   const handleHint = (hint) => { setInputVal(hint); scrollToEvents(); };
 
-  // Páginas secundarias
-  if (selectedEvent) return <EventDetail ev={selectedEvent} onBack={() => setSelectedEvent(null)}/>;
-  if (showAgenda)    return <AgendaPage  onBack={() => setShowAgenda(false)}/>;
-  if (eventsPage !== null) return <EventsPage initialCategory={eventsPage} onBack={() => setEventsPage(null)}/>;
-
   return (
     <div className="ir">
 
-      {/* Skip link WCAG 2.4.1 */}
-      <a href="#main-content" className="skip-link">Saltar al contenido principal</a>
-
-      {/* ── Menú fullscreen ── */}
+      {/* ── Menú fullscreen (móvil) ── */}
       <FullscreenMenu
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
-        onNavigate={(cat) => setEventsPage(cat)}
-        onAgenda={() => setShowAgenda(true)}
+        onNavigate={(cat) => navigate(cat === "Todos" ? "/eventos" : `/eventos/${toSlug(cat)}`)}
+        onAgenda={() => navigate("/agenda")}
       />
 
-      {/* ── NAV ── */}
-      <header role="banner">
-        <nav className="nav" aria-label="Navegación principal">
-          <div className="nav-logo-group">
-            <button
-              className="nav-hamburger"
-              onClick={() => setMenuOpen(true)}
-              aria-label="Abrir menú"
-              aria-expanded={menuOpen}
-            >
-              <span aria-hidden="true"/>
-              <span aria-hidden="true"/>
-              <span aria-hidden="true"/>
-            </button>
-            <button className="logo" onClick={scrollToEvents} aria-label="INCLUGO — ir al inicio">
-              INCLU<em>GO</em>
-            </button>
-          </div>
-
-          {/* Links escritorio */}
-          <ul className="nav-links" role="list">
-            <li><EventsDropdown onSelect={(cat) => setEventsPage(cat)}/></li>
-            <li><AccessibilityDropdown/></li>
-            <li>
-              <button className="nav-link" onClick={() => setShowAgenda(true)}>Agenda</button>
-            </li>
-            <li><button className="nav-link">Acerca de</button></li>
-          </ul>
-        </nav>
-      </header>
+      {/* ── NAV compartido ── */}
+      <Navbar onMenuOpen={() => setMenuOpen(true)} />
 
       {/* ── MAIN ── */}
       <main id="main-content">
@@ -503,7 +464,7 @@ export default function INCLUGOHome() {
                 <button
                   key={t.label}
                   className="type-card"
-                  onClick={() => setEventsPage(t.cat)}
+                  onClick={() => navigate(`/eventos/${toSlug(t.cat)}`)}
                   aria-label={`Ver eventos de ${t.label}`}
                 >
                   <span className="type-card-num" aria-hidden="true">0{i + 1}</span>
@@ -554,7 +515,7 @@ export default function INCLUGOHome() {
 
         {/* ── EVENTS GRID ── */}
         <div ref={evRef} tabIndex={-1}>
-          <EventsGrid onOpenDetail={(ev) => setSelectedEvent(ev)}/>
+          <EventsGrid onOpenDetail={(ev) => navigate(`/evento/${ev.id}`, { state: { ev } })}/>
         </div>
 
 
@@ -596,7 +557,7 @@ export default function INCLUGOHome() {
               </h2>
             </div>
             <div className="agenda-banner-cards">
-              <button className="agenda-banner-card" onClick={() => setEventsPage("Todos")}
+              <button className="agenda-banner-card" onClick={() => navigate("/eventos")}
                 aria-label="Ver todos los eventos">
                 <span className="agenda-banner-card-icon" aria-hidden="true">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
@@ -604,7 +565,7 @@ export default function INCLUGOHome() {
                 <strong className="agenda-banner-card-title">Para cualquier plan</strong>
                 <p className="agenda-banner-card-desc">Más de 800 eventos culturales accesibles disponibles en Madrid.</p>
               </button>
-              <button className="agenda-banner-card" onClick={() => setShowAgenda(true)}
+              <button className="agenda-banner-card" onClick={() => navigate("/agenda")}
                 aria-label="Ver agenda semanal">
                 <span className="agenda-banner-card-icon" aria-hidden="true">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
@@ -623,7 +584,7 @@ export default function INCLUGOHome() {
             <p className="cta-sub">Más de 800 eventos culturales accesibles al alcance de todos. Sin barreras, sin frustraciones.</p>
             <div className="cta-btns">
               <button className="btn-p" onClick={scrollToEvents}>Explorar eventos</button>
-              <button className="btn-s" onClick={() => setShowAgenda(true)}>Ver agenda</button>
+              <button className="btn-s" onClick={() => navigate("/agenda")}>Ver agenda</button>
             </div>
           </div>
         </section>
@@ -638,7 +599,7 @@ export default function INCLUGOHome() {
             {["Eventos","Accesibilidad","Agenda","Acerca de","Contacto"].map(l => (
               <li key={l}>
                 <button className="footer-link"
-                  onClick={l === "Agenda" ? () => setShowAgenda(true) : l === "Eventos" ? () => setEventsPage("Todos") : undefined}>
+                  onClick={l === "Agenda" ? () => navigate("/agenda") : l === "Eventos" ? () => navigate("/eventos") : undefined}>
                   {l}
                 </button>
               </li>

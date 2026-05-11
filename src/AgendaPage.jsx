@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import EventDetail from "./EventDetail";
+import { useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
 
 // ─── Paleta INCLUGO ───────────────────────────────────────────────────────────
 const P = {
@@ -346,16 +347,13 @@ function inWeek(dateKey, monday, sunday) {
 }
 
 // ─── Componente principal ─────────────────────────────────────────────────────
-export default function AgendaPage({ onBack }) {
+export default function AgendaPage() {
+  const navigate = useNavigate();
   const { events, loading, fromApi } = useEvents();
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [weekOffset, setWeekOffset]       = useState(0);
-  const [filterCat, setFilterCat]         = useState("Todos");
+  const [weekOffset, setWeekOffset] = useState(0);
+  const [filterCat, setFilterCat]   = useState("Todos");
 
-  // Detalle
-  if (selectedEvent) {
-    return <EventDetail ev={selectedEvent} onBack={() => setSelectedEvent(null)} />;
-  }
+  const openDetail = (ev) => navigate(`/evento/${ev.id}`, { state: { ev } });
 
   const CATS = ["Todos","Música","Teatro","Exposición","Cine","Danza","Cultura"];
 
@@ -380,30 +378,8 @@ export default function AgendaPage({ onBack }) {
       <style>{css}</style>
       <div className="ag-page">
 
-        {/* ── Skip link ── */}
-        <a href="#ag-main" className="ag-skip">Saltar al contenido</a>
-
-        {/* ── Topbar ── */}
-        <header>
-          <nav className="ag-topbar" aria-label="Navegación de agenda">
-            <button className="ag-back-btn" onClick={onBack} aria-label="Volver al inicio">
-              <ArrowLeft/> Volver
-            </button>
-
-            <div className="ag-topbar-center">
-              <span className="ag-page-label">
-                <CalIcon/> Agenda
-              </span>
-            </div>
-
-            {fromApi && (
-              <div className="ag-api-badge">
-                <span className="ag-api-dot"/>
-                API Madrid
-              </div>
-            )}
-          </nav>
-        </header>
+        {/* ── NAV compartido ── */}
+        <Navbar />
 
         {/* ── Controles de semana + filtro ── */}
         <div className="ag-controls">
@@ -483,7 +459,7 @@ export default function AgendaPage({ onBack }) {
                   key={dateKey}
                   dateKey={dateKey}
                   events={dayEvs}
-                  onOpen={setSelectedEvent}
+                  onOpen={openDetail}
                 />
               ))
             )}
