@@ -145,7 +145,7 @@ export default function PerfilPage() {
     try {
       const res  = await authFetch("/perfil", { method: "PUT", body: JSON.stringify(campos) });
       const data = await res.json();
-      setUser(data);
+      if (res.ok && data?.name) setUser(data);
     } finally {
       setSavingInfo(false);
     }
