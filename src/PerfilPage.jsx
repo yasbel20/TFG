@@ -437,7 +437,7 @@ export default function PerfilPage() {
           {loadingRec ? (
             <div className="pf-loading">
               <span className="pf-spinner" aria-hidden="true" />
-              <span>Generando recomendaciones personalizadas…</span>
+              <span>Cargando eventos recomendados…</span>
             </div>
           ) : errorRec ? (
             <div className="pf-error">

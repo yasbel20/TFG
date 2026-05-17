@@ -85,9 +85,12 @@ class AuthController extends Controller
             'accesibilidad_preferida.*' => 'string|in:silla,signos,podo,bucle',
         ]);
 
+        $normCats = ['Musica'=>'Música','Exposicion'=>'Exposición','Danza'=>'Danza','Teatro'=>'Teatro','Cine'=>'Cine','Cultura'=>'Cultura','Música'=>'Música','Exposición'=>'Exposición'];
+        $categorias = array_map(fn($c) => $normCats[$c] ?? $c, $request->categorias_favoritas ?? []);
+
         $user = $request->user();
         $user->update([
-            'categorias_favoritas'    => $request->categorias_favoritas ?? [],
+            'categorias_favoritas'    => $categorias,
             'accesibilidad_preferida' => $request->accesibilidad_preferida ?? [],
             'onboarding_completado'   => true,
         ]);
