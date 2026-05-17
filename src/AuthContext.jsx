@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, useMemo } from "react";
 
 const API = "http://127.0.0.1:8000/api";
 const AuthContext = createContext(null);
@@ -8,6 +8,7 @@ export function AuthProvider({ children }) {
     try { return JSON.parse(localStorage.getItem("inclugo_user")); } catch { return null; }
   });
   const [token, setToken] = useState(() => localStorage.getItem("inclugo_token"));
+  const [favs,  setFavs]  = useState([]);
 
   const saveUser = (u) => {
     setUser(u);
@@ -24,9 +25,49 @@ export function AuthProvider({ children }) {
   const clear = () => {
     setUser(null);
     setToken(null);
+    setFavs([]);
     localStorage.removeItem("inclugo_user");
     localStorage.removeItem("inclugo_token");
   };
+
+  useEffect(() => {
+    if (!user || !token) { setFavs([]); return; }
+    fetch(`${API}/favoritos`, {
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+    })
+      .then(r => r.json())
+      .then(data => setFavs(Array.isArray(data) ? data.filter(f => f && typeof f === "object") : []))
+      .catch(() => setFavs([]));
+  }, [user?.email, token]);
+
+  const favIds = useMemo(() => new Set(favs.map(f => String(f.id))), [favs]);
+
+  const addFav = useCallback(async (ev) => {
+    if (!token) return;
+    setFavs(prev => prev.some(f => String(f.id) === String(ev.id)) ? prev : [...prev, ev]);
+    try {
+      const res = await fetch(`${API}/favoritos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ evento: ev }),
+      });
+      const data = await res.json();
+      if (data.favoritos) setFavs(data.favoritos.filter(f => f && typeof f === "object"));
+    } catch {
+      setFavs(prev => prev.filter(f => String(f.id) !== String(ev.id)));
+    }
+  }, [token]);
+
+  const removeFav = useCallback(async (evId) => {
+    if (!token) return;
+    setFavs(prev => prev.filter(f => String(f.id) !== String(evId)));
+    try {
+      await fetch(`${API}/favoritos/${evId}`, {
+        method: "DELETE",
+        headers: { "Accept": "application/json", "Authorization": `Bearer ${token}` },
+      });
+    } catch {}
+  }, [token]);
 
   const register = useCallback(async (name, email, password) => {
     const res = await fetch(`${API}/register`, {
@@ -73,7 +114,7 @@ export function AuthProvider({ children }) {
   }, [token]);
 
   return (
-    <AuthContext.Provider value={{ user, token, register, login, logout, authFetch, setUser: saveUser }}>
+    <AuthContext.Provider value={{ user, token, register, login, logout, authFetch, setUser: saveUser, favs, favIds, addFav, removeFav }}>
       {children}
     </AuthContext.Provider>
   );

@@ -118,8 +118,12 @@ export default function Navbar({ onMenuOpen }) {
                 <>
                   <button className="nb-user-btn nb-user-btn--active"
                     onClick={() => setUserOpen(o => !o)}
-                    aria-label="Menú de usuario" aria-expanded={userOpen}>
-                    {user.name.charAt(0).toUpperCase()}
+                    aria-label="Menú de usuario" aria-expanded={userOpen}
+                    style={{ padding: 0, overflow: "hidden" }}>
+                    {user.avatar
+                      ? <img src={user.avatar} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
+                      : user.name.charAt(0).toUpperCase()
+                    }
                   </button>
                   {userOpen && (
                     <div className="nb-user-menu">

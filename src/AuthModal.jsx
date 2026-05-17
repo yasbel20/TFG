@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import OnboardingModal from "./OnboardingModal";
 
 export default function AuthModal({ onClose }) {
   const { login, register } = useAuth();
+  const navigate = useNavigate();
   const [mode,       setMode]       = useState("login");
   const [name,       setName]       = useState("");
   const [email,      setEmail]      = useState("");
@@ -22,9 +24,11 @@ export default function AuthModal({ onClose }) {
       if (mode === "login") {
         await login(email, pass);
         onClose();
+        navigate("/bienvenida");
       } else {
         await register(name, email, pass);
-        setOnboarding(true);
+        onClose();
+        navigate("/bienvenida", { state: { onboarding: true } });
       }
     } catch (err) {
       const msg = err?.errors

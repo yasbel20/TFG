@@ -62,6 +62,20 @@ class AuthController extends Controller
         return response()->json($request->user());
     }
 
+    public function actualizarPerfil(Request $request)
+    {
+        $request->validate([
+            'name'   => 'sometimes|string|max:255',
+            'ciudad' => 'sometimes|nullable|string|max:255',
+            'avatar' => 'sometimes|nullable|string',
+        ]);
+
+        $user = $request->user();
+        $user->update($request->only(['name', 'ciudad', 'avatar']));
+
+        return response()->json($user->fresh());
+    }
+
     public function guardarPreferencias(Request $request)
     {
         $request->validate([
