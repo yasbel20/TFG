@@ -322,7 +322,6 @@ export default function INCLUGOHome() {
         {/* ── HERO ── */}
         <section className="hero" aria-labelledby="hero-heading">
           <div className="hero-inner">
-            <p className="hero-eyebrow" aria-hidden="true">Madrid · Cultura Accesible</p>
             <h1 id="hero-heading" className="hero-h1">
               CULTURA<br/>
               <span className="hl">SIN</span><br/>
@@ -399,20 +398,14 @@ export default function INCLUGOHome() {
               {/* Collage de fotos */}
               <div className="showcase-collage" aria-hidden="true">
                 {[
-                  { q: "madrid concert music crowd",    r: 1 },
-                  { q: "theater stage performance",     r: 2 },
-                  { q: "madrid art exhibition gallery", r: 3 },
-                  { q: "flamenco dance spain",          r: 4 },
-                  { q: "jazz music live performance",   r: 5 },
-                  { q: "madrid cultural festival",      r: 6 },
-                ].map((img, i) => (
+                  "/img/vertical1.png",
+                  "/img/accesible.jpg",
+                  "/img/cultura.jpg",
+                  "/img/interprete.jpg",
+                  "/img/lenguaje.jpg",
+                ].map((src, i) => (
                   <div key={i} className={`collage-item collage-item--${i + 1}`}>
-                    <img
-                      src={`https://source.unsplash.com/random/400x300?${img.q}&sig=${img.r}`}
-                      alt=""
-                      loading="lazy"
-                      onError={e => { e.target.style.display = "none"; }}
-                    />
+                    <img src={src} alt="" loading="lazy" />
                   </div>
                 ))}
               </div>

@@ -13,13 +13,16 @@ class FavoritosController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['evento_id' => 'required|string']);
+        $request->validate(['evento' => 'required|array']);
 
-        $favoritos   = $request->user()->favoritos ?? [];
-        $eventoId    = $request->evento_id;
+        $favoritos = $request->user()->favoritos ?? [];
+        $evento    = $request->evento;
+        $eventoId  = (string)($evento['id'] ?? '');
 
-        if (! in_array($eventoId, $favoritos)) {
-            $favoritos[] = $eventoId;
+        $exists = collect($favoritos)->contains(fn($f) => (string)(is_array($f) ? ($f['id'] ?? '') : $f) === $eventoId);
+
+        if (! $exists) {
+            $favoritos[] = $evento;
             $request->user()->update(['favoritos' => $favoritos]);
         }
 
@@ -29,7 +32,10 @@ class FavoritosController extends Controller
     public function destroy(Request $request, string $eventoId)
     {
         $favoritos = $request->user()->favoritos ?? [];
-        $favoritos = array_values(array_filter($favoritos, fn($id) => $id !== $eventoId));
+        $favoritos = array_values(array_filter(
+            $favoritos,
+            fn($f) => (string)(is_array($f) ? ($f['id'] ?? '') : $f) !== $eventoId
+        ));
         $request->user()->update(['favoritos' => $favoritos]);
 
         return response()->json(['favoritos' => $favoritos]);

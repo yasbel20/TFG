@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useAuth } from "./AuthContext";
 
 const P = {
   yellow: "#C9D11A",
@@ -43,7 +44,14 @@ const InfoIcon   = () => <Ico d={<><circle cx="12" cy="12" r="10"/><line x1="12"
 const CloseIcon  = () => <Ico d="M18 6 6 18M6 6l12 12"/>;
 const SettingsIcon=() => <Ico d={<><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></>}/>;
 const ContrastIcon=() => <Ico d={<><circle cx="12" cy="12" r="9"/><path d="M12 3v18" fill="none"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></>}/>;
-const ShareIcon  = () => <Ico d={<><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></>}/>;
+const ShareIcon  = () => <Ico d={<><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></>}/>
+const HeartIcon  = ({ filled }) => (
+  <svg width="16" height="16" viewBox="0 0 24 24"
+    fill={filled ? "currentColor" : "none"} stroke="currentColor"
+    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+  </svg>
+);;
 const WheelIcon  = () => <Ico size={16} d={<><circle cx="12" cy="5" r="2" fill="currentColor" stroke="none"/><path d="M10 8h4v5h3l2 4H7l-1.5-4H10V8z" fill="currentColor" stroke="none"/><path d="M6 16a6 6 0 1 0 12 0" fill="none" strokeWidth={2}/></>} fill="currentColor" stroke="currentColor"/>;
 const SignosIcon = () => <Ico size={16} d={<path d="M5 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm14 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM3 9v5h2v7h4v-7h2V9H3zm14 0v5h2v7h4v-7h2V9h-8z" fill="currentColor"/>} fill="currentColor" stroke="none"/>;
 const BucleIcon  = () => <Ico size={16} d={<path d="M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9-4-9-9-9zm0 16a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm-1-9v5l4-2.5L11 10z" fill="currentColor"/>} fill="currentColor" stroke="none"/>;
@@ -313,6 +321,7 @@ function HighlightedDesc({ text, wordIndex }) {
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function EventDetail({ ev, onBack }) {
+  const { user, favIds, addFav, removeFav } = useAuth();
   const [imgOk, setImgOk]       = useState(!!ev.image);
   const [fontSize, setFontSize] = useState(1);
   const [hiContrast, setHiContrast] = useState(false);
@@ -335,6 +344,9 @@ export default function EventDetail({ ev, onBack }) {
   const { supported, status, wordIndex, words, play, pause, stop, skipBack, skipFwd } = useSpeech(speechText, speechRate);
 
   useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, []);
+
+  const isFav = favIds.has(String(ev.id));
+  const toggleFav = () => isFav ? removeFav(ev.id) : addFav(ev);
 
   // Clic y escuchar — click en cualquier párrafo lo lee
   useEffect(() => {
@@ -512,6 +524,18 @@ export default function EventDetail({ ev, onBack }) {
               <button className="ed-tool-btn" onClick={handleShare} aria-label="Compartir evento" title="Compartir">
                 <ShareIcon/>
               </button>
+
+              {/* Favorito */}
+              {user && (
+                <button
+                  className={`ed-tool-btn ed-tool-fav${isFav ? " ed-fav-on" : ""}`}
+                  onClick={toggleFav}
+                  aria-label={isFav ? "Quitar de favoritos" : "Guardar en favoritos"}
+                  title={isFav ? "Quitar de favoritos" : "Guardar en favoritos"}
+                >
+                  <HeartIcon filled={isFav}/>
+                </button>
+              )}
 
             </div>
 
@@ -800,6 +824,10 @@ const css = `
   }
   .ed-tool-btn:hover { background:#222; color:#fff; border-color:#666; }
   .ed-tool-btn.ed-active { background:${P.yellow}; color:#111; border-color:${P.yellow}; }
+  .ed-tool-fav { transition:color .15s, background .15s, border-color .15s; }
+  .ed-tool-fav:hover { color:#e74c3c!important; border-color:#e74c3c!important; background:rgba(231,76,60,.08)!important; }
+  .ed-fav-on { color:#e74c3c!important; border-color:#e74c3c!important; background:rgba(231,76,60,.1)!important; }
+  .ed-fav-on:hover { background:rgba(231,76,60,.2)!important; }
   .ed-tool-btn:focus-visible { outline:2px solid ${P.yellow}; outline-offset:2px; }
   .ed-font-label { font-size:.82rem; font-weight:800; font-family:'Bebas Neue',sans-serif; }
 

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import AccessibilityBadge from "./AccessibilityBadge";
+import { useAuth } from "./AuthContext";
 
 // ─── Categorías y colores ─────────────────────────────────────────────────────
 const CAT_COLORS = {
@@ -54,6 +55,13 @@ const ChevronRightIcon = () => (
 const ChevronLeftIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
     <path d="m15 18-6-6 6-6"/>
+  </svg>
+);
+const HeartIcon = ({ filled }) => (
+  <svg width="15" height="15" viewBox="0 0 24 24"
+    fill={filled ? "#e74c3c" : "none"} stroke={filled ? "#e74c3c" : "rgba(255,255,255,0.9)"}
+    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
   </svg>
 );
 
@@ -181,12 +189,17 @@ function useEvents() {
 function EventCard({ ev, onOpenDetail }) {
   const colors = CAT_COLORS[ev.cat] || { bg: "#111111" };
   const [imgOk, setImgOk] = useState(!!ev.image);
+  const { user, favIds, addFav, removeFav } = useAuth();
+  const isFav = favIds.has(String(ev.id));
 
   return (
-    <button
+    <div
       className="eg-card"
       onClick={() => onOpenDetail(ev)}
+      role="button"
+      tabIndex={0}
       aria-label={`Ver detalle de ${ev.title}`}
+      onKeyDown={e => e.key === "Enter" && onOpenDetail(ev)}
     >
       <div className="eg-img-wrap">
         {ev.image && imgOk ? (
@@ -201,6 +214,16 @@ function EventCard({ ev, onOpenDetail }) {
           <div className="eg-img-fallback" style={{ background: colors.bg }}>
             <div className="eg-fallback-pattern"/>
           </div>
+        )}
+        {user && (
+          <button
+            className={`eg-fav-btn${isFav ? " eg-fav-on" : ""}`}
+            aria-label={isFav ? "Quitar de favoritos" : "Guardar en favoritos"}
+            title={isFav ? "Quitar de favoritos" : "Guardar en favoritos"}
+            onClick={e => { e.stopPropagation(); isFav ? removeFav(ev.id) : addFav(ev); }}
+          >
+            <HeartIcon filled={isFav}/>
+          </button>
         )}
       </div>
 
@@ -221,7 +244,7 @@ function EventCard({ ev, onOpenDetail }) {
           }
         </div>
       </div>
-    </button>
+    </div>
   );
 }
 
@@ -376,6 +399,17 @@ const css = `
   .eg-img-wrap { position: relative; width: 100%; height: 290px; overflow: hidden; flex-shrink: 0; }
   .eg-img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; display: block; }
   .eg-card:hover .eg-img { transform: scale(1.04); }
+  .eg-fav-btn {
+    position: absolute; top: 8px; right: 8px;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(0,0,0,.45); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s, transform .15s;
+    backdrop-filter: blur(4px);
+  }
+  .eg-fav-btn:hover { background: rgba(0,0,0,.7); transform: scale(1.1); }
+  .eg-fav-on { background: rgba(231,76,60,.2)!important; }
+  .eg-fav-on:hover { background: rgba(231,76,60,.35)!important; }
   .eg-img-fallback {
     width: 100%; height: 100%; display: flex;
     align-items: center; justify-content: center; transition: filter .35s;

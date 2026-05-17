@@ -42,6 +42,11 @@ body.hi-contrast [style*="background-image"] {
   filter: invert(1) hue-rotate(180deg);
 }
 
+/* La imagen del hero se contra-invierte para que no se vea afectada */
+body.hi-contrast .hero::after {
+  filter: invert(1) hue-rotate(180deg);
+}
+
 /* ── Botón alto contraste ── */
 .hc-btn {
   width: 36px;
