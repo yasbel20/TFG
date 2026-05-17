@@ -38,6 +38,7 @@ class ImportarEventos extends Command
 
         try {
             $response = Http::timeout(30)
+                ->withoutVerifying()
                 ->withHeaders(['User-Agent' => 'Mozilla/5.0 INCLUGO-TFG/1.0'])
                 ->get(self::API_URL);
 
