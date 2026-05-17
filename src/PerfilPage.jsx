@@ -38,42 +38,6 @@ const CAT_IMAGES = {
   "Cultura":    "https://images.unsplash.com/photo-1555993539-1732b0258235?w=500&h=260&fit=crop&q=80",
 };
 
-/* ── Genera recomendaciones ── */
-async function fetchRecomendacionesIA(categorias, accesib) {
-  const accLabels = accesib.map(k => ACCESIBILIDAD_LABELS[k]).join(", ") || "Ninguna";
-  const hoy = new Date().toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
-
-  const prompt = `Eres un sistema de recomendación de eventos culturales en Madrid.
-
-El usuario tiene estas preferencias:
-- Tipos de evento favoritos: ${categorias.length ? categorias.join(", ") : "Todos"}
-- Necesidades de accesibilidad: ${accLabels}
-
-INSTRUCCIONES ESTRICTAS:
-- Genera exactamente 6 eventos culturales ficticios pero realistas.
-- TODOS los eventos deben celebrarse en Madrid, España. Sin excepciones.
-- El campo "venue" debe ser un lugar REAL y conocido de Madrid.
-- Prioriza los tipos de evento seleccionados por el usuario.
-
-Responde SOLO con un JSON array sin markdown ni texto adicional:
-[{"id":1,"title":"...","cat":"Música","dateShort":"20 May 2026","timeStr":"20:30","venue":"...","price":"20 €"}]
-
-Categorías permitidas: Música, Teatro, Exposición, Cine, Danza, Cultura.
-Precios reales entre 0-50€ o "Gratis". Hoy es ${hoy}. Genera fechas desde hoy en adelante.`;
-
-  const res = await fetch("http://localhost:8000/api/recomendaciones", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages: [{ role: "user", content: prompt }] }),
-  });
-
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Error del servidor");
-  const text = data.content.map(i => i.text || "").join("");
-  const clean = text.replace(/```json|```/g, "").trim();
-  return JSON.parse(clean);
-}
-
 /* ── Iconos ── */
 const PencilIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -170,16 +134,10 @@ export default function PerfilPage() {
   const [savingInfo,   setSavingInfo]   = useState(false);
   const fileInputRef = useRef(null);
 
-  const catsKey = JSON.stringify(user?.categorias_favoritas ?? []);
-  const accKey  = JSON.stringify(user?.accesibilidad_preferida ?? []);
-
   useEffect(() => {
     if (!user) { navigate("/"); return; }
-    cargarRecomendaciones(
-      user.categorias_favoritas ?? [],
-      user.accesibilidad_preferida ?? [],
-    );
-  }, [catsKey, accKey]);
+    cargarRecomendaciones();
+  }, [user?.email]);
 
 
   const guardarInfo = async (campos) => {
@@ -212,24 +170,13 @@ export default function PerfilPage() {
     img.src = url;
   };
 
-  const normalizarEvIA = (ev) => ({
-    ...ev,
-    date:     ev.dateShort ?? "",
-    venueRaw: ev.venue ?? "",
-    district: "Madrid",
-    image:    null,
-    url:      "#",
-    org:      "Recomendación IA",
-    descFull: `Evento en ${ev.venue ?? "Madrid"} el ${ev.dateShort ?? ""}${ev.timeStr ? " a las " + ev.timeStr : ""}.`,
-    access:   user?.accesibilidad_preferida ?? [],
-  });
-
-  const cargarRecomendaciones = async (cats, acc) => {
+  const cargarRecomendaciones = async () => {
     setLoadingRec(true);
     setErrorRec(false);
     try {
-      const eventos = await fetchRecomendacionesIA(cats, acc);
-      setRecomendaciones(Array.isArray(eventos) ? eventos : []);
+      const res  = await authFetch("/recomendaciones");
+      const data = await res.json();
+      setRecomendaciones(Array.isArray(data) ? data : []);
     } catch {
       setErrorRec(true);
       setRecomendaciones([]);
@@ -261,7 +208,7 @@ export default function PerfilPage() {
       const data = await res.json();
       setUser(data);
       setEditando(false);
-      await cargarRecomendaciones(categorias, accesib);
+      await cargarRecomendaciones();
     } finally {
       setGuardando(false);
     }
@@ -495,7 +442,7 @@ export default function PerfilPage() {
           ) : errorRec ? (
             <div className="pf-error">
               <p>No se pudieron cargar las recomendaciones.</p>
-              <button className="pf-retry" onClick={() => cargarRecomendaciones(user.categorias_favoritas ?? [], user.accesibilidad_preferida ?? [])}>
+              <button className="pf-retry" onClick={() => cargarRecomendaciones()}>
                 Reintentar
               </button>
             </div>
@@ -507,10 +454,10 @@ export default function PerfilPage() {
                 <article
                   key={ev.id}
                   className="pf-card"
-                  onClick={() => navigate(`/evento/${ev.id}`, { state: { ev: normalizarEvIA(ev) } })}
+                  onClick={() => navigate(`/evento/${ev.id}`, { state: { ev: ev } })}
                   role="button"
                   tabIndex={0}
-                  onKeyDown={e => e.key === "Enter" && navigate(`/evento/${ev.id}`, { state: { ev: normalizarEvIA(ev) } })}
+                  onKeyDown={e => e.key === "Enter" && navigate(`/evento/${ev.id}`, { state: { ev: ev } })}
                 >
                   <div className="pf-card-cat" style={{ background: CAT_COLORS[ev.cat] ?? "#111" }}>{ev.cat}</div>
                   <div className="pf-card-img-wrap">
