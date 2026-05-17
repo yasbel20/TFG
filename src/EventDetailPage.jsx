@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import EventDetail from "./EventDetail";
 import Navbar from "./Navbar";
 
+
 export default function EventDetailPage() {
   const { state } = useLocation();
   const navigate  = useNavigate();
@@ -24,5 +25,10 @@ export default function EventDetailPage() {
     );
   }
 
-  return <EventDetail ev={ev} onBack={() => navigate(-1)} />;
+  return (
+    <>
+      <Navbar />
+      <EventDetail ev={ev} onBack={() => navigate(-1)} />
+    </>
+  );
 }
