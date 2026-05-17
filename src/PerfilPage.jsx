@@ -90,12 +90,6 @@ const MailIcon = () => (
   </svg>
 );
 
-const LocationIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-    <circle cx="12" cy="9" r="2.5"/>
-  </svg>
-);
 
 const MemberIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
@@ -128,9 +122,7 @@ export default function PerfilPage() {
 
   // Edición de datos personales
   const [editNombre,   setEditNombre]   = useState(false);
-  const [editCiudad,   setEditCiudad]   = useState(false);
   const [tmpNombre,    setTmpNombre]    = useState(user?.name ?? "");
-  const [tmpCiudad,    setTmpCiudad]    = useState(user?.ciudad ?? "");
   const [savingInfo,   setSavingInfo]   = useState(false);
   const fileInputRef = useRef(null);
 
@@ -295,35 +287,6 @@ export default function PerfilPage() {
                 <MailIcon /> {user.email}
               </span>
 
-              {/* Ciudad editable */}
-              <span className="pf-meta-item">
-                <LocationIcon />
-                {editCiudad ? (
-                  <span className="pf-inline-edit pf-inline-edit--sm">
-                    <input
-                      className="pf-inline-input"
-                      value={tmpCiudad}
-                      placeholder="Tu ciudad"
-                      onChange={e => setTmpCiudad(e.target.value)}
-                      autoFocus
-                      onKeyDown={e => {
-                        if (e.key === "Enter") { guardarInfo({ ciudad: tmpCiudad }); setEditCiudad(false); }
-                        if (e.key === "Escape") setEditCiudad(false);
-                      }}
-                    />
-                    <button className="pf-inline-save" disabled={savingInfo}
-                      onClick={() => { guardarInfo({ ciudad: tmpCiudad }); setEditCiudad(false); }}>
-                      {savingInfo ? "…" : "✓"}
-                    </button>
-                    <button className="pf-inline-cancel" onClick={() => setEditCiudad(false)}>✕</button>
-                  </span>
-                ) : (
-                  <span className="pf-meta-editable" onClick={() => { setTmpCiudad(user.ciudad ?? ""); setEditCiudad(true); }}>
-                    {user.ciudad || <em>Añadir ciudad</em>}
-                    <span className="pf-meta-edit-ico"><PencilIcon /></span>
-                  </span>
-                )}
-              </span>
 
               <span className="pf-meta-item">
                 <MemberIcon /> Miembro desde {mesRegistro}
