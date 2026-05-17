@@ -426,24 +426,25 @@ export default function EventDetail({ ev, onBack }) {
 
         <a href="#ed-desc" className="ed-skip">Saltar al contenido</a>
 
-        {/* ── Topbar ── */}
-        <nav className="ed-topbar" aria-label="Navegación y herramientas de accesibilidad">
-          <div className="ed-topbar-inner">
+        {/* ── Hero ── */}
+        <div className="ed-hero" aria-hidden="true">
+          {ev.image && imgOk
+            ? <img src={ev.image} alt="" className="ed-hero-img" onError={() => setImgOk(false)}/>
+            : <div className="ed-hero-fallback" style={{ background: fallbackBg }}><div className="ed-hero-pattern"/></div>
+          }
+          <div className="ed-hero-gradient"/>
+        </div>
 
-            <button className="ed-back-btn" onClick={onBack} aria-label="Volver al listado de eventos">
-              <ArrowLeft/> Volver
-            </button>
+        {/* ── Barra de herramientas (debajo de la imagen) ── */}
+        <div className="ed-toolbar-bar">
+          <div className="ed-toolbar-inner">
 
-            {/* ── Barra estilo ReadSpeaker ── */}
+            {/* Lector de voz */}
             {supported && (
               <div className="rs-bar" role="toolbar" aria-label="Lector de voz">
-
-                {/* Menú */}
-                <button className="rs-btn rs-btn--menu" onClick={() => setShowPrefs(p => !p)} aria-label="Abrir preferencias" title="Preferencias">
+                <button className="rs-btn rs-btn--menu" onClick={() => setShowPrefs(p => !p)} aria-label="Preferencias" title="Preferencias">
                   <span className="rs-hamburger" aria-hidden="true">☰</span>
                 </button>
-
-                {/* Escuchar / Pausar */}
                 <button
                   className={`rs-btn rs-btn--listen${status !== "idle" ? " rs-active" : ""}`}
                   onClick={status === "idle" ? play : pause}
@@ -452,99 +453,50 @@ export default function EventDetail({ ev, onBack }) {
                   {status === "playing" ? <PauseIcon/> : <PlayIcon/>}
                   <span>{status === "playing" ? "Pausar" : status === "paused" ? "Reanudar" : "Escuchar"}</span>
                 </button>
-
-                {/* Stop */}
                 {status !== "idle" && (
-                  <button className="rs-btn" onClick={stop} aria-label="Detener lectura" title="Detener">
-                    <StopIcon/>
-                  </button>
+                  <button className="rs-btn" onClick={stop} aria-label="Detener" title="Detener"><StopIcon/></button>
                 )}
-
-                {/* Retroceder */}
-                <button className="rs-btn" onClick={skipBack} aria-label="Retroceder" title="Retroceder">
-                  <SkipBIcon/>
-                </button>
-
-                {/* Avanzar */}
-                <button className="rs-btn" onClick={skipFwd} aria-label="Avanzar" title="Avanzar">
-                  <SkipFIcon/>
-                </button>
-
-                {/* Volumen (decorativo — la API no expone volumen independiente) */}
-                <button className="rs-btn" aria-label="Volumen" title="Volumen" onClick={() => {}}>
-                  <VolumeIcon/>
-                </button>
-
-                {/* Info */}
-                <button className="rs-btn" aria-label="Información" title="Información" onClick={() => setShowPrefs(true)}>
-                  <InfoIcon/>
-                </button>
-
-                {/* Cerrar barra */}
-                <button className="rs-btn rs-btn--close" onClick={stop} aria-label="Cerrar lector">
-                  <CloseIcon/>
-                </button>
-
+                <button className="rs-btn" onClick={skipBack} aria-label="Retroceder" title="Retroceder"><SkipBIcon/></button>
+                <button className="rs-btn" onClick={skipFwd}  aria-label="Avanzar"    title="Avanzar"><SkipFIcon/></button>
+                <button className="rs-btn" aria-label="Volumen" title="Volumen" onClick={() => {}}><VolumeIcon/></button>
+                <button className="rs-btn" aria-label="Información" title="Información" onClick={() => setShowPrefs(true)}><InfoIcon/></button>
+                <button className="rs-btn rs-btn--close" onClick={stop} aria-label="Cerrar lector"><CloseIcon/></button>
               </div>
             )}
 
-            {/* Herramientas adicionales */}
+            {/* Herramientas visuales */}
             <div className="ed-extra-tools" role="toolbar" aria-label="Herramientas de visualización">
-
-              {/* Preferencias (si no hay speech) */}
               {!supported && (
                 <button className={`ed-tool-btn${showPrefs ? " ed-active" : ""}`}
                   onClick={() => setShowPrefs(p => !p)} aria-label="Preferencias" title="Preferencias">
                   <SettingsIcon/>
                 </button>
               )}
-
-              {/* Tamaño texto */}
-              <button
-                className={`ed-tool-btn${fontSize > 1 ? " ed-active" : ""}`}
-                onClick={cycleFontSize}
-                aria-label={`Tamaño de texto: ${fontLabel}`}
-                title="Tamaño de texto"
-              >
+              <button className={`ed-tool-btn${fontSize > 1 ? " ed-active" : ""}`} onClick={cycleFontSize}
+                aria-label={`Tamaño de texto: ${fontLabel}`} title="Tamaño de texto">
                 <span className="ed-font-label" aria-hidden="true">{fontLabel}</span>
               </button>
-
-              {/* Alto contraste */}
-              <button
-                className={`ed-tool-btn${hiContrast ? " ed-active" : ""}`}
-                onClick={() => setHiContrast(h => !h)}
-                aria-pressed={hiContrast}
-                aria-label="Alto contraste"
-                title="Alto contraste"
-              >
+              <button className={`ed-tool-btn${hiContrast ? " ed-active" : ""}`}
+                onClick={() => setHiContrast(h => !h)} aria-pressed={hiContrast}
+                aria-label="Alto contraste" title="Alto contraste">
                 <ContrastIcon/>
               </button>
-
-              {/* Compartir */}
               <button className="ed-tool-btn" onClick={handleShare} aria-label="Compartir evento" title="Compartir">
                 <ShareIcon/>
               </button>
-
-              {/* Favorito */}
               {user && (
-                <button
-                  className={`ed-tool-btn ed-tool-fav${isFav ? " ed-fav-on" : ""}`}
-                  onClick={toggleFav}
+                <button className={`ed-tool-btn ed-tool-fav${isFav ? " ed-fav-on" : ""}`} onClick={toggleFav}
                   aria-label={isFav ? "Quitar de favoritos" : "Guardar en favoritos"}
-                  title={isFav ? "Quitar de favoritos" : "Guardar en favoritos"}
-                >
+                  title={isFav ? "Quitar de favoritos" : "Guardar en favoritos"}>
                   <HeartIcon filled={isFav}/>
                 </button>
               )}
-
             </div>
 
           </div>
 
           {/* Toast */}
-          {shareMsg && (
-            <div className="ed-toast" role="status" aria-live="polite">{shareMsg}</div>
-          )}
+          {shareMsg && <div className="ed-toast" role="status" aria-live="polite">{shareMsg}</div>}
 
           {/* Progreso de lectura */}
           {status !== "idle" && (
@@ -554,15 +506,6 @@ export default function EventDetail({ ev, onBack }) {
                 style={{ width: `${Math.round((Math.max(0, wordIndex) / Math.max(1, words.length)) * 100)}%` }}/>
             </div>
           )}
-        </nav>
-
-        {/* ── Hero ── */}
-        <div className="ed-hero" aria-hidden="true">
-          {ev.image && imgOk
-            ? <img src={ev.image} alt="" className="ed-hero-img" onError={() => setImgOk(false)}/>
-            : <div className="ed-hero-fallback" style={{ background: fallbackBg }}><div className="ed-hero-pattern"/></div>
-          }
-          <div className="ed-hero-gradient"/>
         </div>
 
         {/* ── Contenido ── */}
@@ -728,8 +671,7 @@ const css = `
 
   /* Alto contraste */
   .ed-hi-contrast { background:#000!important; color:#fff!important; }
-  .ed-hi-contrast .ed-topbar { background:#000!important; border-color:#fff!important; }
-  .ed-hi-contrast .ed-back-btn { color:#fff!important; border-color:#fff!important; }
+  .ed-hi-contrast .ed-toolbar-bar { background:#000!important; border-color:#fff!important; }
   .ed-hi-contrast .rs-bar { background:#111!important; border-color:#fff!important; }
   .ed-hi-contrast .rs-btn { color:#fff!important; border-color:#555!important; }
   .ed-hi-contrast .rs-btn--listen { background:#ff0!important; color:#000!important; }
@@ -765,50 +707,41 @@ const css = `
   }
   .ed-skip:focus { position:fixed; left:50%; transform:translateX(-50%); top:0; width:auto; height:auto; }
 
-  /* ── Topbar ── */
-  .ed-topbar {
-    position:sticky; top:0; z-index:200;
-    background:#111; border-bottom:1px solid #222;
+  /* ── Barra de herramientas bajo imagen ── */
+  .ed-toolbar-bar {
+    background:#fff; border-bottom:1.5px solid #e5e5e5;
+    position:relative;
   }
-  .ed-topbar-inner {
+  .ed-toolbar-inner {
     max-width:1120px; margin:0 auto;
-    padding:0 clamp(1rem,5vw,4rem);
-    min-height:56px; display:flex; align-items:center;
-    gap:.75rem; flex-wrap:wrap; padding-top:.5rem; padding-bottom:.5rem;
+    padding:.6rem clamp(1rem,5vw,4rem);
+    display:flex; align-items:center;
+    gap:.75rem; flex-wrap:wrap;
   }
-  .ed-back-btn {
-    display:inline-flex; align-items:center; gap:.45rem;
-    background:transparent; border:1.5px solid #444; color:#ccc;
-    font-family:'Inter',sans-serif; font-size:.8rem; font-weight:500;
-    padding:.4rem .9rem; border-radius:4px; cursor:pointer; transition:all .15s;
-    white-space:nowrap; flex-shrink:0;
-  }
-  .ed-back-btn:hover { background:#222; color:#fff; border-color:#666; }
-  .ed-back-btn:focus-visible { outline:2px solid ${P.yellow}; outline-offset:2px; }
 
   /* ── Barra ReadSpeaker ── */
   .rs-bar {
     display:inline-flex; align-items:center; gap:1px;
-    background:#1e1e1e; border:1.5px solid #444; border-radius:4px;
+    background:#f5f5f5; border:1.5px solid #ddd; border-radius:4px;
     overflow:hidden; flex-shrink:0;
   }
   .rs-btn {
     display:inline-flex; align-items:center; gap:.35rem;
-    background:transparent; border:none; border-right:1px solid #333;
-    color:#bbb; font-family:'Inter',sans-serif; font-size:.72rem; font-weight:600;
+    background:transparent; border:none; border-right:1px solid #e0e0e0;
+    color:#555; font-family:'Inter',sans-serif; font-size:.72rem; font-weight:600;
     padding:.42rem .65rem; cursor:pointer; transition:all .12s;
     min-height:36px; white-space:nowrap;
   }
   .rs-btn:last-child { border-right:none; }
-  .rs-btn:hover { background:#2a2a2a; color:#fff; }
+  .rs-btn:hover { background:#e8e8e8; color:#111; }
   .rs-btn:focus-visible { outline:2px solid ${P.yellow}; outline-offset:-2px; z-index:1; position:relative; }
   .rs-btn--listen {
-    background:#1a3a6e; color:#fff; font-weight:700; padding:.42rem .9rem;
+    background:${P.navy}; color:#fff; font-weight:700; padding:.42rem .9rem;
   }
   .rs-btn--listen.rs-active { background:${P.yellow}; color:#111; }
-  .rs-btn--listen:hover { background:#254d96; }
+  .rs-btn--listen:hover { background:${P.blue}; }
   .rs-btn--menu { font-size:1rem; padding:.42rem .7rem; }
-  .rs-btn--close { color:#666; }
+  .rs-btn--close { color:#999; }
   .rs-hamburger { font-size:1rem; line-height:1; }
 
   /* Extra tools */
@@ -817,13 +750,13 @@ const css = `
   }
   .ed-tool-btn {
     display:inline-flex; align-items:center; gap:.35rem;
-    background:transparent; border:1.5px solid #444; color:#aaa;
+    background:transparent; border:1.5px solid #ddd; color:#555;
     font-family:'Inter',sans-serif; font-size:.72rem; font-weight:600;
     padding:.35rem .6rem; border-radius:4px; cursor:pointer;
     transition:all .15s; min-height:36px;
   }
-  .ed-tool-btn:hover { background:#222; color:#fff; border-color:#666; }
-  .ed-tool-btn.ed-active { background:${P.yellow}; color:#111; border-color:${P.yellow}; }
+  .ed-tool-btn:hover { background:#f0f0f0; color:#111; border-color:#aaa; }
+  .ed-tool-btn.ed-active { background:${P.navy}; color:#fff; border-color:${P.navy}; }
   .ed-tool-fav { transition:color .15s, background .15s, border-color .15s; }
   .ed-tool-fav:hover { color:#e74c3c!important; border-color:#e74c3c!important; background:rgba(231,76,60,.08)!important; }
   .ed-fav-on { color:#e74c3c!important; border-color:#e74c3c!important; background:rgba(231,76,60,.1)!important; }
