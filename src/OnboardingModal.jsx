@@ -135,8 +135,6 @@ export default function OnboardingModal({ onClose }) {
 }
 
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap');
-
   .ob-overlay {
     position: fixed; inset: 0;
     background: rgba(0,0,0,.5);
@@ -145,7 +143,7 @@ const css = `
   }
 
   .ob-box {
-    background: #fff;
+    background: var(--bg);
     width: 100%; max-width: 440px;
     min-height: 580px;
     border-radius: 10px;
@@ -158,22 +156,22 @@ const css = `
   .ob-back {
     position: absolute; top: 14px; right: 14px;
     width: 34px; height: 34px; border-radius: 50%;
-    background: #fff; border: 1.5px solid #ddd;
+    background: var(--bg); border: 1.5px solid var(--border);
     cursor: pointer; font-size: 1rem;
     display: flex; align-items: center; justify-content: center;
-    color: #111; transition: background .15s;
+    color: var(--text-primary); transition: background .15s;
   }
-  .ob-back:hover { background: #eee; }
+  .ob-back:hover { background: var(--bg-surface); }
 
   .ob-title {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--ff-h);
     font-size: 2.6rem; line-height: 1.05;
-    letter-spacing: .02em; color: #111; margin: 0;
+    letter-spacing: .02em; color: var(--text-primary); margin: 0;
   }
 
   .ob-sub {
-    font-family: 'Inter', sans-serif;
-    font-size: .78rem; color: #111; margin: 0; line-height: 1.5;
+    font-family: var(--ff-b);
+    font-size: .78rem; color: var(--text-muted); margin: 0; line-height: 1.5;
   }
 
   .ob-chips {
@@ -185,45 +183,45 @@ const css = `
 
   .ob-chip {
     display: flex; align-items: center; gap: 8px;
-    background: #fff; border: 1.5px solid #e0e0e0;
+    background: var(--bg); border: 1.5px solid var(--border);
     border-radius: 8px; padding: 11px 13px;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--ff-b);
     font-size: .8rem; font-weight: 600;
     cursor: pointer; text-align: left;
     transition: all .15s; min-height: 46px;
-    color: #555;
+    color: var(--text-muted);
   }
   .ob-chip-ico { display: flex; align-items: center; flex-shrink: 0; }
   .ob-chip-txt { transition: color .15s; }
   .ob-chip:hover {
-    background: #111; border-color: #111; color: #fff;
+    background: var(--brand); border-color: var(--brand); color: var(--on-brand);
   }
   .ob-chip--on {
-    background: #111; border-color: #111; color: #fff;
+    background: var(--brand); border-color: var(--brand); color: var(--on-brand);
   }
 
   .ob-cta {
-    width: 100%; background: #333; color: #fff;
+    width: 100%; background: var(--brand); color: var(--on-brand);
     border: none; border-radius: 6px; cursor: pointer;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--ff-b);
     font-size: .76rem; font-weight: 700;
     letter-spacing: .08em; text-transform: uppercase;
     padding: 15px; min-height: 50px;
     transition: background .15s; margin-top: .25rem;
   }
-  .ob-cta:hover:not(:disabled) { background: #111; }
+  .ob-cta:hover:not(:disabled) { background: var(--brand-hover); }
   .ob-cta:disabled { opacity: .35; cursor: default; }
 
   .ob-skip {
     background: none; border: none; cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    font-size: .73rem; color: #111;
+    font-family: var(--ff-b);
+    font-size: .73rem; color: var(--text-muted);
     text-align: center; text-decoration: underline; padding: 0;
   }
-  .ob-skip:hover { color: #444; }
+  .ob-skip:hover { color: var(--text-primary); }
 
   .ob-error {
-    font-family: 'Inter', sans-serif;
-    font-size: .78rem; color: #c0392b;
+    font-family: var(--ff-b);
+    font-size: .78rem; color: var(--error);
   }
 `;

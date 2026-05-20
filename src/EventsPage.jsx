@@ -436,83 +436,46 @@ export default function EventsPage() {
 
 // ─── Estilos ──────────────────────────────────────────────────────────────────
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
-
   .ep-page {
     min-height: 100vh;
-    background: #F7F7F5;
-    font-family: 'Inter', sans-serif;
+    background: var(--bg-surface);
+    font-family: var(--ff-b);
   }
-
-  /* ── NAV ── */
-  .ep-nav {
-    width: 100%;
-    background: #ffffff;
-    border-bottom: 1.5px solid #111111;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 clamp(1.25rem, 5vw, 6rem);
-    height: 72px;
-    position: sticky; top: 0; z-index: 300;
-  }
-  .ep-nav-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(1.8rem, 3.5vw, 2.4rem);
-    letter-spacing: .06em;
-    color: #111111;
-    background: none; border: none; cursor: pointer; padding: 0;
-    line-height: 1;
-  }
-  .ep-nav-logo em { color: #333333; font-style: normal; }
-  .ep-nav-links {
-    display: flex; gap: clamp(1.5rem, 3vw, 3rem);
-    list-style: none; margin: 0; padding: 0;
-  }
-  .ep-nav-link {
-    font-size: .78rem; font-weight: 600;
-    color: #555555;
-    background: none; border: none; cursor: pointer;
-    letter-spacing: .12em; text-transform: uppercase;
-    padding: .75rem 0; min-height: 44px;
-    display: inline-flex; align-items: center; gap: 5px;
-    transition: color .15s;
-  }
-  .ep-nav-link:hover, .ep-nav-active { color: #111111; }
-  .ep-nav-cta {
-    background: #111111; color: #fff;
-    border: none;
-    padding: .625rem 1.5rem; min-height: 44px;
-    font-size: .78rem; font-weight: 700; cursor: pointer;
-    letter-spacing: .1em; text-transform: uppercase;
-    font-family: 'Inter', sans-serif;
-    transition: background .15s;
-    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
-  }
-  .ep-nav-cta:hover { background: #333333; }
 
   /* Nav dropdown */
   .ep-nav-dropdown-wrap { position: relative; }
   .ep-nav-link--arrow { gap: 5px; }
   .ep-nav-dropdown {
     position: absolute; top: calc(100% + 4px); left: 0;
-    background: #111111;
+    background: var(--dark-bg);
     min-width: 200px;
     z-index: 400;
     display: flex; flex-direction: column;
     padding: .4rem 0;
     box-shadow: 0 8px 24px rgba(0,0,0,.18);
   }
+  .ep-nav-link {
+    font-size: .78rem; font-weight: 600;
+    color: var(--text-muted);
+    background: none; border: none; cursor: pointer;
+    letter-spacing: .12em; text-transform: uppercase;
+    padding: .75rem 0; min-height: 44px;
+    display: inline-flex; align-items: center; gap: 5px;
+    transition: color .15s;
+  }
+  .ep-nav-link:hover, .ep-nav-active { color: var(--text-primary); }
   .ep-nav-dropdown-item {
     background: none; border: none; cursor: pointer;
-    color: #aaaaaa;
-    font-family: 'Inter', sans-serif;
+    color: var(--brand-light);
+    font-family: var(--ff-b);
     font-size: .7rem; font-weight: 600;
     letter-spacing: .1em;
     padding: .6rem 1.2rem;
     text-align: left;
     transition: color .12s, background .12s;
   }
-  .ep-nav-dropdown-item:hover { color: #ffffff; background: rgba(255,255,255,.06); }
-  .ep-nav-dropdown-item--active { color: #ffffff; font-weight: 700; }
+  .ep-nav-dropdown-item:hover { color: var(--on-brand); background: rgba(255,255,255,.06); }
+  .ep-nav-dropdown-item--active { color: var(--on-brand); font-weight: 700; }
 
   /* ── Foto de categoría ── */
   .ep-cat-photo {
@@ -545,12 +508,12 @@ const css = `
   }
 
   .ep-header-title {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--ff-h);
     font-size: clamp(3rem, 8vw, 6rem);
     font-weight: 400;
     letter-spacing: .06em;
     text-transform: uppercase;
-    color: #ffffff;
+    color: var(--on-brand);
     margin: 0;
     line-height: 1;
   }
@@ -565,57 +528,16 @@ const css = `
     color: rgba(255,255,255,.5);
     white-space: nowrap;
     flex-shrink: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--ff-b);
   }
   .ep-api-dot {
     width: 6px; height: 6px;
     border-radius: 50%;
-    background: #4ade80;
+    background: var(--success);
     animation: eppulse 2s infinite;
     flex-shrink: 0;
   }
   @keyframes eppulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-  /* ── Filtros bar sticky ── */
-  .ep-filters-bar {
-    background: #111111;
-    position: sticky;
-    top: 72px;
-    z-index: 10;
-    border-bottom: 1px solid #222222;
-  }
-  .ep-filters-inner {
-    width: 100%;
-    padding: 0 clamp(1.25rem, 5vw, 6rem);
-  }
-  .ep-filters {
-    display: flex;
-    gap: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .ep-filters::-webkit-scrollbar { display: none; }
-  .ep-fbtn {
-    padding: .85rem 1.4rem;
-    border: none;
-    border-bottom: 2px solid transparent;
-    background: transparent;
-    color: #666666;
-    font-family: 'Inter', sans-serif;
-    font-size: .8rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all .15s;
-    letter-spacing: .03em;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .ep-fbtn:hover { color: #ffffff; }
-  .ep-fbtn.active {
-    color: #ffffff;
-    border-bottom-color: #ffffff;
-    font-weight: 700;
-  }
 
   /* ── Body / Grid ── */
   .ep-body {
@@ -630,7 +552,7 @@ const css = `
   .ep-empty {
     grid-column: 1/-1;
     text-align: center;
-    color: #999999;
+    color: var(--text-tertiary);
     font-size: .9rem;
     padding: 4rem 0;
   }
@@ -660,8 +582,8 @@ const css = `
     backdrop-filter: blur(4px);
   }
   .ep-fav-btn:hover { background: rgba(0,0,0,.7); transform: scale(1.1); }
-  .ep-fav-on { background: rgba(231,76,60,.2)!important; }
-  .ep-fav-on:hover { background: rgba(231,76,60,.35)!important; }
+  .ep-fav-on { background: rgba(220,38,38,.2)!important; }
+  .ep-fav-on:hover { background: rgba(220,38,38,.35)!important; }
 
   /* Imagen */
   .ep-img-wrap {
@@ -705,20 +627,20 @@ const css = `
     gap: 0;
   }
   .ep-cat {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--ff-b);
     font-size: .6rem;
     font-weight: 700;
     letter-spacing: .14em;
     text-transform: uppercase;
-    color: #999999;
+    color: var(--brand);
     margin-bottom: .3rem;
   }
   .ep-title {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--ff-h);
     font-weight: 400;
     font-size: 1.2rem;
     letter-spacing: .03em;
-    color: #111111;
+    color: var(--text-primary);
     line-height: 1.15;
     margin: 0 0 .5rem;
     display: -webkit-box;
@@ -737,31 +659,31 @@ const css = `
     align-items: center;
     gap: 5px;
     font-size: .67rem;
-    font-family: 'Inter', sans-serif;
-    color: #888888;
+    font-family: var(--ff-b);
+    color: var(--text-muted);
   }
-  .ep-meta-date { color: #555555; font-weight: 600; }
-  .ep-meta-venue { color: #999999; }
+  .ep-meta-date { color: var(--text-secondary); font-weight: 600; }
+  .ep-meta-venue { color: var(--text-tertiary); }
   .ep-bottom-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding-top: .4rem;
-    border-top: 1px solid #EBEBEB;
+    border-top: 1px solid var(--border);
   }
   .ep-price-free {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--ff-b);
     font-size: .65rem;
     font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
-    color: #111111;
+    color: var(--success);
   }
   .ep-price-paid {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--ff-b);
     font-size: .65rem;
     font-weight: 700;
-    color: #111111;
+    color: var(--text-primary);
   }
   .ep-access-badges {
     display: flex;
@@ -774,16 +696,16 @@ const css = `
     display: inline-flex;
     align-items: center;
     gap: 3px;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--ff-b);
     font-size: .62rem;
     font-weight: 500;
-    color: #888888;
+    color: var(--text-muted);
     line-height: 1;
   }
 
   /* Skeleton */
   .ep-skel {
-    background: linear-gradient(90deg, #EBEBEB 25%, #F5F5F5 50%, #EBEBEB 75%);
+    background: linear-gradient(90deg, var(--border) 25%, var(--bg-surface) 50%, var(--border) 75%);
     background-size: 200%;
     animation: epskel 1.4s infinite;
     border-radius: 2px;
@@ -801,24 +723,24 @@ const css = `
     display: inline-flex;
     align-items: center;
     padding: .45rem 1.1rem;
-    border-radius: 999px;
-    border: 1.5px solid #CCCCCC;
-    background: #ffffff;
-    color: #333333;
-    font-family: 'Inter', sans-serif;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    color: var(--text-secondary);
+    font-family: var(--ff-b);
     font-size: .78rem;
     font-weight: 500;
     cursor: pointer;
     transition: all .15s;
     white-space: nowrap;
   }
-  .fp-pill:hover { border-color: #111111; color: #111111; }
-  .fp-pill--active { background: #111111; border-color: #111111; color: #ffffff; font-weight: 600; }
+  .fp-pill:hover { border-color: var(--brand); color: var(--brand); }
+  .fp-pill--active { background: var(--brand); border-color: var(--brand); color: var(--on-brand); font-weight: 600; }
 
   /* ── Pills de accesibilidad (contenedor) ── */
   .ep-acc-bar {
-    background: #ffffff;
-    border-bottom: 1px solid #E8E8E8;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
     padding: 1rem clamp(1.25rem, 5vw, 6rem);
   }
   .ep-acc-inner {
@@ -831,11 +753,11 @@ const css = `
     align-items: center;
     gap: 6px;
     padding: .45rem 1.1rem;
-    border-radius: 999px;
-    border: 1.5px solid #CCCCCC;
-    background: #ffffff;
-    color: #333333;
-    font-family: 'Inter', sans-serif;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    color: var(--text-secondary);
+    font-family: var(--ff-b);
     font-size: .78rem;
     font-weight: 500;
     cursor: pointer;
@@ -843,19 +765,18 @@ const css = `
     white-space: nowrap;
   }
   .ep-acc-pill:hover {
-    border-color: #111111;
-    color: #111111;
+    border-color: var(--brand);
+    color: var(--brand);
   }
   .ep-acc-pill--active {
-    background: #111111;
-    border-color: #111111;
-    color: #ffffff;
+    background: var(--brand);
+    border-color: var(--brand);
+    color: var(--on-brand);
     font-weight: 600;
   }
 
   /* Responsive */
   @media (max-width: 768px) {
-    .ep-nav-links { display: none; }
     .ep-cat-photo { height: 280px; }
     .ep-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem .75rem; }
     .ep-img-wrap { height: 220px; }

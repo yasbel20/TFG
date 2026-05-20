@@ -213,80 +213,6 @@ function AccessibilityDropdown() {
   );
 }
 
-/* ══════════════════════════════════════════════════
-   MENÚ HAMBURGUESA FULLSCREEN (estilo WAH)
-══════════════════════════════════════════════════ */
-function FullscreenMenu({ open, onClose, onNavigate, onAgenda }) {
-  // Bloquear scroll y gestionar foco
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-      document.getElementById("fs-menu-first")?.focus();
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [open]);
-
-  // Cerrar con Escape
-  useEffect(() => {
-    const h = (e) => { if (e.key === "Escape") onClose(); };
-    document.addEventListener("keydown", h);
-    return () => document.removeEventListener("keydown", h);
-  }, [onClose]);
-
-  const NAV_ITEMS = [
-    { label: "EVENTOS",        action: () => { onNavigate("Todos"); onClose(); } },
-    { label: "MÚSICA",         action: () => { onNavigate("Música"); onClose(); } },
-    { label: "TEATRO",         action: () => { onNavigate("Teatro"); onClose(); } },
-    { label: "EXPOSICIONES",   action: () => { onNavigate("Exposición"); onClose(); } },
-    { label: "AGENDA",         action: () => { onAgenda(); onClose(); } },
-    { label: "ACCESIBILIDAD",  action: () => { onClose(); } },
-    { label: "ACERCA DE",      action: () => { onClose(); } },
-  ];
-
-  return (
-    <div
-      className={`fs-menu${open ? " fs-menu--open" : ""}`}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Menú principal"
-    >
-      {/* Botón cerrar */}
-      <button className="fs-close" onClick={onClose} aria-label="Cerrar menú">
-        <span aria-hidden="true">✕</span>
-      </button>
-
-      {/* Logo dentro del menú */}
-      <p className="fs-logo" aria-hidden="true">INCLU<em>GO</em></p>
-
-      {/* Ítems de navegación */}
-      <nav aria-label="Menú de navegación">
-        <ul className="fs-nav-list" role="list">
-          {NAV_ITEMS.map((item, i) => (
-            <li key={item.label}>
-              <button
-                id={i === 0 ? "fs-menu-first" : undefined}
-                className="fs-nav-item"
-                onClick={item.action}
-              >
-                <span className="fs-nav-num" aria-hidden="true">0{i + 1}</span>
-                {item.label}
-                <span className="fs-nav-arrow" aria-hidden="true">›</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      {/* Footer del menú */}
-      <div className="fs-footer">
-        <p className="fs-footer-copy">TFG DAW · ILERNA Madrid · 2025/2026</p>
-        <p className="fs-footer-copy">Datos: Ayuntamiento de Madrid</p>
-      </div>
-    </div>
-  );
-}
 
 /* ══════════════════════════════════════════════════
    COMPONENTE PRINCIPAL
@@ -294,7 +220,6 @@ function FullscreenMenu({ open, onClose, onNavigate, onAgenda }) {
 export default function INCLUGOHome() {
   const navigate = useNavigate();
   const [inputVal,  setInputVal]  = useState("");
-  const [menuOpen,  setMenuOpen]  = useState(false);
   const evRef = useRef(null);
 
   const scrollToEvents = () =>
@@ -305,62 +230,29 @@ export default function INCLUGOHome() {
   return (
     <div className="ir">
 
-      {/* ── Menú fullscreen (móvil) ── */}
-      <FullscreenMenu
-        open={menuOpen}
-        onClose={() => setMenuOpen(false)}
-        onNavigate={(cat) => navigate(cat === "Todos" ? "/eventos" : `/eventos/${toSlug(cat)}`)}
-        onAgenda={() => navigate("/agenda")}
-      />
-
       {/* ── NAV compartido ── */}
-      <Navbar onMenuOpen={() => setMenuOpen(true)} />
+      <Navbar />
 
       {/* ── MAIN ── */}
       <main id="main-content">
 
         {/* ── HERO ── */}
         <section className="hero" aria-labelledby="hero-heading">
-          <div className="hero-inner">
+          <div className="hero-left">
             <h1 id="hero-heading" className="hero-h1">
               CULTURA<br/>
               <span className="hl">SIN</span><br/>
               BARRERAS
             </h1>
             <p className="hero-sub">
-              Descubre eventos culturales accesibles en Madrid. Filtra por tus necesidades
-              y disfruta de la ciudad en igualdad de condiciones.
+              La plataforma definitiva para encontrar ocio y eventos accesibles en Madrid. Filtra por tus necesidades y disfruta de la ciudad sin límites.
             </p>
-
-            <div className="search-wrap" role="search">
-              <div className="search-bar">
-                <span className="search-icon-wrap" aria-hidden="true"><SearchIcon/></span>
-                <label htmlFor="search-input" className="sr-only">Buscar evento, lugar o categoría</label>
-                <input
-                  id="search-input" className="search-input" type="search"
-                  placeholder="Busca un evento, lugar o categoría..."
-                  value={inputVal} onChange={e => setInputVal(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && scrollToEvents()}
-                  autoComplete="off"
-                />
-                <button className="search-btn" onClick={scrollToEvents} aria-label="Buscar eventos">
-                  Buscar
-                </button>
-              </div>
-              <div className="search-hint" aria-label="Búsquedas sugeridas">
-                {[
-                  { label: "Conciertos",   query: "concierto"  },
-                  { label: "Teatro",       query: "teatro"     },
-                  { label: "Exposiciones", query: "exposición" },
-                  { label: "Gratis",       query: "gratis"     },
-                ].map(({ label, query }) => (
-                  <button key={query} className="search-hint-btn"
-                    onClick={() => handleHint(query)} aria-label={`Buscar ${label}`}>
-                    → {label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <button className="hero-cta" onClick={() => navigate("/eventos")}>
+              Ver eventos
+            </button>
+          </div>
+          <div className="hero-right" aria-hidden="true">
+            <img src="/img/hero1.png" alt="" />
           </div>
         </section>
 
@@ -378,7 +270,7 @@ export default function INCLUGOHome() {
               <span className="stat-label">Eventos culturales activos</span>
             </div>
             <div className="stat">
-              <span className="stat-num">8</span>
+              <span className="stat-num">4</span>
               <span className="stat-label">Tipos de accesibilidad cubiertos</span>
             </div>
           </div>

@@ -39,6 +39,7 @@ export default function Navbar({ onMenuOpen }) {
   const [evOpen,    setEvOpen]    = useState(false);
   const [authOpen,  setAuthOpen]  = useState(false);
   const [userOpen,  setUserOpen]  = useState(false);
+  const [mobOpen,   setMobOpen]   = useState(false);
   const evRef   = useRef(null);
   const userRef = useRef(null);
 
@@ -68,14 +69,21 @@ export default function Navbar({ onMenuOpen }) {
 
           {/* ── Izquierda: hamburger + logo ── */}
           <div className="nb-left">
-            {onMenuOpen && (
-              <button className="nb-hamburger" onClick={onMenuOpen}
-                aria-label="Abrir menú" aria-expanded={false}>
-                <MenuIcon/>
-              </button>
-            )}
+            <button className="nb-hamburger" onClick={() => setMobOpen(true)}
+              aria-label="Abrir menú" aria-expanded={mobOpen}>
+              <MenuIcon/>
+            </button>
             <button className="nb-logo" onClick={() => navigate("/")} aria-label="INCLUGO — ir al inicio">
-              INCLU<em>GO</em>
+              <img
+                src="/img/InclugoLogo/LogoClaro.png"
+                className="nb-logo-img nb-logo-img--light"
+                alt="INCLUGO"
+              />
+              <img
+                src="/img/InclugoLogo/LogoOscuro.png"
+                className="nb-logo-img nb-logo-img--dark"
+                alt="INCLUGO"
+              />
             </button>
           </div>
 
@@ -150,6 +158,51 @@ export default function Navbar({ onMenuOpen }) {
         </nav>
       </header>
       {authOpen && <AuthModal onClose={() => setAuthOpen(false)} />}
+
+      {/* ── Menú móvil ── */}
+      {mobOpen && <div className="nb-mob-overlay" onClick={() => setMobOpen(false)} aria-hidden="true" />}
+      <div className={`nb-mob-menu${mobOpen ? " nb-mob-menu--open" : ""}`} role="dialog" aria-modal="true" aria-label="Menú principal">
+        <div className="nb-mob-header">
+          <img src="/img/InclugoLogo/LogoClaro.png" className="nb-mob-logo nb-mob-logo--light" alt="INCLUGO" />
+          <img src="/img/InclugoLogo/LogoOscuro.png" className="nb-mob-logo nb-mob-logo--dark" alt="INCLUGO" />
+          <button className="nb-mob-close" onClick={() => setMobOpen(false)} aria-label="Cerrar menú">✕</button>
+        </div>
+        <nav aria-label="Menú de navegación">
+          <ul className="nb-mob-list">
+            <li>
+              <button
+                className={`nb-mob-item${evOpen ? " nb-mob-item--open" : ""}`}
+                onClick={() => setEvOpen(o => !o)}
+                aria-expanded={evOpen}
+              >
+                Eventos
+                <span className="nb-mob-chevron" aria-hidden="true">{evOpen ? "^" : "›"}</span>
+              </button>
+              {evOpen && (
+                <ul className="nb-mob-sub">
+                  {CATS.map(cat => (
+                    <li key={cat}>
+                      <button className="nb-mob-sub-item" onClick={() => {
+                        setMobOpen(false);
+                        setEvOpen(false);
+                        navigate(cat === "Todos" ? "/eventos" : `/eventos/${toSlug(cat)}`);
+                      }}>
+                        {cat === "Todos" ? "Todos los eventos" : cat}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+            <li>
+              <button className="nb-mob-item" onClick={() => { setMobOpen(false); navigate("/agenda"); }}>
+                Agenda
+                <span className="nb-mob-chevron" aria-hidden="true">›</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </>
   );
 }
@@ -165,10 +218,10 @@ const css = `
   .nb-skip:focus {
     position: fixed;
     top: 0; left: 0;
-    background: #111; color: #fff;
+    background: var(--text-primary); color: var(--on-brand);
     padding: .5rem 1rem;
     z-index: 9999;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--ff-b);
     font-size: .85rem;
   }
 
@@ -176,8 +229,9 @@ const css = `
     position: sticky;
     top: 0;
     z-index: 500;
-    background: #ffffff;
-    border-bottom: 1.5px solid #111111;
+    background: var(--bg);
+    border-bottom: none;
+    box-shadow: 0 1px 0 var(--border);
   }
 
   .nb-nav {
@@ -196,17 +250,22 @@ const css = `
     flex-shrink: 0;
   }
   .nb-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(1.8rem, 3vw, 2.2rem);
-    letter-spacing: .06em;
-    color: #111111;
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
-    line-height: 1;
+    display: flex;
+    align-items: center;
   }
-  .nb-logo em { font-style: normal; color: #555555; }
+  .nb-logo-img {
+    height: clamp(48px, 6vw, 58px);
+    width: auto;
+    display: block;
+  }
+  .nb-logo-img--dark { display: none; }
+
+  .hi-contrast .nb-logo-img--light { display: none; }
+  .hi-contrast .nb-logo-img--dark  { display: block; }
 
   .nb-links {
     display: flex;
@@ -217,12 +276,12 @@ const css = `
     padding: 0;
   }
   .nb-link {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--ff-b);
     font-size: .78rem;
     font-weight: 600;
     letter-spacing: .1em;
     text-transform: uppercase;
-    color: #666666;
+    color: var(--text-muted);
     background: none;
     border: none;
     cursor: pointer;
@@ -234,35 +293,65 @@ const css = `
     transition: color .15s;
     white-space: nowrap;
   }
-  .nb-link:hover, .nb-active { color: #111111; }
+  .nb-link:hover, .nb-active { color: var(--text-primary); }
 
   .nb-drop-wrap { position: relative; }
   .nb-dropdown {
     position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    background: #111111;
-    min-width: 210px;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg);
+    min-width: 280px;
     z-index: 600;
     display: flex;
     flex-direction: column;
-    padding: .4rem 0;
-    box-shadow: 0 8px 24px rgba(0,0,0,.18);
+    border: 1px solid var(--border);
+    box-shadow: 0 16px 40px rgba(0,0,0,.10);
+  }
+  .nb-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px; height: 10px;
+    background: var(--bg);
+    border-left: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+    rotate: 45deg;
   }
   .nb-dropdown-item {
     background: none;
     border: none;
+    border-bottom: 1px solid var(--border);
     cursor: pointer;
-    color: #aaaaaa;
-    font-family: 'Inter', sans-serif;
-    font-size: .7rem;
-    font-weight: 600;
-    letter-spacing: .1em;
-    padding: .65rem 1.25rem;
+    color: var(--text-secondary);
+    font-family: var(--ff-h);
+    font-size: 1.9rem;
+    letter-spacing: .04em;
+    padding: .7rem 1.5rem;
     text-align: left;
-    transition: color .12s, background .12s;
+    transition: color .15s, padding-left .15s, background .15s;
+    position: relative;
+    line-height: 1.1;
   }
-  .nb-dropdown-item:hover { color: #ffffff; background: rgba(255,255,255,.06); }
+  .nb-dropdown-item:last-child { border-bottom: none; }
+  .nb-dropdown-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--brand);
+    transform: scaleY(0);
+    transition: transform .15s;
+  }
+  .nb-dropdown-item:hover {
+    color: var(--brand);
+    padding-left: 2rem;
+    background: var(--brand-subtle);
+  }
+  .nb-dropdown-item:hover::before { transform: scaleY(1); }
 
   .nb-actions {
     display: flex;
@@ -275,27 +364,27 @@ const css = `
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: 1.5px solid #CCCCCC;
+    border: 1.5px solid var(--border);
     background: transparent;
-    color: #555555;
+    color: var(--text-muted);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: border-color .15s, color .15s, background .15s;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--ff-b);
     font-size: .85rem;
     font-weight: 700;
   }
-  .nb-user-btn:hover { border-color: #111111; color: #111111; }
-  .nb-user-btn--active { background: #111; color: #fff; border-color: #111; }
-  .nb-user-btn--active:hover { background: #333; border-color: #333; color: #fff; }
+  .nb-user-btn:hover { border-color: var(--text-primary); color: var(--text-primary); }
+  .nb-user-btn--active { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
+  .nb-user-btn--active:hover { background: var(--brand-hover); border-color: var(--brand-hover); color: var(--on-brand); }
   .nb-user-menu {
     position: absolute;
     top: calc(100% + 8px);
     right: 0;
-    background: #fff;
-    border: 1.5px solid #111;
+    background: var(--bg);
+    border: 1.5px solid var(--text-primary);
     min-width: 180px;
     display: flex;
     flex-direction: column;
@@ -304,41 +393,41 @@ const css = `
     box-shadow: 0 8px 24px rgba(0,0,0,.12);
   }
   .nb-user-name {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--ff-b);
     font-size: .82rem; font-weight: 700;
-    color: #111; padding: .4rem 1rem .1rem;
+    color: var(--text-primary); padding: .4rem 1rem .1rem;
   }
   .nb-user-email {
-    font-family: 'Inter', sans-serif;
-    font-size: .73rem; color: #888;
+    font-family: var(--ff-b);
+    font-size: .73rem; color: var(--text-muted);
     padding: 0 1rem .6rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border);
   }
   .nb-user-menu-item {
     background: none; border: none; cursor: pointer;
-    font-family: 'Inter', sans-serif; font-size: .75rem;
+    font-family: var(--ff-b); font-size: .75rem;
     font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-    color: #333; padding: .6rem 1rem; text-align: left;
+    color: var(--text-secondary); padding: .6rem 1rem; text-align: left;
     width: 100%; transition: background .12s;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--border);
   }
-  .nb-user-menu-item:hover { background: #f5f5f5; }
+  .nb-user-menu-item:hover { background: var(--bg-surface); }
   .nb-user-logout {
     background: none; border: none; cursor: pointer;
-    font-family: 'Inter', sans-serif; font-size: .75rem;
+    font-family: var(--ff-b); font-size: .75rem;
     font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-    color: #c0392b; padding: .6rem 1rem; text-align: left;
+    color: var(--error); padding: .6rem 1rem; text-align: left;
     width: 100%; transition: background .12s;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--border);
   }
-  .nb-user-logout:hover { background: #fdf0ef; }
+  .nb-user-logout:hover { background: var(--error-light); }
 
   .nb-hamburger {
     display: none;
     background: none;
     border: none;
     cursor: pointer;
-    color: #111111;
+    color: var(--text-primary);
     padding: .25rem;
     min-height: 44px;
     align-items: center;
@@ -348,4 +437,88 @@ const css = `
     .nb-links { display: none; }
     .nb-hamburger { display: flex; }
   }
+
+  /* ── Menú móvil ── */
+  .nb-mob-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.35);
+    z-index: 8999;
+  }
+  .nb-mob-menu {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: #fff;
+    z-index: 9000;
+    transform: translateY(-100%);
+    transition: transform .3s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,.12);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .nb-mob-menu--open { transform: translateY(0); }
+
+  .nb-mob-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .75rem 1.5rem;
+  }
+  .nb-mob-logo { height: 44px; width: auto; }
+  .nb-mob-logo--dark { display: none; }
+  .hi-contrast .nb-mob-logo--light { display: none; }
+  .hi-contrast .nb-mob-logo--dark  { display: block; }
+  .nb-mob-close {
+    width: 40px; height: 40px;
+    background: none; border: none;
+    cursor: pointer; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted);
+    transition: color .15s;
+  }
+  .nb-mob-close:hover { color: var(--text-primary); }
+
+  .nb-mob-list { list-style: none; margin: 0; padding: 0; }
+
+  .nb-mob-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: none; border: none;
+    padding: 1.25rem 1.5rem;
+    cursor: pointer; text-align: left;
+    font-family: var(--ff-h);
+    font-size: 2rem;
+    letter-spacing: .04em;
+    color: var(--text-muted);
+    transition: color .15s;
+  }
+  .nb-mob-item:hover,
+  .nb-mob-item--open { color: var(--brand); }
+
+  .nb-mob-chevron {
+    font-size: 1.2rem;
+    color: var(--text-tertiary);
+    transition: color .15s;
+  }
+  .nb-mob-item:hover .nb-mob-chevron,
+  .nb-mob-item--open .nb-mob-chevron { color: var(--brand); }
+
+  .nb-mob-sub {
+    list-style: none; margin: 0; padding: 0;
+    border-left: 1px solid var(--border);
+    margin-left: 2rem;
+  }
+  .nb-mob-sub-item {
+    display: block; width: 100%;
+    background: none; border: none;
+    padding: .75rem 1.25rem;
+    text-align: left; cursor: pointer;
+    font-family: var(--ff-h);
+    font-size: 1.6rem;
+    letter-spacing: .04em;
+    color: var(--text-muted);
+    transition: color .15s;
+  }
+  .nb-mob-sub-item:hover { color: var(--brand); }
 `;

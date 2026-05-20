@@ -474,12 +474,10 @@ export default function AgendaPage() {
 
 // ─── Estilos ──────────────────────────────────────────────────────────────────
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap');
-
   .ag-page {
     min-height: 100vh;
-    background: #F7F7F5;
-    font-family: 'Inter', sans-serif;
+    background: var(--bg-surface);
+    font-family: var(--ff-b);
     animation: ag-in .2s ease;
   }
   @keyframes ag-in { from{opacity:0} to{opacity:1} }
@@ -487,51 +485,51 @@ const css = `
   /* Skip link */
   .ag-skip {
     position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;
-    background: ${P.yellow}; color: #111; font-weight: 700; padding: .5rem 1rem;
+    background: var(--brand); color: var(--on-brand); font-weight: 700; padding: .5rem 1rem;
     border-radius: 0 0 4px 4px; z-index: 9999; text-decoration: none;
   }
   .ag-skip:focus { position: fixed; left: 50%; transform: translateX(-50%); top: 0; width: auto; height: auto; }
 
   /* ── Topbar ── */
   .ag-topbar {
-    background: #111111;
-    border-bottom: 1px solid #222;
+    background: var(--dark-bg);
+    border-bottom: 1px solid var(--dark-surface);
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 clamp(1rem, 5vw, 4rem);
     height: 56px; position: sticky; top: 0; z-index: 50;
   }
   .ag-back-btn {
     display: inline-flex; align-items: center; gap: .45rem;
-    background: transparent; border: 1.5px solid #444; color: #ccc;
-    font-family: 'Inter', sans-serif; font-size: .8rem; font-weight: 500;
+    background: transparent; border: 1.5px solid rgba(255,255,255,.2); color: rgba(255,255,255,.6);
+    font-family: var(--ff-b); font-size: .8rem; font-weight: 500;
     padding: .4rem .9rem; border-radius: 4px; cursor: pointer; transition: all .15s;
   }
-  .ag-back-btn:hover { background: #222; color: #fff; border-color: #666; }
-  .ag-back-btn:focus-visible { outline: 2px solid ${P.yellow}; outline-offset: 2px; }
+  .ag-back-btn:hover { background: rgba(255,255,255,.08); color: var(--on-brand); border-color: rgba(255,255,255,.4); }
+  .ag-back-btn:focus-visible { outline: 2px solid var(--brand-light); outline-offset: 2px; }
 
   .ag-topbar-center {
     display: flex; align-items: center;
   }
   .ag-page-label {
     display: inline-flex; align-items: center; gap: .5rem;
-    font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem;
-    letter-spacing: .1em; color: #ffffff;
+    font-family: var(--ff-h); font-size: 1.3rem;
+    letter-spacing: .1em; color: var(--on-brand);
   }
 
   .ag-api-badge {
     display: inline-flex; align-items: center; gap: 5px;
-    font-size: .65rem; color: #666; letter-spacing: .08em; text-transform: uppercase;
+    font-size: .65rem; color: rgba(255,255,255,.35); letter-spacing: .08em; text-transform: uppercase;
   }
   .ag-api-dot {
-    width: 6px; height: 6px; border-radius: 50%; background: #4ade80;
+    width: 6px; height: 6px; border-radius: 50%; background: var(--success);
     animation: ag-pulse 2s infinite;
   }
   @keyframes ag-pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
   /* ── Controles ── */
   .ag-controls {
-    background: #ffffff;
-    border-bottom: 1.5px solid #111;
+    background: var(--bg);
+    border-bottom: 1.5px solid var(--text-primary);
     position: sticky; top: 56px; z-index: 40;
   }
   .ag-controls-inner {
@@ -545,38 +543,38 @@ const css = `
     display: flex; align-items: center; gap: .5rem;
   }
   .ag-week-btn {
-    width: 34px; height: 34px; border: 1.5px solid #CCCAC0; border-radius: 4px;
-    background: transparent; color: #111; display: flex; align-items: center;
+    width: 34px; height: 34px; border: 1.5px solid var(--border); border-radius: 4px;
+    background: transparent; color: var(--text-primary); display: flex; align-items: center;
     justify-content: center; cursor: pointer; transition: all .12s; padding: 0;
   }
-  .ag-week-btn:hover { background: #111; color: #fff; border-color: #111; }
-  .ag-week-btn:focus-visible { outline: 2px solid ${P.yellow}; outline-offset: 2px; }
+  .ag-week-btn:hover { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
+  .ag-week-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
   .ag-week-label {
-    font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
-    letter-spacing: .08em; color: #111; min-width: 180px; text-align: center;
+    font-family: var(--ff-h); font-size: 1.1rem;
+    letter-spacing: .08em; color: var(--text-primary); min-width: 180px; text-align: center;
   }
   .ag-week-today {
-    background: ${P.yellow}; color: #111; border: none;
-    font-family: 'Inter', sans-serif; font-size: .72rem; font-weight: 700;
-    padding: .3rem .75rem; border-radius: 100px; cursor: pointer;
+    background: var(--brand); color: var(--on-brand); border: none;
+    font-family: var(--ff-b); font-size: .72rem; font-weight: 700;
+    padding: .3rem .75rem; border-radius: var(--radius-pill); cursor: pointer;
     letter-spacing: .06em; text-transform: uppercase; transition: opacity .15s;
   }
   .ag-week-today:hover { opacity: .8; }
-  .ag-week-today:focus-visible { outline: 2px solid #111; outline-offset: 2px; }
+  .ag-week-today:focus-visible { outline: 2px solid var(--brand-hc); outline-offset: 2px; }
 
   /* Filtros categoría */
   .ag-cat-filters {
     display: flex; gap: .3rem; flex-wrap: wrap;
   }
   .ag-cat-btn {
-    padding: .28rem .75rem; border: 1.5px solid #CCCAC0; border-radius: 2px;
-    background: transparent; color: #666; font-family: 'Inter', sans-serif;
+    padding: .28rem .75rem; border: 1.5px solid var(--border); border-radius: 2px;
+    background: transparent; color: var(--text-muted); font-family: var(--ff-b);
     font-size: .7rem; font-weight: 500; cursor: pointer; transition: all .12s;
   }
-  .ag-cat-btn:hover { background: #111; color: #fff; border-color: #111; }
-  .ag-cat-btn.active { background: #111; color: ${P.yellow}; border-color: #111; font-weight: 700; }
-  .ag-cat-btn:focus-visible { outline: 2px solid ${P.yellow}; outline-offset: 2px; }
+  .ag-cat-btn:hover { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
+  .ag-cat-btn.active { background: var(--brand); color: var(--on-brand); border-color: var(--brand); font-weight: 700; }
+  .ag-cat-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
   /* ── Main ── */
   .ag-main { padding: 2rem clamp(1rem, 5vw, 4rem) 5rem; }
@@ -587,7 +585,7 @@ const css = `
     display: grid;
     grid-template-columns: 140px 1fr;
     gap: 0;
-    border-bottom: 1.5px solid #E0DED4;
+    border-bottom: 1.5px solid var(--border);
     padding: 1.75rem 0;
   }
   .ag-day--today .ag-day-head { position: relative; }
@@ -595,37 +593,37 @@ const css = `
 
   @media (max-width: 600px) {
     .ag-day { grid-template-columns: 1fr; }
-    .ag-day-head { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; padding-right: 0; border-right: none; border-bottom: 1px solid #E0DED4; padding-bottom: .75rem; }
+    .ag-day-head { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; padding-right: 0; border-right: none; border-bottom: 1px solid var(--border); padding-bottom: .75rem; }
   }
 
   /* Cabecera día */
   .ag-day-head {
     display: flex; flex-direction: column; gap: .1rem;
-    padding-right: 1.5rem; border-right: 1.5px solid #111;
+    padding-right: 1.5rem; border-right: 1.5px solid var(--text-primary);
     position: sticky; top: 150px; align-self: start;
   }
   .ag-day-name {
-    font-family: 'Inter', sans-serif; font-size: .65rem; font-weight: 800;
-    letter-spacing: .16em; color: #999; text-transform: uppercase;
+    font-family: var(--ff-b); font-size: .65rem; font-weight: 800;
+    letter-spacing: .16em; color: var(--text-tertiary); text-transform: uppercase;
   }
   .ag-day-num {
-    font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem;
-    letter-spacing: .02em; color: #111; line-height: 1;
+    font-family: var(--ff-h); font-size: 3.5rem;
+    letter-spacing: .02em; color: var(--text-primary); line-height: 1;
   }
-  .ag-day--today .ag-day-num { color: ${P.blue}; }
+  .ag-day--today .ag-day-num { color: var(--brand); }
   .ag-day-month {
-    font-family: 'Inter', sans-serif; font-size: .68rem; font-weight: 700;
-    letter-spacing: .12em; color: #555; text-transform: uppercase;
+    font-family: var(--ff-b); font-size: .68rem; font-weight: 700;
+    letter-spacing: .12em; color: var(--text-muted); text-transform: uppercase;
   }
   .ag-today-badge {
     display: inline-block; margin-top: .4rem;
-    background: ${P.yellow}; color: #111; font-size: .58rem; font-weight: 800;
+    background: var(--brand-subtle); color: var(--brand); font-size: .58rem; font-weight: 800;
     letter-spacing: .1em; padding: .2rem .5rem; border-radius: 2px;
-    text-transform: uppercase;
+    text-transform: uppercase; border: 1px solid var(--brand-border);
   }
   .ag-day-count {
-    font-size: .62rem; color: #aaa; margin-top: .5rem;
-    font-family: 'Inter', sans-serif;
+    font-size: .62rem; color: var(--text-tertiary); margin-top: .5rem;
+    font-family: var(--ff-b);
   }
 
   /* Lista de eventos del día */
@@ -642,23 +640,23 @@ const css = `
     display: flex; align-items: stretch;
     gap: 0; width: 100%; background: transparent; border: none; padding: 0;
     cursor: pointer; text-align: left;
-    border-bottom: 1px solid #F0EEE8;
+    border-bottom: 1px solid var(--border);
     transition: background .12s;
   }
   .ag-row:last-child { border-bottom: none; }
-  .ag-row:hover { background: #ffffff; border-radius: 4px; }
-  .ag-row:focus-visible { outline: 2px solid ${P.yellow}; outline-offset: 2px; border-radius: 4px; }
+  .ag-row:hover { background: var(--bg); border-radius: 4px; }
+  .ag-row:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
 
   /* Hora */
   .ag-row-time {
     width: 58px; flex-shrink: 0;
     display: flex; flex-direction: column; align-items: flex-end;
     justify-content: flex-start; padding: .875rem .75rem .875rem 0;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--ff-b);
   }
-  .ag-time-val { font-size: .82rem; font-weight: 700; color: #111; line-height: 1; }
-  .ag-time-h   { font-size: .6rem; color: #999; margin-top: .1rem; }
-  .ag-time-tbd { font-size: 1.2rem; color: #ddd; line-height: 1; margin-top: .5rem; }
+  .ag-time-val { font-size: .82rem; font-weight: 700; color: var(--text-primary); line-height: 1; }
+  .ag-time-h   { font-size: .6rem; color: var(--text-tertiary); margin-top: .1rem; }
+  .ag-time-tbd { font-size: 1.2rem; color: var(--border); line-height: 1; margin-top: .5rem; }
 
   /* Acento de color */
   .ag-row-accent {
@@ -674,29 +672,29 @@ const css = `
     display: flex; align-items: center; justify-content: space-between; gap: .5rem;
   }
   .ag-row-cat {
-    font-family: 'Inter', sans-serif; font-size: .6rem; font-weight: 800;
+    font-family: var(--ff-b); font-size: .6rem; font-weight: 800;
     letter-spacing: .14em; text-transform: uppercase;
   }
   .ag-row-price {
-    font-family: 'Inter', sans-serif; font-size: .68rem; font-weight: 700;
-    color: #111; white-space: nowrap; flex-shrink: 0;
+    font-family: var(--ff-b); font-size: .68rem; font-weight: 700;
+    color: var(--text-primary); white-space: nowrap; flex-shrink: 0;
   }
   .ag-row-title {
-    font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 1.25rem;
-    letter-spacing: .03em; color: #111; line-height: 1.1; margin: 0;
+    font-family: var(--ff-h); font-weight: 400; font-size: 1.25rem;
+    letter-spacing: .03em; color: var(--text-primary); line-height: 1.1; margin: 0;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .ag-row:hover .ag-row-title { color: ${P.blue}; }
+  .ag-row:hover .ag-row-title { color: var(--brand); }
 
   .ag-row-meta {
     display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
   }
   .ag-row-venue {
     display: inline-flex; align-items: center; gap: 3px;
-    font-size: .68rem; color: #888; font-family: 'Inter', sans-serif;
+    font-size: .68rem; color: var(--text-muted); font-family: var(--ff-b);
   }
   .ag-row-district {
-    font-size: .62rem; color: #bbb; font-family: 'Inter', sans-serif;
+    font-size: .62rem; color: var(--text-tertiary); font-family: var(--ff-b);
   }
 
   /* Badges accesibilidad */
@@ -706,17 +704,17 @@ const css = `
   .ag-badge {
     display: inline-flex; align-items: center; justify-content: center;
     width: 20px; height: 20px; border-radius: 4px;
-    background: ${P.cream}; color: ${P.navy}; border: 1px solid #E0DED4;
+    background: var(--brand-subtle); color: var(--brand); border: 1px solid var(--brand-border);
   }
 
   /* Flecha */
   .ag-row-arrow {
     display: flex; align-items: center;
     padding: 0 .75rem 0 .25rem;
-    font-size: 1.2rem; color: #ccc;
+    font-size: 1.2rem; color: var(--border);
     transition: color .12s; flex-shrink: 0;
   }
-  .ag-row:hover .ag-row-arrow { color: ${P.blue}; }
+  .ag-row:hover .ag-row-arrow { color: var(--brand); }
 
   /* ── Empty state ── */
   .ag-empty {
@@ -725,14 +723,14 @@ const css = `
   }
   .ag-empty-icon { font-size: 3rem; }
   .ag-empty-title {
-    font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem;
-    letter-spacing: .06em; color: #111;
+    font-family: var(--ff-h); font-size: 1.8rem;
+    letter-spacing: .06em; color: var(--text-primary);
   }
-  .ag-empty-sub { font-size: .88rem; color: #999; max-width: 380px; line-height: 1.6; }
+  .ag-empty-sub { font-size: .88rem; color: var(--text-tertiary); max-width: 380px; line-height: 1.6; }
 
   /* ── Skeleton ── */
   .ag-skel {
-    background: linear-gradient(90deg, #E8E8E6 25%, #F5F5F3 50%, #E8E8E6 75%);
+    background: linear-gradient(90deg, var(--border) 25%, var(--bg-surface) 50%, var(--border) 75%);
     background-size: 200%; animation: ag-skel 1.4s infinite;
   }
   @keyframes ag-skel { 0%{background-position:200% 0}100%{background-position:-200% 0} }
