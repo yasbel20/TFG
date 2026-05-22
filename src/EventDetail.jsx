@@ -2,10 +2,11 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "./AuthContext";
 
 const P = {
-  yellow: "#C9D11A",
-  navy:   "#1A237E",
-  blue:   "#3D47C8",
-  cream:  "#F2F0E6",
+  brand:       "#3D47C8",
+  brandHover:  "#2f39a8",
+  brandLight:  "#a0a8f5",
+  brandSubtle: "#eef0fe",
+  cream:       "#F2F0E6",
 };
 
 const CAT_COLORS = {
@@ -19,10 +20,10 @@ const CAT_COLORS = {
 };
 
 const ACCESS_INFO = {
-  silla:   { label: "Accesible PMR",          desc: "Espacio adaptado para personas usuarias de silla de ruedas." },
-  signos:  { label: "Lengua de signos",        desc: "Interpretación en Lengua de Signos Española (LSE)." },
-  bucle:   { label: "Bucle magnético",         desc: "Sistema de audio inductivo para audífonos e implantes cocleares." },
-  braille: { label: "Señalización podotáctil", desc: "Pavimento táctil y señalética en Braille." },
+  silla:   { label: "Accesible PMR",    desc: "Espacio adaptado para personas usuarias de silla de ruedas.", requestable: false },
+  signos:  { label: "Lengua de signos", desc: "Interpretación en Lengua de Signos Española (LSE).", requestable: true },
+  bucle:   { label: "Bucle magnético",  desc: "Disponible para personas con prótesis auditivas.", requestable: true },
+  braille: { label: "Apoyos visuales",  desc: "Material gráfico de apoyo disponible.", requestable: true },
 };
 
 // ─── Iconos ───────────────────────────────────────────────────────────────────
@@ -322,7 +323,9 @@ function HighlightedDesc({ text, wordIndex }) {
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function EventDetail({ ev, onBack }) {
   const { user, favIds, addFav, removeFav } = useAuth();
-  const [imgOk, setImgOk]       = useState(!!ev.image);
+  const imgSrc = ev.image || "/img/eventos/image.png";
+  const [imgOk, setImgOk]       = useState(true);
+  const descShort = ev.descShort || (ev.descFull ? ev.descFull.slice(0, 220).trimEnd() + (ev.descFull.length > 220 ? "…" : "") : "");
   const [fontSize, setFontSize] = useState(1);
   const [hiContrast, setHiContrast] = useState(false);
   const [shareMsg, setShareMsg] = useState("");
@@ -407,6 +410,18 @@ export default function EventDetail({ ev, onBack }) {
     } : {}),
   };
 
+  // Construir texto del resumen "¿Qué encontrarás?"
+  const highlights = ev.highlights || [];
+
+  // Información adicional del sidebar
+  const additionalInfo = [
+    ev.price && ev.price !== "Ver precio" ? { icon: <EuroIcon/>, text: `Entrada general: ${ev.price}` } : null,
+    ev.ageMin ? { icon: <Ico d={<><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></>}/>, text: `A partir de ${ev.ageMin} años` } : null,
+    ev.ticketNote ? { icon: <Ico d={<><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2M8 7V5a2 2 0 0 0-4 0v2"/></>}/>, text: ev.ticketNote } : null,
+    ev.familyFriendly ? { icon: <Ico d={<><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>}/>, text: "Espectáculo familiar" } : null,
+    ev.limitedCapacity ? { icon: <Ico d={<><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>}/>, text: "Aforo limitado" } : null,
+  ].filter(Boolean);
+
   return (
     <>
       <style>{css}</style>
@@ -426,79 +441,48 @@ export default function EventDetail({ ev, onBack }) {
 
         <a href="#ed-desc" className="ed-skip">Saltar al contenido</a>
 
-        {/* ── Hero ── */}
-        <div className="ed-hero" aria-hidden="true">
-          {ev.image && imgOk
-            ? <img src={ev.image} alt="" className="ed-hero-img" onError={() => setImgOk(false)}/>
-            : <div className="ed-hero-fallback" style={{ background: fallbackBg }}><div className="ed-hero-pattern"/></div>
-          }
-          <div className="ed-hero-gradient"/>
-        </div>
-
-        {/* ── Barra de herramientas (debajo de la imagen) ── */}
-        <div className="ed-toolbar-bar">
-          <div className="ed-toolbar-inner">
-
-            {/* Lector de voz */}
-            {supported && (
-              <div className="rs-bar" role="toolbar" aria-label="Lector de voz">
-                <button className="rs-btn rs-btn--menu" onClick={() => setShowPrefs(p => !p)} aria-label="Preferencias" title="Preferencias">
-                  <span className="rs-hamburger" aria-hidden="true">☰</span>
-                </button>
-                <button
-                  className={`rs-btn rs-btn--listen${status !== "idle" ? " rs-active" : ""}`}
-                  onClick={status === "idle" ? play : pause}
-                  aria-label={status === "playing" ? "Pausar lectura" : status === "paused" ? "Reanudar" : "Escuchar"}
-                >
-                  {status === "playing" ? <PauseIcon/> : <PlayIcon/>}
-                  <span>{status === "playing" ? "Pausar" : status === "paused" ? "Reanudar" : "Escuchar"}</span>
-                </button>
-                {status !== "idle" && (
-                  <button className="rs-btn" onClick={stop} aria-label="Detener" title="Detener"><StopIcon/></button>
-                )}
-                <button className="rs-btn" onClick={skipBack} aria-label="Retroceder" title="Retroceder"><SkipBIcon/></button>
-                <button className="rs-btn" onClick={skipFwd}  aria-label="Avanzar"    title="Avanzar"><SkipFIcon/></button>
-                <button className="rs-btn" aria-label="Volumen" title="Volumen" onClick={() => {}}><VolumeIcon/></button>
-                <button className="rs-btn" aria-label="Información" title="Información" onClick={() => setShowPrefs(true)}><InfoIcon/></button>
-                <button className="rs-btn rs-btn--close" onClick={stop} aria-label="Cerrar lector"><CloseIcon/></button>
-              </div>
-            )}
-
-            {/* Herramientas visuales */}
-            <div className="ed-extra-tools" role="toolbar" aria-label="Herramientas de visualización">
-              {!supported && (
-                <button className={`ed-tool-btn${showPrefs ? " ed-active" : ""}`}
-                  onClick={() => setShowPrefs(p => !p)} aria-label="Preferencias" title="Preferencias">
-                  <SettingsIcon/>
-                </button>
-              )}
-              <button className={`ed-tool-btn${fontSize > 1 ? " ed-active" : ""}`} onClick={cycleFontSize}
-                aria-label={`Tamaño de texto: ${fontLabel}`} title="Tamaño de texto">
-                <span className="ed-font-label" aria-hidden="true">{fontLabel}</span>
-              </button>
-              <button className={`ed-tool-btn${hiContrast ? " ed-active" : ""}`}
-                onClick={() => setHiContrast(h => !h)} aria-pressed={hiContrast}
-                aria-label="Alto contraste" title="Alto contraste">
-                <ContrastIcon/>
-              </button>
-              <button className="ed-tool-btn" onClick={handleShare} aria-label="Compartir evento" title="Compartir">
-                <ShareIcon/>
-              </button>
+        {/* ── Topbar: navegación + controles accesibilidad ── */}
+        <nav className="ed-topbar">
+          <div className="ed-topbar-inner">
+            <button className="ed-back-btn" onClick={onBack} aria-label="Volver a eventos">
+              <ArrowLeft/> Volver a eventos
+            </button>
+            <div className="ed-topbar-actions">
               {user && (
-                <button className={`ed-tool-btn ed-tool-fav${isFav ? " ed-fav-on" : ""}`} onClick={toggleFav}
-                  aria-label={isFav ? "Quitar de favoritos" : "Guardar en favoritos"}
-                  title={isFav ? "Quitar de favoritos" : "Guardar en favoritos"}>
+                <button className={`ed-icon-btn${isFav ? " ed-fav-on" : ""}`} onClick={toggleFav}
+                  aria-label={isFav ? "Quitar de favoritos" : "Guardar en favoritos"}>
                   <HeartIcon filled={isFav}/>
                 </button>
               )}
+              <button className="ed-icon-btn" onClick={handleShare} aria-label="Compartir evento">
+                <ShareIcon/>
+              </button>
+              {supported && (
+                <>
+                  <div className="ed-topbar-sep"/>
+                  <button className="ed-icon-btn" onClick={skipBack} aria-label="Retroceder"><SkipBIcon/></button>
+                  <button className={`ed-icon-btn ed-icon-btn--play${status !== "idle" ? " ed-active" : ""}`}
+                    onClick={status === "idle" ? play : (status === "playing" ? pause : play)}
+                    aria-label={status === "playing" ? "Pausar" : "Escuchar"}>
+                    {status === "playing" ? <PauseIcon/> : <PlayIcon/>}
+                  </button>
+                  <button className="ed-icon-btn" onClick={skipFwd} aria-label="Avanzar"><SkipFIcon/></button>
+                  <div className="ed-topbar-sep"/>
+                </>
+              )}
+              <button className={`ed-icon-btn ed-icon-btn--text${fontSize > 1 ? " ed-active" : ""}`}
+                onClick={cycleFontSize} aria-label={`Tamaño de texto: ${fontLabel}`}>
+                <span className="ed-font-label">{fontLabel}</span>
+              </button>
+              <button className="ed-icon-btn" onClick={() => setShowPrefs(p => !p)} aria-label="Preferencias">
+                <SettingsIcon/>
+              </button>
+              <button className="ed-icon-btn ed-icon-btn--close" onClick={onBack} aria-label="Cerrar">
+                <CloseIcon/>
+              </button>
             </div>
-
           </div>
-
-          {/* Toast */}
           {shareMsg && <div className="ed-toast" role="status" aria-live="polite">{shareMsg}</div>}
-
-          {/* Progreso de lectura */}
           {status !== "idle" && (
             <div className="ed-progress" role="progressbar"
               aria-valuenow={wordIndex} aria-valuemax={words.length} aria-label="Progreso de lectura">
@@ -506,7 +490,7 @@ export default function EventDetail({ ev, onBack }) {
                 style={{ width: `${Math.round((Math.max(0, wordIndex) / Math.max(1, words.length)) * 100)}%` }}/>
             </div>
           )}
-        </div>
+        </nav>
 
         {/* ── Contenido ── */}
         <div className="ed-content">
@@ -515,75 +499,151 @@ export default function EventDetail({ ev, onBack }) {
             {/* Columna principal */}
             <div className="ed-main-col">
 
+              {/* Título y categoría */}
               <div className="ed-title-block">
                 <span className="ed-cat-label">{ev.cat}</span>
                 <h1 className="ed-title">{ev.title}</h1>
-                {ev.org && <p className="ed-org">{ev.org}</p>}
+
+                {/* Ubicación */}
+                {(ev.venueRaw || ev.venue) && (
+                  <div className="ed-venue-row">
+                    <PinIcon/>
+                    <div>
+                      <span className="ed-venue-name">{ev.venueRaw || ev.venue}</span>
+                      <span className="ed-venue-city">{ev.district}, Madrid</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {ev.access.length > 0 && (
-                <div className="ed-access-pills" role="list" aria-label="Accesibilidad">
-                  {ev.access.map(a => {
-                    const info = ACCESS_INFO[a];
-                    if (!info) return null;
-                    const Icon = { silla: WheelIcon, signos: SignosIcon, bucle: BucleIcon, braille: PodoIcon }[a];
-                    return (
-                      <span key={a} className="ed-pill" role="listitem">
-                        {Icon && <Icon/>} {info.label}
-                      </span>
-                    );
-                  })}
+              {/* Metadatos en fila */}
+              <div className="ed-meta-row">
+                {ev.date && (
+                  <div className="ed-meta-item">
+                    <CalIcon/>
+                    <div>
+                      <span className="ed-meta-label">Fecha</span>
+                      <span className="ed-meta-sub">{ev.date}{ev.timeStr && <> · {ev.timeStr}</>}</span>
+                    </div>
+                  </div>
+                )}
+                {ev.duration && (
+                  <div className="ed-meta-item">
+                    <Ico d={<><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>}/>
+                    <div>
+                      <span className="ed-meta-label">Duración</span>
+                      <span className="ed-meta-sub">{ev.duration}</span>
+                    </div>
+                  </div>
+                )}
+                {ev.ageMin && (
+                  <div className="ed-meta-item">
+                    <Ico d={<><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></>}/>
+                    <div>
+                      <span className="ed-meta-label">Edad recomendada</span>
+                      <span className="ed-meta-sub">A partir de {ev.ageMin}</span>
+                    </div>
+                  </div>
+                )}
+                {ev.price && (
+                  <div className="ed-meta-item">
+                    <EuroIcon/>
+                    <div>
+                      <span className="ed-meta-label">Entrada general</span>
+                      <span className="ed-meta-sub">{ev.price}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Imagen + descripción lado a lado */}
+              {(imgOk || ev.descFull || ev.trailerUrl) && (
+                <div className="ed-show-block" id="ed-desc">
+                  {imgOk && (
+                    <div className="ed-show-img-wrap">
+                      <img src={imgSrc} alt={ev.title} className="ed-show-img" onError={() => setImgOk(false)}/>
+                    </div>
+                  )}
+                  <div className="ed-show-info">
+                    <div className="ed-show-info-header">
+                      <Ico d={<><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>} size={16}/>
+                      <span className="ed-show-info-title">SOBRE EL ESPECTÁCULO</span>
+                      {supported && (
+                        <button
+                          className={`ed-listen-inline${status !== "idle" ? " ed-active" : ""}`}
+                          onClick={status === "idle" ? play : pause}
+                          aria-label={status === "playing" ? "Pausar" : "Escuchar descripción"}
+                          style={{marginLeft:"auto"}}
+                        >
+                          {status === "playing" ? <PauseIcon/> : <PlayIcon/>}
+                          {status === "playing" ? "Pausar" : status === "paused" ? "Reanudar" : "Escuchar"}
+                        </button>
+                      )}
+                    </div>
+                    {ev.descFull ? (
+                      <div className="ed-desc">
+                        <HighlightedDesc
+                          text={ev.descFull}
+                          wordIndex={status !== "idle" ? wordIndex : -1}
+                        />
+                      </div>
+                    ) : (
+                      <p className="ed-no-desc">El Ayuntamiento de Madrid no ha facilitado descripción para este evento.</p>
+                    )}
+                    {ev.trailerUrl && (
+                      <a href={ev.trailerUrl} target="_blank" rel="noreferrer" className="ed-trailer-btn">
+                        <PlayIcon/> Ver tráiler
+                      </a>
+                    )}
+                  </div>
                 </div>
               )}
 
-              {/* Descripción */}
-              <section id="ed-desc" className="ed-section" aria-labelledby="desc-h">
-                <div className="ed-section-header">
-                  <h2 className="ed-section-title" id="desc-h">Descripción del evento</h2>
-                  {supported && (
-                    <button
-                      className={`ed-listen-inline${status !== "idle" ? " ed-active" : ""}`}
-                      onClick={status === "idle" ? play : pause}
-                      aria-label={status === "playing" ? "Pausar" : "Escuchar descripción"}
-                    >
-                      {status === "playing" ? <PauseIcon/> : <PlayIcon/>}
-                      {status === "playing" ? "Pausar" : status === "paused" ? "Reanudar" : "Escuchar"}
-                    </button>
-                  )}
-                </div>
-
-                {ev.descFull ? (
-                  <div className="ed-desc">
-                    <HighlightedDesc
-                      text={ev.descFull}
-                      wordIndex={status !== "idle" ? wordIndex : -1}
-                    />
-                  </div>
-                ) : (
-                  <p className="ed-no-desc">El Ayuntamiento de Madrid no ha facilitado descripción para este evento.</p>
-                )}
-              </section>
+              {/* ¿Qué encontrarás? */}
+              {highlights.length > 0 && (
+                <section className="ed-section" aria-labelledby="hi-h">
+                  <h2 className="ed-section-title" id="hi-h">¿QUÉ ENCONTRARÁS?</h2>
+                  <ul className="ed-highlights-list">
+                    {highlights.map((h, i) => (
+                      <li key={i} className="ed-highlight-item">
+                        <span className="ed-highlight-icon" aria-hidden="true">
+                          <Ico d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" size={14}/>
+                        </span>
+                        {h}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
 
               {/* Accesibilidad detallada */}
               {ev.access.length > 0 && (
                 <section className="ed-section" aria-labelledby="acc-h">
                   <h2 className="ed-section-title" id="acc-h">Accesibilidad</h2>
-                  <div className="ed-access-list">
+                  <div className="ed-access-grid">
                     {ev.access.map(a => {
                       const info = ACCESS_INFO[a];
                       if (!info) return null;
                       const Icon = { silla: WheelIcon, signos: SignosIcon, bucle: BucleIcon, braille: PodoIcon }[a];
                       return (
-                        <div key={a} className="ed-access-row">
+                        <div key={a} className="ed-access-card">
                           <span className="ed-access-icon" aria-hidden="true">{Icon && <Icon/>}</span>
-                          <div>
+                          <div className="ed-access-body">
                             <strong className="ed-access-name">{info.label}</strong>
                             <span className="ed-access-desc">{info.desc}</span>
+                            {info.requestable && (
+                              <a href={info.ticketUrl || ev.url || "#"} target="_blank" rel="noreferrer" className="ed-access-link">
+                                Solicitar en taquilla <ExternalIcon/>
+                              </a>
+                            )}
                           </div>
                         </div>
                       );
                     })}
                   </div>
+                  <p className="ed-access-note">
+                    <InfoIcon/> Si necesitas otras medidas de apoyo, contacta con la organización.
+                  </p>
                 </section>
               )}
 
@@ -592,6 +652,9 @@ export default function EventDetail({ ev, onBack }) {
             {/* Sidebar */}
             <aside className="ed-sidebar" aria-label="Información del evento">
               <div className="ed-sidebar-card">
+
+                <h2 className="ed-sidebar-heading">Detalles del evento</h2>
+                <div className="ed-sidebar-heading-bar"/>
 
                 <div className="ed-sidebar-item">
                   <span className="ed-sidebar-icon" aria-hidden="true"><EuroIcon/></span>
@@ -605,7 +668,7 @@ export default function EventDetail({ ev, onBack }) {
                 <div className="ed-sidebar-item">
                   <span className="ed-sidebar-icon" aria-hidden="true"><CalIcon/></span>
                   <div>
-                    <span className="ed-sidebar-label">Fecha</span>
+                    <span className="ed-sidebar-label">Fecha y hora</span>
                     <span className="ed-sidebar-value">{ev.date}</span>
                     {ev.timeStr && <span className="ed-sidebar-sub">a las {ev.timeStr}</span>}
                   </div>
@@ -617,7 +680,19 @@ export default function EventDetail({ ev, onBack }) {
                   <div>
                     <span className="ed-sidebar-label">Lugar</span>
                     <span className="ed-sidebar-value">{ev.venueRaw || ev.venue}</span>
-                    <span className="ed-sidebar-sub">{ev.district} · Madrid</span>
+                    <span className="ed-sidebar-sub">{ev.district}, Madrid</span>
+                    <div className="ed-map-embed">
+                      <iframe
+                        title="Mapa del evento"
+                        src={`https://maps.google.com/maps?q=${encodeURIComponent((ev.venueRaw || ev.venue) + ', Madrid')}&output=embed&z=15`}
+                        width="100%" height="180" style={{border:0, display:"block"}}
+                        allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+                      />
+                    </div>
+                    <a href={`https://maps.google.com/?q=${encodeURIComponent((ev.venueRaw || ev.venue) + ', Madrid')}`}
+                      target="_blank" rel="noreferrer" className="ed-map-link">
+                      Ver mapa <ExternalIcon/>
+                    </a>
                   </div>
                 </div>
                 <div className="ed-sidebar-divider"/>
@@ -631,7 +706,33 @@ export default function EventDetail({ ev, onBack }) {
                   <ShareIcon/> Compartir evento
                 </button>
 
+                {/* Información adicional */}
+                {additionalInfo.length > 0 && (
+                  <>
+                    <div className="ed-sidebar-divider" style={{marginTop:"1.25rem"}}/>
+                    <h3 className="ed-addinfo-title">Información adicional</h3>
+                    <ul className="ed-addinfo-list">
+                      {additionalInfo.map((item, i) => (
+                        <li key={i} className="ed-addinfo-item">
+                          <span className="ed-addinfo-icon" aria-hidden="true">{item.icon}</span>
+                          <span>{item.text}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+
               </div>
+
+              {ev.org && (
+                <>
+                  <div className="ed-sidebar-divider" style={{marginTop:"1rem"}}/>
+                  <div className="ed-org-row">
+                    <span className="ed-org-label">Organismo</span>
+                    <span className="ed-org-name">{ev.org}</span>
+                  </div>
+                </>
+              )}
 
               <p className="ed-source-note">
                 Datos:{" "}
@@ -651,12 +752,12 @@ export default function EventDetail({ ev, onBack }) {
 
 // ─── Estilos ──────────────────────────────────────────────────────────────────
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
   .ed-page {
-    --ed-bg:#fff; --ed-text:#111; --ed-subtext:#666;
-    --ed-border:#ebebeb; --ed-card-bg:${P.cream};
-    --ed-pill-bg:${P.cream}; --ed-pill-text:${P.navy};
+    --ed-bg:#fff; --ed-text:#111827; --ed-subtext:#6b7280;
+    --ed-border:#d8d8ee; --ed-card-bg:${P.cream};
+    --ed-pill-bg:${P.brandSubtle}; --ed-pill-text:${P.brand};
     min-height:100vh; background:var(--ed-bg); color:var(--ed-text);
     font-family:'Inter',sans-serif; transition:font-size .2s;
     animation:ed-in .22s ease;
@@ -702,72 +803,35 @@ const css = `
   /* Skip link */
   .ed-skip {
     position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;
-    background:${P.yellow}; color:#111; font-weight:700; padding:.5rem 1rem;
+    background:${P.brandSubtle}; color:${P.brand}; font-weight:700; padding:.5rem 1rem;
     border-radius:0 0 4px 4px; z-index:9999; text-decoration:none;
   }
   .ed-skip:focus { position:fixed; left:50%; transform:translateX(-50%); top:0; width:auto; height:auto; }
 
-  /* ── Barra de herramientas bajo imagen ── */
-  .ed-toolbar-bar {
-    background:#fff; border-bottom:1.5px solid #e5e5e5;
-    position:relative;
+  /* ── Iconos en topbar ── */
+  .ed-icon-btn {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:6px;
+    background:transparent; border:1px solid #e5e7eb; color:#6b7280;
+    cursor:pointer; transition:all .15s; flex-shrink:0;
   }
-  .ed-toolbar-inner {
-    max-width:1120px; margin:0 auto;
-    padding:.6rem clamp(1rem,5vw,4rem);
-    display:flex; align-items:center;
-    gap:.75rem; flex-wrap:wrap;
-  }
-
-  /* ── Barra ReadSpeaker ── */
-  .rs-bar {
-    display:inline-flex; align-items:center; gap:1px;
-    background:#f5f5f5; border:1.5px solid #ddd; border-radius:4px;
-    overflow:hidden; flex-shrink:0;
-  }
-  .rs-btn {
-    display:inline-flex; align-items:center; gap:.35rem;
-    background:transparent; border:none; border-right:1px solid #e0e0e0;
-    color:#555; font-family:'Inter',sans-serif; font-size:.72rem; font-weight:600;
-    padding:.42rem .65rem; cursor:pointer; transition:all .12s;
-    min-height:36px; white-space:nowrap;
-  }
-  .rs-btn:last-child { border-right:none; }
-  .rs-btn:hover { background:#e8e8e8; color:#111; }
-  .rs-btn:focus-visible { outline:2px solid ${P.yellow}; outline-offset:-2px; z-index:1; position:relative; }
-  .rs-btn--listen {
-    background:${P.navy}; color:#fff; font-weight:700; padding:.42rem .9rem;
-  }
-  .rs-btn--listen.rs-active { background:${P.yellow}; color:#111; }
-  .rs-btn--listen:hover { background:${P.blue}; }
-  .rs-btn--menu { font-size:1rem; padding:.42rem .7rem; }
-  .rs-btn--close { color:#999; }
-  .rs-hamburger { font-size:1rem; line-height:1; }
-
-  /* Extra tools */
-  .ed-extra-tools {
-    display:inline-flex; align-items:center; gap:.3rem; margin-left:auto; flex-shrink:0;
-  }
-  .ed-tool-btn {
-    display:inline-flex; align-items:center; gap:.35rem;
-    background:transparent; border:1.5px solid #ddd; color:#555;
-    font-family:'Inter',sans-serif; font-size:.72rem; font-weight:600;
-    padding:.35rem .6rem; border-radius:4px; cursor:pointer;
-    transition:all .15s; min-height:36px;
-  }
-  .ed-tool-btn:hover { background:#f0f0f0; color:#111; border-color:#aaa; }
-  .ed-tool-btn.ed-active { background:${P.navy}; color:#fff; border-color:${P.navy}; }
-  .ed-tool-fav { transition:color .15s, background .15s, border-color .15s; }
-  .ed-tool-fav:hover { color:#e74c3c!important; border-color:#e74c3c!important; background:rgba(231,76,60,.08)!important; }
-  .ed-fav-on { color:#e74c3c!important; border-color:#e74c3c!important; background:rgba(231,76,60,.1)!important; }
-  .ed-fav-on:hover { background:rgba(231,76,60,.2)!important; }
-  .ed-tool-btn:focus-visible { outline:2px solid ${P.yellow}; outline-offset:2px; }
-  .ed-font-label { font-size:.82rem; font-weight:800; font-family:'Bebas Neue',sans-serif; }
+  .ed-icon-btn:hover { background:#f3f4f6; color:#111827; border-color:#d1d5db; }
+  .ed-icon-btn.ed-active { background:${P.brandSubtle}; color:${P.brand}; border-color:${P.brand}; }
+  .ed-icon-btn.ed-fav-on { color:#e74c3c; border-color:#fca5a5; background:#fff1f2; }
+  .ed-icon-btn--play { background:${P.brand}; color:#fff; border-color:${P.brand}; width:34px; height:34px; }
+  .ed-icon-btn--play:hover { background:${P.brandHover}; }
+  .ed-icon-btn--play.ed-active { background:${P.brandHover}; }
+  .ed-icon-btn--text { width:auto; padding:0 .5rem; font-family:'Inter',sans-serif; }
+  .ed-icon-btn--close { color:#9ca3af; border-color:transparent; }
+  .ed-icon-btn--close:hover { background:#fee2e2; color:#dc2626; border-color:#fca5a5; }
+  .ed-icon-btn:focus-visible { outline:2px solid ${P.brand}; outline-offset:2px; }
+  .ed-topbar-sep { width:1px; height:20px; background:#e5e7eb; flex-shrink:0; }
+  .ed-font-label { font-size:.78rem; font-weight:700; font-family:'Inter',sans-serif; }
 
   /* Toast */
   .ed-toast {
     position:absolute; top:100%; left:50%; transform:translateX(-50%);
-    background:${P.navy}; color:#fff; font-size:.8rem; font-weight:600;
+    background:${P.brand}; color:#fff; font-size:.8rem; font-weight:600;
     padding:.5rem 1.25rem; border-radius:100px; margin-top:.5rem;
     animation:ed-toast-in .2s ease; z-index:300; white-space:nowrap;
     max-width:90vw; text-align:center;
@@ -776,7 +840,7 @@ const css = `
 
   /* Progreso lectura */
   .ed-progress { height:3px; background:#222; width:100%; }
-  .ed-progress-bar { height:100%; background:${P.yellow}; transition:width .3s linear; }
+  .ed-progress-bar { height:100%; background:${P.brand}; transition:width .3s linear; }
 
   /* ── Panel preferencias ── */
   .rs-panel-backdrop {
@@ -807,7 +871,7 @@ const css = `
     padding:.25rem; border-radius:4px; display:flex; align-items:center;
   }
   .rs-panel-close:hover { color:#111; }
-  .rs-panel-close:focus-visible { outline:2px solid ${P.yellow}; }
+  .rs-panel-close:focus-visible { outline:2px solid ${P.brand}; }
 
   .rs-panel-body { padding:.5rem 0; }
   .rs-pref-row {
@@ -833,7 +897,7 @@ const css = `
   .rs-toggle-input { opacity:0; width:0; height:0; position:absolute; }
   .rs-toggle-input:checked ~ .rs-toggle-thumb { transform:translateX(18px); }
   .rs-toggle-input:checked + .rs-toggle-track,
-  .rs-toggle-track:has(.rs-toggle-input:checked) { background:${P.blue}; }
+  .rs-toggle-track:has(.rs-toggle-input:checked) { background:${P.brand}; }
   .rs-toggle-thumb {
     position:absolute; top:3px; left:3px;
     width:18px; height:18px; border-radius:50%;
@@ -854,13 +918,34 @@ const css = `
     cursor:pointer; transition:background .12s; text-align:left;
   }
   .rs-pref-download:hover { background:#f5f5f5; }
-  .rs-pref-download:focus-visible { outline:2px solid ${P.yellow}; }
+  .rs-pref-download:focus-visible { outline:2px solid ${P.brand}; }
 
   .rs-panel-foot {
     padding:.6rem 1rem; border-top:1px solid #eee;
     font-size:.68rem; color:#aaa; text-align:right;
     background:#fafafa;
   }
+
+  /* ── Topbar ── */
+  .ed-topbar {
+    background:#fff; border-bottom:1px solid #e5e7eb;
+    position:sticky; top:0; z-index:200;
+  }
+  .ed-topbar-inner {
+    max-width:1280px; margin:0 auto;
+    padding:.5rem clamp(1.25rem,5vw,6rem);
+    display:flex; align-items:center; justify-content:space-between;
+    gap:1rem;
+  }
+  .ed-back-btn {
+    display:inline-flex; align-items:center; gap:.4rem;
+    background:transparent; border:none; color:#6b7280;
+    font-family:'Inter',sans-serif; font-size:.82rem; font-weight:500;
+    padding:.35rem 0; cursor:pointer; transition:color .15s; white-space:nowrap;
+  }
+  .ed-back-btn:hover { color:#111827; }
+  .ed-back-btn:focus-visible { outline:2px solid ${P.brand}; outline-offset:2px; }
+  .ed-topbar-actions { display:flex; align-items:center; gap:.35rem; flex-shrink:0; }
 
   /* ── Hero ── */
   .ed-hero {
@@ -878,16 +963,17 @@ const css = `
   /* ── Layout ── */
   .ed-content { background:var(--ed-bg); }
   .ed-content-inner {
-    max-width:1120px; margin:0 auto;
-    padding:clamp(2rem,5vw,3.5rem) clamp(1rem,5vw,4rem) clamp(3rem,6vw,5rem);
-    display:grid; grid-template-columns:1fr 320px; gap:3.5rem; align-items:start;
+    max-width:1280px; margin:0 auto;
+    padding:clamp(2rem,4vw,3rem) clamp(1.25rem,5vw,6rem) clamp(3rem,6vw,5rem);
+    display:grid; grid-template-columns:1fr 320px; gap:2.5rem; align-items:start;
   }
-  @media (max-width:860px) {
+  @media (max-width:900px) {
     .ed-content-inner { grid-template-columns:1fr; gap:2rem; }
     .ed-sidebar { order:-1; }
   }
 
-  .ed-title-block { margin-bottom:1.5rem; }
+  /* ── Title block ── */
+  .ed-title-block { margin-bottom:1.25rem; }
   .ed-cat-label {
     display:inline-block; font-size:.65rem; font-weight:800;
     letter-spacing:.14em; text-transform:uppercase;
@@ -896,10 +982,77 @@ const css = `
     border-radius:2px; margin-bottom:.75rem;
   }
   .ed-title {
-    font-family:'Bebas Neue',sans-serif; font-weight:400;
-    font-size:clamp(2.2rem,6vw,3.8rem); letter-spacing:.04em;
-    color:var(--ed-text); line-height:1.05; margin:0 0 .5rem;
+    font-family:'Inter',sans-serif; font-weight:800;
+    font-size:clamp(1.6rem,4vw,2.6rem); letter-spacing:-.01em;
+    color:var(--ed-text); line-height:1.15; margin:0 0 .75rem;
   }
+  .ed-venue-row {
+    display:flex; align-items:flex-start; gap:.5rem;
+    color:var(--ed-subtext); margin-top:.25rem;
+  }
+  .ed-venue-row svg { flex-shrink:0; margin-top:2px; }
+  .ed-venue-name { display:block; font-size:.9rem; font-weight:600; color:var(--ed-text); }
+  .ed-venue-city { display:block; font-size:.8rem; color:var(--ed-subtext); margin-top:.1rem; }
+
+  /* ── Meta row ── */
+  .ed-meta-row {
+    display:flex; flex-wrap:wrap; gap:0;
+    border:1px solid #e5e7eb; border-radius:10px;
+    overflow:hidden; margin-bottom:2rem;
+    background:#fff;
+  }
+  .ed-meta-item {
+    display:flex; align-items:center; gap:.65rem;
+    padding:.85rem 1.1rem; flex:1; min-width:0;
+    border-right:1px solid #e5e7eb;
+  }
+  .ed-meta-item:last-child { border-right:none; }
+  @media (max-width:640px) {
+    .ed-meta-item { min-width:50%; border-bottom:1px solid #e5e7eb; }
+    .ed-meta-item:nth-child(even) { border-right:none; }
+    .ed-meta-item:nth-last-child(-n+2) { border-bottom:none; }
+  }
+  .ed-meta-item svg { color:${P.brand}; flex-shrink:0; }
+  .ed-meta-label { display:block; font-size:.63rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#9ca3af; margin-bottom:.15rem; }
+  .ed-meta-sub { display:block; font-size:.82rem; font-weight:600; color:var(--ed-text); line-height:1.3; }
+
+  /* ── Show block (imagen + sobre el espectáculo) ── */
+  .ed-show-block {
+    display:grid; grid-template-columns:1fr 1fr; gap:0;
+    border:1px solid #e5e7eb; border-radius:12px;
+    overflow:hidden; margin-bottom:2rem;
+    box-shadow:0 1px 3px rgba(0,0,0,.05);
+  }
+  @media (max-width:640px) { .ed-show-block { grid-template-columns:1fr; } }
+  .ed-show-img-wrap { overflow:hidden; min-height:240px; }
+  .ed-show-img { width:100%; height:100%; object-fit:cover; display:block; }
+  .ed-show-info {
+    padding:1.5rem;
+    background:#f9fafb;
+    display:flex; flex-direction:column; gap:.75rem;
+    overflow-y:auto; max-height:520px;
+  }
+  .ed-show-info-header {
+    display:flex; align-items:center; gap:.5rem;
+    color:${P.brand}; flex-wrap:wrap;
+  }
+  .ed-show-info-title {
+    font-size:.68rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+    color:${P.brand};
+  }
+  .ed-show-desc {
+    font-size:.88rem; line-height:1.7; color:var(--ed-text);
+    margin:0; flex:1;
+  }
+  .ed-trailer-btn {
+    display:inline-flex; align-items:center; gap:.45rem;
+    background:#fff; border:1px solid #e5e7eb; color:#374151;
+    font-family:'Inter',sans-serif; font-size:.78rem; font-weight:600;
+    padding:.45rem .9rem; border-radius:100px;
+    text-decoration:none; transition:all .15s; align-self:flex-start;
+  }
+  .ed-trailer-btn:hover { background:${P.brand}; color:#fff; border-color:${P.brand}; }
+
   .ed-org { font-size:.85rem; color:var(--ed-subtext); margin:0; font-style:italic; }
 
   .ed-access-pills { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:2rem; }
@@ -910,10 +1063,41 @@ const css = `
     padding:.35rem .85rem; border-radius:100px;
   }
 
+  /* ── Sections ── */
   .ed-section { margin-bottom:2.5rem; padding-bottom:2.5rem; border-bottom:1px solid var(--ed-border); }
   .ed-section:last-of-type { border-bottom:none; }
   .ed-section-header { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap; }
-  .ed-section-title { font-family:'Bebas Neue',sans-serif; font-weight:400; font-size:1.5rem; letter-spacing:.06em; color:var(--ed-text); margin:0; text-transform:uppercase; }
+  .ed-section-title {
+    font-family:'Inter',sans-serif; font-weight:700; font-size:1rem;
+    letter-spacing:-.01em; color:var(--ed-text); margin:0; text-transform:uppercase;
+    font-size:.8rem; letter-spacing:.08em;
+  }
+
+  /* Desc grid */
+  .ed-desc-grid {
+    display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; align-items:start;
+  }
+  @media (max-width:700px) { .ed-desc-grid { grid-template-columns:1fr; } }
+
+  /* ¿Qué encontrarás? */
+  .ed-highlights-card {
+    background:#fafaf8; border:1.5px solid #E0DED4;
+    border-radius:8px; padding:1.25rem;
+  }
+  .ed-highlights-title {
+    font-family:'Bebas Neue',sans-serif; font-size:1rem; letter-spacing:.1em;
+    color:var(--ed-text); margin:0 0 1rem; font-weight:400;
+  }
+  .ed-highlights-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.6rem; }
+  .ed-highlight-item {
+    display:flex; align-items:center; gap:.6rem;
+    font-size:.85rem; color:var(--ed-text);
+  }
+  .ed-highlight-icon {
+    width:28px; height:28px; border-radius:6px;
+    background:#fff; border:1px solid #d8d8ee; color:${P.brand};
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
 
   .ed-listen-inline {
     display:inline-flex; align-items:center; gap:.4rem;
@@ -921,70 +1105,128 @@ const css = `
     font-family:'Inter',sans-serif; font-size:.75rem; font-weight:600;
     padding:.35rem .85rem; border-radius:100px; cursor:pointer; transition:all .15s;
   }
-  .ed-listen-inline:hover { background:${P.navy}; color:#fff; border-color:${P.navy}; }
-  .ed-listen-inline.ed-active { background:${P.yellow}; color:#111; border-color:${P.yellow}; }
-  .ed-listen-inline:focus-visible { outline:2px solid ${P.yellow}; outline-offset:2px; }
+  .ed-listen-inline:hover { background:${P.brand}; color:#fff; border-color:${P.brand}; }
+  .ed-listen-inline.ed-active { background:${P.brandSubtle}; color:${P.brand}; border-color:${P.brand}; }
+  .ed-listen-inline:focus-visible { outline:2px solid ${P.brand}; outline-offset:2px; }
 
   .ed-desc { font-size:1em; line-height:1.75; color:var(--ed-text); }
   .ed-desc-text { margin:0 0 1rem; color:var(--ed-text); line-height:1.75; }
   .ed-desc-text:last-child { margin-bottom:0; }
   .ed-no-desc { font-size:.88rem; color:var(--ed-subtext); font-style:italic; }
 
-  .ed-word-hi { background:${P.yellow}; color:#111; border-radius:2px; padding:0 2px; transition:background .1s; }
+  .ed-word-hi { background:${P.brandSubtle}; color:${P.brand}; border-radius:2px; padding:0 2px; transition:background .1s; }
 
-  .ed-access-list { display:flex; flex-direction:column; gap:1.25rem; }
-  .ed-access-row { display:flex; align-items:flex-start; gap:1rem; }
+  /* ── Accesibilidad grid ── */
+  .ed-access-grid {
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+    gap:1rem; margin-bottom:1rem;
+  }
+  .ed-access-card {
+    border:1px solid #e5e7eb; border-radius:10px;
+    padding:1rem; display:flex; flex-direction:column; gap:.6rem;
+    background:#fff;
+  }
   .ed-access-icon {
-    width:40px; height:40px; border-radius:10px;
-    background:${P.navy}; color:#fff;
+    width:36px; height:36px; border-radius:8px;
+    background:${P.brandSubtle}; color:${P.brand};
     display:flex; align-items:center; justify-content:center; flex-shrink:0;
   }
-  .ed-access-name { display:block; font-size:.88rem; font-weight:700; color:var(--ed-text); margin-bottom:.2rem; }
-  .ed-access-desc { display:block; font-size:.82rem; color:var(--ed-subtext); line-height:1.5; }
+  .ed-access-body { display:flex; flex-direction:column; gap:.25rem; }
+  .ed-access-name { display:block; font-size:.88rem; font-weight:700; color:var(--ed-text); }
+  .ed-access-desc { display:block; font-size:.8rem; color:var(--ed-subtext); line-height:1.5; }
+  .ed-access-link {
+    display:inline-flex; align-items:center; gap:.3rem;
+    font-size:.78rem; font-weight:600; color:${P.brand};
+    text-decoration:none; margin-top:.25rem;
+  }
+  .ed-access-link:hover { text-decoration:underline; }
+  .ed-access-note {
+    display:flex; align-items:center; gap:.5rem;
+    font-size:.78rem; color:var(--ed-subtext);
+    margin:0; padding-top:.5rem;
+  }
 
+  /* ── Sidebar ── */
   .ed-sidebar-card {
-    background:var(--ed-card-bg); border:1.5px solid #E0DED4;
-    border-radius:8px; padding:1.5rem; position:sticky; top:72px;
+    background:#fff; border:1px solid #e5e7eb;
+    border-radius:12px; padding:1.5rem; position:sticky; top:60px;
+    box-shadow:0 1px 4px rgba(0,0,0,.06);
   }
-  .ed-sidebar-item { display:flex; align-items:flex-start; gap:.875rem; }
+  .ed-sidebar-heading {
+    font-family:'Inter',sans-serif; font-weight:700;
+    font-size:1rem; letter-spacing:-.01em;
+    color:var(--ed-text); margin:0 0 .25rem;
+  }
+  .ed-sidebar-heading-bar {
+    width:2rem; height:2px; background:${P.brand}; border-radius:2px; margin-bottom:1.25rem;
+  }
+  .ed-sidebar-item { display:flex; align-items:flex-start; gap:.75rem; }
   .ed-sidebar-icon {
-    width:36px; height:36px; border-radius:8px; background:#fff;
-    border:1px solid #E0DED4; color:${P.navy};
-    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    width:32px; height:32px; border-radius:8px; background:${P.brandSubtle};
+    color:${P.brand};
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:.1rem;
   }
-  .ed-sidebar-label { display:block; font-size:.63rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#999; margin-bottom:.2rem; }
-  .ed-sidebar-value { display:block; font-size:.92rem; font-weight:700; color:var(--ed-text); line-height:1.35; }
-  .ed-val-free { color:${P.blue}; }
-  .ed-sidebar-sub { display:block; font-size:.78rem; color:var(--ed-subtext); margin-top:.15rem; }
-  .ed-sidebar-divider { height:1px; background:#E0DED4; margin:1.25rem 0; }
+  .ed-sidebar-label { display:block; font-size:.63rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#9ca3af; margin-bottom:.2rem; }
+  .ed-sidebar-value { display:block; font-size:.88rem; font-weight:600; color:var(--ed-text); line-height:1.35; }
+  .ed-val-free { color:#16a34a; }
+  .ed-sidebar-sub { display:block; font-size:.78rem; color:var(--ed-subtext); margin-top:.1rem; }
+  .ed-sidebar-divider { height:1px; background:#f3f4f6; margin:1rem 0; }
+  .ed-map-link {
+    display:inline-flex; align-items:center; gap:.3rem;
+    font-size:.75rem; font-weight:600; color:${P.brand};
+    background:none; border:none; cursor:pointer; padding:0; margin-top:.3rem;
+  }
+  .ed-map-link:hover { text-decoration:underline; }
+  .ed-map-embed {
+    margin-top:.75rem; border-radius:8px; overflow:hidden;
+    border:1px solid #e5e7eb;
+    animation:ed-in .2s ease;
+  }
 
   .ed-cta {
     display:flex; align-items:center; justify-content:center; gap:.5rem;
-    background:${P.navy}; color:#fff; font-size:.85rem; font-weight:700;
-    letter-spacing:.04em; padding:.9rem 1.5rem; border-radius:4px;
+    background:${P.brand}; color:#fff; font-size:.85rem; font-weight:600;
+    padding:.8rem 1.5rem; border-radius:8px;
     text-decoration:none; transition:background .15s; width:100%;
-    text-align:center; margin-top:.25rem;
+    text-align:center; margin-top:.5rem;
   }
-  .ed-cta:hover { background:${P.blue}; }
-  .ed-cta:focus-visible { outline:2px solid ${P.yellow}; outline-offset:2px; }
-  .ed-cta-disabled { display:block; text-align:center; font-size:.8rem; color:#999; padding:.9rem; border:1px dashed #ccc; border-radius:4px; margin-top:.25rem; }
+  .ed-cta:hover { background:${P.brandHover}; }
+  .ed-cta:focus-visible { outline:2px solid ${P.brand}; outline-offset:2px; }
+  .ed-cta-disabled { display:block; text-align:center; font-size:.8rem; color:#9ca3af; padding:.8rem; border:1px dashed #e5e7eb; border-radius:8px; margin-top:.5rem; }
 
   .ed-share-btn {
     display:flex; align-items:center; justify-content:center; gap:.5rem;
-    width:100%; margin-top:.75rem; background:transparent;
-    border:1.5px solid #CCCAC0; color:#555; font-family:'Inter',sans-serif;
-    font-size:.82rem; font-weight:600; padding:.7rem; border-radius:4px;
+    width:100%; margin-top:.5rem; background:transparent;
+    border:1px solid #e5e7eb; color:#6b7280; font-family:'Inter',sans-serif;
+    font-size:.82rem; font-weight:600; padding:.7rem; border-radius:8px;
     cursor:pointer; transition:all .15s;
   }
-  .ed-share-btn:hover { background:#f5f5f5; color:#111; }
-  .ed-share-btn:focus-visible { outline:2px solid ${P.yellow}; outline-offset:2px; }
+  .ed-share-btn:hover { background:#f9fafb; color:#111827; border-color:#d1d5db; }
+  .ed-share-btn:focus-visible { outline:2px solid ${P.brand}; outline-offset:2px; }
 
-  .ed-source-note { font-size:.72rem; color:#999; text-align:center; margin-top:.875rem; line-height:1.5; }
-  .ed-source-link { color:${P.blue}; text-decoration:none; }
+  /* Información adicional */
+  .ed-addinfo-title {
+    font-size:.63rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:#9ca3af; margin:1rem 0 .5rem;
+  }
+  .ed-addinfo-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.5rem; }
+  .ed-addinfo-item {
+    display:flex; align-items:center; gap:.5rem;
+    font-size:.82rem; color:var(--ed-text);
+  }
+  .ed-addinfo-icon { color:var(--ed-subtext); display:flex; flex-shrink:0; }
+
+  /* Organismo */
+  .ed-org-row { display:flex; flex-direction:column; gap:.2rem; }
+  .ed-org-label { font-size:.63rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#9ca3af; }
+  .ed-org-name { font-size:.82rem; font-weight:600; color:var(--ed-text); }
+
+  .ed-source-note { font-size:.68rem; color:#9ca3af; text-align:center; margin-top:.875rem; line-height:1.5; }
+  .ed-source-link { color:${P.brand}; text-decoration:none; }
   .ed-source-link:hover { text-decoration:underline; }
 
   @media (max-width:640px) {
-    .rs-bar .rs-btn:not(.rs-btn--listen):not(.rs-btn--menu) { display:none; }
-    .ed-extra-tools .ed-tool-btn { padding:.3rem .45rem; }
+    .ed-topbar-sep { display:none; }
+    .ed-icon-btn--play ~ .ed-icon-btn:not(.ed-icon-btn--text):not(.ed-icon-btn--close) { display:none; }
   }
 `;

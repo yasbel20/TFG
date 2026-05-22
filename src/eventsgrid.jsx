@@ -124,6 +124,12 @@ function parseEvent(item, i) {
   // Descripción COMPLETA de la API, sin recortar
   const descFull = (item.description || "").replace(/<[^>]+>/g, "").trim();
 
+  // Descripción corta: primer párrafo o primeros 220 caracteres
+  const firstPara = descFull.split(/\n+/)[0] || "";
+  const descShort = firstPara.length > 220
+    ? firstPara.slice(0, 218).trimEnd() + "…"
+    : firstPara;
+
   return {
     id:        item.id || `ev-${i}`,
     title:     item.title || "Evento sin título",
@@ -138,7 +144,8 @@ function parseEvent(item, i) {
     access,
     image,
     url:       item.link || "#",
-    descFull,  // ← descripción completa sin límite
+    descFull,
+    descShort,
     org:       item.organization?.["organization-name"] || "",
   };
 }
@@ -231,7 +238,8 @@ function EventCard({ ev, onOpenDetail }) {
         <span className="eg-cat">{ev.cat}</span>
         <h3 className="eg-title">{ev.title}</h3>
         {ev.access.length > 0 && (
-          <AccessibilityBadge types={ev.access} className="eg-access-chip" />
+          <AccessibilityBadge types={ev.access} className="eg-access-chip"
+            style={{color:"#6b7280"}}/>
         )}
         <div className="eg-meta-block">
           <span className="eg-meta-row eg-meta-date"><CalIcon/> {ev.dateShort}</span>
@@ -450,11 +458,7 @@ const css = `
   }
   .eg-price-paid { font-family: 'Inter', sans-serif; font-size: .65rem; font-weight: 700; color: #111111; }
   .eg-access-badges { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: .45rem; }
-  .eg-access-chip {
-    display: inline-flex; align-items: center; gap: 3px;
-    font-family: 'Inter', sans-serif; font-size: .62rem; font-weight: 500;
-    color: #888888; line-height: 1;
-  }
+  .eg-access-chip { margin-bottom: 0; }
 
   .eg-skel {
     background: linear-gradient(90deg, #EBEBEB 25%, #F5F5F5 50%, #EBEBEB 75%);
