@@ -63,8 +63,13 @@ const PodoIcon = () => (
   </svg>
 );
 const CalIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
     <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+  </svg>
+);
+const ArrowSm = () => (
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
   </svg>
 );
 
@@ -227,50 +232,52 @@ function parseDateKey(dateKey) {
   };
 }
 
-// ─── Fila de evento en la agenda ──────────────────────────────────────────────
+// ─── Tarjeta de evento ────────────────────────────────────────────────────────
 function AgendaRow({ ev, onOpen }) {
   const accent = CAT_ACCENT[ev.cat] || P.navy;
   return (
-    <button
-      className="ag-row"
+    <article
+      className="ag-card"
+      style={{ borderLeftColor: accent }}
       onClick={() => onOpen(ev)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => e.key === "Enter" && onOpen(ev)}
       aria-label={`Ver detalle de ${ev.title}`}
     >
-      {/* Hora */}
-      <div className="ag-row-time" aria-label={ev.timeStr || "Hora por confirmar"}>
-        {ev.timeStr
-          ? <><span className="ag-time-val">{ev.timeStr.replace(" h","")}</span><span className="ag-time-h">h</span></>
-          : <span className="ag-time-tbd">–</span>
-        }
+      {/* Fila superior: categoría · precio */}
+      <div className="ag-card-top">
+        <span className="ag-card-cat" style={{ color: accent }}>
+          <span className="ag-cat-dot" style={{ background: accent }}/>
+          {ev.cat}
+        </span>
+        <span className="ag-card-price">{ev.price}</span>
       </div>
 
-      {/* Separador de color por categoría */}
-      <div className="ag-row-accent" style={{ background: accent }} aria-hidden="true"/>
+      {/* Título */}
+      <h3 className="ag-card-title">{ev.title}</h3>
 
-      {/* Contenido */}
-      <div className="ag-row-body">
-        <div className="ag-row-top">
-          <span className="ag-row-cat" style={{ color: accent }}>{ev.cat.toUpperCase()}</span>
-          <span className="ag-row-price">{ev.price}</span>
+      {/* Fila inferior: meta · badges · botón */}
+      <div className="ag-card-bottom">
+        <div className="ag-card-meta">
+          <span className="ag-meta-venue"><PinIcon/>{ev.venue}</span>
+          {ev.timeStr  && <><span className="ag-dot">·</span><span className="ag-meta-time"><CalIcon/>{ev.timeStr}</span></>}
+          {ev.district && <><span className="ag-dot">·</span><span className="ag-meta-dist">{ev.district}</span></>}
         </div>
-        <h3 className="ag-row-title">{ev.title}</h3>
-        <div className="ag-row-meta">
-          <span className="ag-row-venue"><PinIcon/> {ev.venue}</span>
-          {ev.district && <span className="ag-row-district">{ev.district}</span>}
+
+        <div className="ag-card-right">
+          {ev.access.length > 0 && (
+            <div className="ag-badges" aria-label="Accesibilidad">
+              {ev.access.includes("silla")   && <span className="ag-badge" title="Accesible PMR"><WheelIcon/></span>}
+              {ev.access.includes("signos")  && <span className="ag-badge" title="Lengua de signos"><SignosIcon/></span>}
+              {ev.access.includes("bucle")   && <span className="ag-badge" title="Bucle magnético"><BucleIcon/></span>}
+              {ev.access.includes("braille") && <span className="ag-badge" title="Podotáctil"><PodoIcon/></span>}
+            </div>
+          )}
+          <span className="ag-card-btn">Ver detalles <ArrowSm/></span>
         </div>
-        {/* Badges accesibilidad */}
-        {ev.access.length > 0 && (
-          <div className="ag-row-badges" aria-label="Accesibilidad">
-            {ev.access.includes("silla")   && <span className="ag-badge" title="Accesible PMR"><WheelIcon/></span>}
-            {ev.access.includes("signos")  && <span className="ag-badge" title="Lengua de signos"><SignosIcon/></span>}
-            {ev.access.includes("bucle")   && <span className="ag-badge" title="Bucle magnético"><BucleIcon/></span>}
-            {ev.access.includes("braille") && <span className="ag-badge" title="Podotáctil"><PodoIcon/></span>}
-          </div>
-        )}
       </div>
-
-      <div className="ag-row-arrow" aria-hidden="true">›</div>
-    </button>
+    </article>
   );
 }
 
@@ -278,27 +285,28 @@ function AgendaRow({ ev, onOpen }) {
 function DayBlock({ dateKey, events, onOpen }) {
   const { dia, numero, mes, isToday } = parseDateKey(dateKey);
   return (
-    <article className={`ag-day${isToday ? " ag-day--today" : ""}`} aria-label={`${dia} ${numero} de ${mes}`}>
-      {/* Cabecera del día */}
+    <section className={`ag-day${isToday ? " ag-day--today" : ""}`} aria-label={`${dia} ${numero} de ${mes}`}>
+      {/* Cabecera horizontal del día */}
       <div className="ag-day-head">
-        <div className="ag-day-date">
-          <span className="ag-day-name">{dia}</span>
+        <div className="ag-day-label">
+          <span className="ag-day-weekday">{dia}</span>
           <span className="ag-day-num">{numero}</span>
           <span className="ag-day-month">{mes}</span>
+          {isToday && <span className="ag-today-pill">HOY</span>}
         </div>
-        {isToday && <span className="ag-today-badge">HOY</span>}
+        <div className="ag-day-rule" aria-hidden="true"/>
         <span className="ag-day-count">{events.length} evento{events.length !== 1 ? "s" : ""}</span>
       </div>
 
-      {/* Filas de eventos */}
-      <div className="ag-day-events" role="list">
+      {/* Tarjetas de eventos */}
+      <div className="ag-day-cards" role="list">
         {events.map(ev => (
           <div key={ev.id} role="listitem">
             <AgendaRow ev={ev} onOpen={onOpen}/>
           </div>
         ))}
       </div>
-    </article>
+    </section>
   );
 }
 
@@ -307,18 +315,19 @@ function SkeletonDay() {
   return (
     <div className="ag-day" aria-hidden="true">
       <div className="ag-day-head">
-        <div className="ag-skel" style={{ width:120, height:24, borderRadius:4 }}/>
+        <div style={{ display:"flex", alignItems:"baseline", gap:10 }}>
+          <div className="ag-skel" style={{ width:64, height:13, borderRadius:3 }}/>
+          <div className="ag-skel" style={{ width:36, height:34, borderRadius:4 }}/>
+          <div className="ag-skel" style={{ width:36, height:13, borderRadius:3 }}/>
+        </div>
+        <div className="ag-day-rule" style={{ background:"#ede8fb" }}/>
       </div>
-      <div className="ag-day-events">
-        {[1,2,3].map(i => (
-          <div key={i} className="ag-row" style={{ pointerEvents:"none" }}>
-            <div className="ag-skel" style={{ width:48, height:40, borderRadius:4 }}/>
-            <div className="ag-row-accent" style={{ background:"#eee" }}/>
-            <div className="ag-row-body" style={{ gap:8 }}>
-              <div className="ag-skel" style={{ width:"30%", height:10, borderRadius:3 }}/>
-              <div className="ag-skel" style={{ width:"70%", height:16, borderRadius:3 }}/>
-              <div className="ag-skel" style={{ width:"50%", height:10, borderRadius:3 }}/>
-            </div>
+      <div className="ag-day-cards">
+        {[1,2].map(i => (
+          <div key={i} className="ag-card" style={{ borderLeftColor:"#ddd8f5", pointerEvents:"none", gap:10 }}>
+            <div className="ag-skel" style={{ width:"22%", height:10, borderRadius:3 }}/>
+            <div className="ag-skel" style={{ width:"70%", height:20, borderRadius:4 }}/>
+            <div className="ag-skel" style={{ width:"50%", height:10, borderRadius:3 }}/>
           </div>
         ))}
       </div>
@@ -474,270 +483,231 @@ export default function AgendaPage() {
 
 // ─── Estilos ──────────────────────────────────────────────────────────────────
 const css = `
+  /* ── Base ── */
   .ag-page {
     min-height: 100vh;
-    background: var(--bg-surface);
-    font-family: var(--ff-b);
-    animation: ag-in .2s ease;
-  }
-  @keyframes ag-in { from{opacity:0} to{opacity:1} }
-
-  /* Skip link */
-  .ag-skip {
-    position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;
-    background: var(--brand); color: var(--on-brand); font-weight: 700; padding: .5rem 1rem;
-    border-radius: 0 0 4px 4px; z-index: 9999; text-decoration: none;
-  }
-  .ag-skip:focus { position: fixed; left: 50%; transform: translateX(-50%); top: 0; width: auto; height: auto; }
-
-  /* ── Topbar ── */
-  .ag-topbar {
-    background: var(--dark-bg);
-    border-bottom: 1px solid var(--dark-surface);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 clamp(1rem, 5vw, 4rem);
-    height: 56px; position: sticky; top: 0; z-index: 50;
-  }
-  .ag-back-btn {
-    display: inline-flex; align-items: center; gap: .45rem;
-    background: transparent; border: 1.5px solid rgba(255,255,255,.2); color: rgba(255,255,255,.6);
-    font-family: var(--ff-b); font-size: .8rem; font-weight: 500;
-    padding: .4rem .9rem; border-radius: 4px; cursor: pointer; transition: all .15s;
-  }
-  .ag-back-btn:hover { background: rgba(255,255,255,.08); color: var(--on-brand); border-color: rgba(255,255,255,.4); }
-  .ag-back-btn:focus-visible { outline: 2px solid var(--brand-light); outline-offset: 2px; }
-
-  .ag-topbar-center {
-    display: flex; align-items: center;
-  }
-  .ag-page-label {
-    display: inline-flex; align-items: center; gap: .5rem;
-    font-family: var(--ff-h); font-size: 1.3rem;
-    letter-spacing: .1em; color: var(--on-brand);
+    background: #f6f5fb;
+    font-family: 'Inter', var(--ff-b), system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
   }
 
-  .ag-api-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: .65rem; color: rgba(255,255,255,.35); letter-spacing: .08em; text-transform: uppercase;
-  }
-  .ag-api-dot {
-    width: 6px; height: 6px; border-radius: 50%; background: var(--success);
-    animation: ag-pulse 2s infinite;
-  }
-  @keyframes ag-pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-  /* ── Controles ── */
+  /* ── Barra de controles ── */
   .ag-controls {
-    background: var(--bg);
-    border-bottom: 1.5px solid var(--text-primary);
-    position: sticky; top: 56px; z-index: 40;
+    background: #fff;
+    border-bottom: 1px solid #eae6f6;
+    position: sticky; top: 60px; z-index: 40;
+    box-shadow: 0 2px 12px rgba(79,62,200,.06);
   }
   .ag-controls-inner {
-    max-width: 900px; margin: 0 auto;
-    padding: .75rem clamp(1rem, 5vw, 4rem);
-    display: flex; flex-direction: column; gap: .75rem;
+    max-width: 960px; margin: 0 auto;
+    padding: 1rem clamp(1rem, 5vw, 3rem);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: .85rem;
   }
 
   /* Navegación semana */
-  .ag-week-nav {
-    display: flex; align-items: center; gap: .5rem;
-  }
+  .ag-week-nav { display: flex; align-items: center; gap: .5rem; }
   .ag-week-btn {
-    width: 34px; height: 34px; border: 1.5px solid var(--border); border-radius: 4px;
-    background: transparent; color: var(--text-primary); display: flex; align-items: center;
-    justify-content: center; cursor: pointer; transition: all .12s; padding: 0;
+    width: 36px; height: 36px;
+    border: 1.5px solid #ddd8f2; border-radius: 8px;
+    background: transparent; color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all .12s; padding: 0; flex-shrink: 0;
   }
-  .ag-week-btn:hover { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
+  .ag-week-btn:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
   .ag-week-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
   .ag-week-label {
-    font-family: var(--ff-h); font-size: 1.1rem;
-    letter-spacing: .08em; color: var(--text-primary); min-width: 180px; text-align: center;
+    font-family: 'Bebas Neue', var(--ff-h), sans-serif;
+    font-size: 1.25rem; letter-spacing: .08em;
+    color: var(--text-primary); min-width: 210px; text-align: center;
   }
   .ag-week-today {
-    background: var(--brand); color: var(--on-brand); border: none;
-    font-family: var(--ff-b); font-size: .72rem; font-weight: 700;
-    padding: .3rem .75rem; border-radius: var(--radius-pill); cursor: pointer;
-    letter-spacing: .06em; text-transform: uppercase; transition: opacity .15s;
+    background: var(--brand); color: #fff; border: none;
+    font-family: 'Inter', var(--ff-b), sans-serif;
+    font-size: .75rem; font-weight: 700;
+    padding: .3rem .75rem; border-radius: 20px; cursor: pointer;
+    letter-spacing: .06em; text-transform: uppercase;
+    transition: opacity .15s; margin-left: .25rem;
   }
-  .ag-week-today:hover { opacity: .8; }
-  .ag-week-today:focus-visible { outline: 2px solid var(--brand-hc); outline-offset: 2px; }
+  .ag-week-today:hover { opacity: .82; }
 
-  /* Filtros categoría */
+  /* Filtros */
   .ag-cat-filters {
-    display: flex; gap: .3rem; flex-wrap: wrap;
+    display: flex; gap: .4rem;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  .ag-cat-filters::-webkit-scrollbar { display: none; }
   .ag-cat-btn {
-    padding: .28rem .75rem; border: 1.5px solid var(--border); border-radius: 2px;
-    background: transparent; color: var(--text-muted); font-family: var(--ff-b);
-    font-size: .7rem; font-weight: 500; cursor: pointer; transition: all .12s;
+    padding: .38rem 1rem; flex-shrink: 0;
+    border: 1.5px solid #ddd8f2; border-radius: 20px;
+    background: transparent; color: var(--text-muted);
+    font-family: 'Inter', var(--ff-b), sans-serif;
+    font-size: .78rem; font-weight: 600; letter-spacing: .04em;
+    cursor: pointer; transition: all .12s; white-space: nowrap;
   }
-  .ag-cat-btn:hover { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
-  .ag-cat-btn.active { background: var(--brand); color: var(--on-brand); border-color: var(--brand); font-weight: 700; }
+  .ag-cat-btn:hover { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
+  .ag-cat-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); font-weight: 700; }
   .ag-cat-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
-  /* ── Main ── */
-  .ag-main { padding: 2rem clamp(1rem, 5vw, 4rem) 5rem; }
-  .ag-main-inner { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; }
-
-  /* ── Bloque día ── */
-  .ag-day {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: 0;
-    border-bottom: 1.5px solid var(--border);
-    padding: 1.75rem 0;
-  }
-  .ag-day--today .ag-day-head { position: relative; }
-  .ag-day:last-child { border-bottom: none; }
-
-  @media (max-width: 600px) {
-    .ag-day { grid-template-columns: 1fr; }
-    .ag-day-head { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; padding-right: 0; border-right: none; border-bottom: 1px solid var(--border); padding-bottom: .75rem; }
+  /* ── Área principal ── */
+  .ag-main { padding: 2.5rem clamp(1rem, 5vw, 3rem) 7rem; }
+  .ag-main-inner {
+    max-width: 960px; margin: 0 auto;
+    display: flex; flex-direction: column; gap: 3rem;
   }
 
-  /* Cabecera día */
-  .ag-day-head {
-    display: flex; flex-direction: column; gap: .1rem;
-    padding-right: 1.5rem; border-right: 1.5px solid var(--text-primary);
-    position: sticky; top: 150px; align-self: start;
-  }
-  .ag-day-name {
-    font-family: var(--ff-b); font-size: .65rem; font-weight: 800;
-    letter-spacing: .16em; color: var(--text-tertiary); text-transform: uppercase;
+  /* ── Bloque de día ── */
+  .ag-day { display: flex; flex-direction: column; gap: 1.1rem; }
+
+  /* Cabecera del día */
+  .ag-day-head { display: flex; align-items: center; gap: 1.1rem; }
+  .ag-day-label { display: flex; align-items: baseline; gap: .6rem; flex-shrink: 0; }
+  .ag-day-weekday {
+    font-family: 'Inter', var(--ff-b), sans-serif;
+    font-size: .78rem; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted);
   }
   .ag-day-num {
-    font-family: var(--ff-h); font-size: 3.5rem;
-    letter-spacing: .02em; color: var(--text-primary); line-height: 1;
+    font-family: 'Bebas Neue', var(--ff-h), sans-serif;
+    font-size: 3rem; line-height: 1;
+    color: var(--text-primary); letter-spacing: .02em;
   }
   .ag-day--today .ag-day-num { color: var(--brand); }
   .ag-day-month {
-    font-family: var(--ff-b); font-size: .68rem; font-weight: 700;
-    letter-spacing: .12em; color: var(--text-muted); text-transform: uppercase;
+    font-family: 'Inter', var(--ff-b), sans-serif;
+    font-size: .78rem; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted);
   }
-  .ag-today-badge {
-    display: inline-block; margin-top: .4rem;
-    background: var(--brand-subtle); color: var(--brand); font-size: .58rem; font-weight: 800;
-    letter-spacing: .1em; padding: .2rem .5rem; border-radius: 2px;
-    text-transform: uppercase; border: 1px solid var(--brand-border);
+  .ag-today-pill {
+    background: var(--brand); color: #fff;
+    font-family: 'Inter', var(--ff-b), sans-serif;
+    font-size: .65rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+    padding: .22rem .55rem; border-radius: 4px; margin-left: .3rem;
+    vertical-align: middle; position: relative; top: -2px;
   }
+  .ag-day-rule { flex: 1; height: 1px; background: #e4dff5; }
   .ag-day-count {
-    font-size: .62rem; color: var(--text-tertiary); margin-top: .5rem;
-    font-family: var(--ff-b);
+    font-family: 'Inter', var(--ff-b), sans-serif;
+    font-size: .75rem; font-weight: 500;
+    color: var(--text-tertiary); white-space: nowrap; flex-shrink: 0;
   }
 
-  /* Lista de eventos del día */
-  .ag-day-events {
-    padding-left: 1.5rem;
-    display: flex; flex-direction: column; gap: 0;
+  /* ── Lista de tarjetas ── */
+  .ag-day-cards { display: flex; flex-direction: column; gap: .75rem; }
+
+  /* ── Tarjeta de evento ── */
+  .ag-card {
+    background: #fff;
+    border: 1px solid #eae6f5;
+    border-left: 5px solid;
+    border-radius: 0 12px 12px 0;
+    padding: 1.2rem 1.4rem 1.1rem 1.2rem;
+    cursor: pointer;
+    display: flex; flex-direction: column; gap: .65rem;
+    transition: box-shadow .18s, transform .18s;
+    text-align: left;
   }
-  @media (max-width: 600px) {
-    .ag-day-events { padding-left: 0; }
+  .ag-card:hover {
+    box-shadow: 0 6px 28px rgba(79,62,200,.11);
+    transform: translateX(4px);
+  }
+  .ag-card:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+  /* Fila superior */
+  .ag-card-top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+  .ag-card-cat {
+    display: flex; align-items: center; gap: .45rem;
+    font-family: 'Inter', var(--ff-b), sans-serif;
+    font-size: .72rem; font-weight: 800;
+    letter-spacing: .1em; text-transform: uppercase;
+  }
+  .ag-cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .ag-card-price {
+    font-family: 'Inter', var(--ff-b), sans-serif;
+    font-size: .82rem; font-weight: 700;
+    color: var(--brand); white-space: nowrap;
   }
 
-  /* ── Fila de evento ── */
-  .ag-row {
-    display: flex; align-items: stretch;
-    gap: 0; width: 100%; background: transparent; border: none; padding: 0;
-    cursor: pointer; text-align: left;
-    border-bottom: 1px solid var(--border);
-    transition: background .12s;
-  }
-  .ag-row:last-child { border-bottom: none; }
-  .ag-row:hover { background: var(--bg); border-radius: 4px; }
-  .ag-row:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
-
-  /* Hora */
-  .ag-row-time {
-    width: 58px; flex-shrink: 0;
-    display: flex; flex-direction: column; align-items: flex-end;
-    justify-content: flex-start; padding: .875rem .75rem .875rem 0;
-    font-family: var(--ff-b);
-  }
-  .ag-time-val { font-size: .82rem; font-weight: 700; color: var(--text-primary); line-height: 1; }
-  .ag-time-h   { font-size: .6rem; color: var(--text-tertiary); margin-top: .1rem; }
-  .ag-time-tbd { font-size: 1.2rem; color: var(--border); line-height: 1; margin-top: .5rem; }
-
-  /* Acento de color */
-  .ag-row-accent {
-    width: 3px; flex-shrink: 0; border-radius: 2px; margin: .875rem 0;
-  }
-
-  /* Cuerpo */
-  .ag-row-body {
-    flex: 1; padding: .875rem .875rem .875rem .75rem;
-    display: flex; flex-direction: column; gap: .3rem; min-width: 0;
-  }
-  .ag-row-top {
-    display: flex; align-items: center; justify-content: space-between; gap: .5rem;
-  }
-  .ag-row-cat {
-    font-family: var(--ff-b); font-size: .6rem; font-weight: 800;
-    letter-spacing: .14em; text-transform: uppercase;
-  }
-  .ag-row-price {
-    font-family: var(--ff-b); font-size: .68rem; font-weight: 700;
-    color: var(--text-primary); white-space: nowrap; flex-shrink: 0;
-  }
-  .ag-row-title {
-    font-family: var(--ff-h); font-weight: 400; font-size: 1.25rem;
-    letter-spacing: .03em; color: var(--text-primary); line-height: 1.1; margin: 0;
+  /* Título */
+  .ag-card-title {
+    font-family: 'Inter', var(--ff-b), sans-serif;
+    font-size: 1.15rem; font-weight: 700; line-height: 1.3;
+    color: var(--text-primary); margin: 0;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transition: color .15s;
   }
-  .ag-row:hover .ag-row-title { color: var(--brand); }
+  .ag-card:hover .ag-card-title { color: var(--brand); }
 
-  .ag-row-meta {
-    display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  /* Fila inferior */
+  .ag-card-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: .75rem; flex-wrap: wrap;
   }
-  .ag-row-venue {
-    display: inline-flex; align-items: center; gap: 3px;
-    font-size: .68rem; color: var(--text-muted); font-family: var(--ff-b);
+  .ag-card-meta {
+    display: flex; align-items: center; flex-wrap: wrap;
+    gap: .25rem .4rem;
+    font-family: 'Inter', var(--ff-b), sans-serif;
+    font-size: .82rem; color: var(--text-muted); line-height: 1.4;
   }
-  .ag-row-district {
-    font-size: .62rem; color: var(--text-tertiary); font-family: var(--ff-b);
-  }
+  .ag-meta-venue { display: inline-flex; align-items: center; gap: 4px; }
+  .ag-meta-time  { display: inline-flex; align-items: center; gap: 4px; }
+  .ag-meta-dist  { color: var(--text-tertiary); }
+  .ag-dot { color: #ccc; }
 
-  /* Badges accesibilidad */
-  .ag-row-badges {
-    display: flex; gap: 4px; margin-top: .1rem;
-  }
+  /* Badges + botón */
+  .ag-card-right { display: flex; align-items: center; gap: .65rem; flex-shrink: 0; }
+  .ag-badges { display: flex; gap: 4px; }
   .ag-badge {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 20px; height: 20px; border-radius: 4px;
-    background: var(--brand-subtle); color: var(--brand); border: 1px solid var(--brand-border);
+    width: 26px; height: 26px; border-radius: 5px;
+    background: #ede9ff; color: var(--brand); border: 1px solid #d4cefc;
+    transition: background .12s;
   }
-
-  /* Flecha */
-  .ag-row-arrow {
-    display: flex; align-items: center;
-    padding: 0 .75rem 0 .25rem;
-    font-size: 1.2rem; color: var(--border);
-    transition: color .12s; flex-shrink: 0;
+  .ag-card:hover .ag-badge { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .ag-card-btn {
+    display: inline-flex; align-items: center; gap: .35rem;
+    border: 1.5px solid #ddd8f2; color: var(--text-muted);
+    font-family: 'Inter', var(--ff-b), sans-serif;
+    font-size: .75rem; font-weight: 600;
+    padding: .45rem 1rem; border-radius: 8px;
+    transition: all .15s; white-space: nowrap;
   }
-  .ag-row:hover .ag-row-arrow { color: var(--brand); }
+  .ag-card:hover .ag-card-btn { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
 
   /* ── Empty state ── */
   .ag-empty {
-    text-align: center; padding: 5rem 2rem;
-    display: flex; flex-direction: column; align-items: center; gap: .75rem;
+    text-align: center; padding: 6rem 2rem;
+    display: flex; flex-direction: column; align-items: center; gap: .9rem;
   }
-  .ag-empty-icon { font-size: 3rem; }
+  .ag-empty-icon { font-size: 3.5rem; line-height: 1; }
   .ag-empty-title {
-    font-family: var(--ff-h); font-size: 1.8rem;
-    letter-spacing: .06em; color: var(--text-primary);
+    font-family: 'Bebas Neue', var(--ff-h), sans-serif;
+    font-size: 2rem; letter-spacing: .06em;
+    color: var(--text-primary); margin: .5rem 0 0;
   }
-  .ag-empty-sub { font-size: .88rem; color: var(--text-tertiary); max-width: 380px; line-height: 1.6; }
+  .ag-empty-sub {
+    font-family: 'Inter', var(--ff-b), sans-serif;
+    font-size: .9rem; color: var(--text-tertiary);
+    max-width: 360px; line-height: 1.7;
+  }
 
   /* ── Skeleton ── */
   .ag-skel {
-    background: linear-gradient(90deg, var(--border) 25%, var(--bg-surface) 50%, var(--border) 75%);
-    background-size: 200%; animation: ag-skel 1.4s infinite;
+    background: linear-gradient(90deg, #eae6f6 25%, #f5f3fc 50%, #eae6f6 75%);
+    background-size: 200%; animation: ag-skel 1.5s infinite;
   }
-  @keyframes ag-skel { 0%{background-position:200% 0}100%{background-position:-200% 0} }
+  @keyframes ag-skel { from{background-position:200% 0} to{background-position:-200% 0} }
 
-  @media (max-width: 480px) {
-    .ag-week-label { min-width: 120px; font-size: .95rem; }
-    .ag-day-num { font-size: 2.8rem; }
-    .ag-row-title { font-size: 1.1rem; }
+  /* ── Responsivo ── */
+  @media (max-width: 640px) {
+    .ag-controls-inner { flex-direction: column; align-items: flex-start; }
+    .ag-week-label { min-width: 150px; font-size: 1.1rem; }
+    .ag-day-num { font-size: 2.4rem; }
+    .ag-card { padding: 1rem 1rem .95rem 1rem; }
+    .ag-card-title { font-size: 1rem; white-space: normal; }
+    .ag-card-btn { display: none; }
   }
 `;
