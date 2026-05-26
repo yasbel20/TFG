@@ -105,10 +105,11 @@ function parseEvent(item, i) {
       timeStr = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")} h`;
   }
 
-  let image = null;
-  if (item.media?.["@id"])  image = item.media["@id"];
-  else if (item.image)      image = item.image;
-  else if (item.media?.url) image = item.media.url;
+  const BASE_IMG = "https://www.madrid.es";
+  const rawImg = item.media?.["@id"] || item.image || item.media?.url || null;
+  const image = rawImg
+    ? (rawImg.startsWith("http") ? rawImg : BASE_IMG + rawImg)
+    : null;
 
   const venue = item.location?.["street-address"]
     || item.organization?.["organization-name"]

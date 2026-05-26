@@ -23,6 +23,38 @@ const UserIcon = () => (
   </svg>
 );
 
+const ChevronRight = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
+    <path d="m9 18 6-6-6-6"/>
+  </svg>
+);
+
+const ProfileIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+    <circle cx="12" cy="8" r="4"/>
+    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+  </svg>
+);
+
+const SettingsIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </svg>
+);
+
+const LogoutIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <line x1="21" y1="12" x2="9" y2="12"/>
+  </svg>
+);
+
 const MenuIcon = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
@@ -135,13 +167,26 @@ export default function Navbar({ onMenuOpen }) {
                   </button>
                   {userOpen && (
                     <div className="nb-user-menu">
-                      <span className="nb-user-name">{user.name}</span>
-                      <span className="nb-user-email">{user.email}</span>
+                      <div className="nb-user-header">
+                        <div className="nb-user-avatar">
+                          {user.avatar
+                            ? <img src={user.avatar} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", borderRadius:"50%" }}/>
+                            : user.name.charAt(0).toUpperCase()
+                          }
+                        </div>
+                        <div>
+                          <p className="nb-user-name">{user.name}</p>
+                          <p className="nb-user-email">{user.email}</p>
+                        </div>
+                      </div>
+                      <div className="nb-user-divider"/>
                       <button className="nb-user-menu-item" onClick={() => { setUserOpen(false); navigate("/perfil"); }}>
-                        Mi perfil
+                        <span className="nb-user-item-left"><ProfileIcon/> Mi perfil</span>
+                        <ChevronRight/>
                       </button>
+                      <div className="nb-user-divider"/>
                       <button className="nb-user-logout" onClick={() => { setUserOpen(false); logout(); }}>
-                        Cerrar sesión
+                        <LogoutIcon/> Cerrar sesión
                       </button>
                     </div>
                   )}
@@ -381,46 +426,68 @@ const css = `
   .nb-user-btn--active:hover { background: var(--brand-hover); border-color: var(--brand-hover); color: var(--on-brand); }
   .nb-user-menu {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 10px);
     right: 0;
-    background: var(--bg);
-    border: 1.5px solid var(--text-primary);
-    min-width: 180px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    min-width: 220px;
     display: flex;
     flex-direction: column;
     padding: .5rem 0;
     z-index: 600;
-    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    box-shadow: 0 8px 32px rgba(0,0,0,.12);
+    animation: nb-menu-in .15s ease;
+  }
+  @keyframes nb-menu-in {
+    from { opacity:0; transform:translateY(-6px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .nb-user-header {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .75rem 1rem 1rem;
+  }
+  .nb-user-avatar {
+    width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+    background: var(--brand, #3d47c8); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', sans-serif; font-size: .95rem; font-weight: 700;
+    overflow: hidden;
   }
   .nb-user-name {
-    font-family: var(--ff-b);
-    font-size: .82rem; font-weight: 700;
-    color: var(--text-primary); padding: .4rem 1rem .1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: .9rem; font-weight: 700;
+    color: #111827; margin: 0 0 .1rem;
   }
   .nb-user-email {
-    font-family: var(--ff-b);
-    font-size: .73rem; color: var(--text-muted);
-    padding: 0 1rem .6rem;
-    border-bottom: 1px solid var(--border);
+    font-family: 'Inter', sans-serif;
+    font-size: .78rem; color: #6b7280;
+    margin: 0;
+  }
+  .nb-user-divider {
+    height: 1px; background: #f3f4f6; margin: .25rem 0;
   }
   .nb-user-menu-item {
     background: none; border: none; cursor: pointer;
-    font-family: var(--ff-b); font-size: .75rem;
-    font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--text-secondary); padding: .6rem 1rem; text-align: left;
-    width: 100%; transition: background .12s;
-    border-top: 1px solid var(--border);
+    font-family: 'Inter', sans-serif; font-size: .9rem; font-weight: 500;
+    color: #374151; padding: .65rem 1rem;
+    text-align: left; width: 100%;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background .12s; border-radius: 0;
   }
-  .nb-user-menu-item:hover { background: var(--bg-surface); }
+  .nb-user-item-left {
+    display: flex; align-items: center; gap: .6rem;
+  }
+  .nb-user-menu-item:hover { background: #f9fafb; }
   .nb-user-logout {
     background: none; border: none; cursor: pointer;
-    font-family: var(--ff-b); font-size: .75rem;
-    font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--error); padding: .6rem 1rem; text-align: left;
-    width: 100%; transition: background .12s;
-    border-top: 1px solid var(--border);
+    font-family: 'Inter', sans-serif; font-size: .9rem; font-weight: 500;
+    color: #ef4444; padding: .65rem 1rem;
+    text-align: left; width: 100%;
+    display: flex; align-items: center; gap: .6rem;
+    transition: background .12s;
   }
-  .nb-user-logout:hover { background: var(--error-light); }
+  .nb-user-logout:hover { background: #fef2f2; }
 
   .nb-hamburger {
     display: none;
