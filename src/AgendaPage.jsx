@@ -476,7 +476,7 @@ export default function AgendaPage() {
 const css = `
   .ag-page {
     min-height: 100vh;
-    background: var(--bg-surface);
+    background: #ffffff;
     font-family: var(--ff-b);
     animation: ag-in .2s ease;
   }
@@ -528,8 +528,8 @@ const css = `
 
   /* ── Controles ── */
   .ag-controls {
-    background: var(--bg);
-    border-bottom: 1.5px solid var(--text-primary);
+    background: #ffffff;
+    border-bottom: 1px solid var(--border);
     position: sticky; top: 56px; z-index: 40;
   }
   .ag-controls-inner {
@@ -599,7 +599,7 @@ const css = `
   /* Cabecera día */
   .ag-day-head {
     display: flex; flex-direction: column; gap: .1rem;
-    padding-right: 1.5rem; border-right: 1.5px solid var(--text-primary);
+    padding-right: 1.5rem; border-right: 1px solid var(--border);
     position: sticky; top: 150px; align-self: start;
   }
   .ag-day-name {
@@ -644,7 +644,7 @@ const css = `
     transition: background .12s;
   }
   .ag-row:last-child { border-bottom: none; }
-  .ag-row:hover { background: var(--bg); border-radius: 4px; }
+  .ag-row:hover { background: var(--brand-subtle); border-radius: 4px; }
   .ag-row:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
 
   /* Hora */

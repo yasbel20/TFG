@@ -234,6 +234,7 @@ export default function INCLUGOHome() {
       <Navbar />
 
       {/* ── MAIN ── */}
+     
       <main id="main-content">
 
         {/* ── HERO ── */}
@@ -476,23 +477,6 @@ export default function INCLUGOHome() {
 
       </main>
 
-      {/* ── FOOTER ── */}
-      <footer className="footer" role="contentinfo">
-        <p className="footer-logo" aria-label="INCLUGO">INCLU<em>GO</em></p>
-        <nav aria-label="Navegación del pie de página">
-          <ul className="footer-links" role="list">
-            {["Eventos","Accesibilidad","Agenda","Acerca de","Contacto"].map(l => (
-              <li key={l}>
-                <button className="footer-link"
-                  onClick={l === "Agenda" ? () => navigate("/agenda") : l === "Eventos" ? () => navigate("/eventos") : undefined}>
-                  {l}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        <p className="footer-copy">TFG DAW · ILERNA Madrid · 2025/2026 · <span lang="es">Datos: Ayuntamiento de Madrid</span></p>
-      </footer>
 
     </div>
   );

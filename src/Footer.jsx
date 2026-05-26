@@ -1,0 +1,116 @@
+import { useNavigate } from "react-router-dom";
+
+export default function Footer() {
+  const navigate = useNavigate();
+  const year = new Date().getFullYear();
+
+  return (
+    <footer style={s.footer}>
+
+      {/* ── Top section ── */}
+      <div style={s.top}>
+
+        {/* Columns */}
+        <div style={s.cols}>
+
+          <div style={s.col}>
+            <p style={s.colTitle}>Explorar</p>
+            <ul style={s.list}>
+              <li><button style={s.lnk} onClick={() => navigate("/eventos")}>Todos los eventos</button></li>
+              <li><button style={s.lnk} onClick={() => navigate("/eventos/musica")}>Música</button></li>
+              <li><button style={s.lnk} onClick={() => navigate("/eventos/teatro")}>Teatro</button></li>
+              <li><button style={s.lnk} onClick={() => navigate("/eventos/exposicion")}>Exposiciones</button></li>
+              <li><button style={s.lnk} onClick={() => navigate("/eventos/danza")}>Danza</button></li>
+            </ul>
+          </div>
+
+          <div style={s.col}>
+            <p style={s.colTitle}>Soporte</p>
+            <ul style={s.list}>
+              <li><button style={s.lnk}>Preguntas frecuentes</button></li>
+              <li><button style={s.lnk}>Centro de ayuda</button></li>
+              <li><button style={s.lnk}>Contacto</button></li>
+            </ul>
+          </div>
+
+          <div style={s.col}>
+            <p style={s.colTitle}>Compañía</p>
+            <ul style={s.list}>
+              <li><button style={s.lnk}>Sobre nosotros</button></li>
+              <li><button style={s.lnk}>Accesibilidad</button></li>
+            </ul>
+          </div>
+
+          <div style={s.col}>
+            <p style={s.colTitle}>Legal</p>
+            <ul style={s.list}>
+              <li><button style={s.lnk}>Política de privacidad</button></li>
+              <li><button style={s.lnk}>Política de cookies</button></li>
+              <li><button style={s.lnk}>Aviso legal</button></li>
+            </ul>
+          </div>
+
+        </div>
+
+        {/* Divider (vertical, only desktop) */}
+        <div style={s.vDivider} aria-hidden="true" />
+
+        {/* Right: logo */}
+        <div style={s.brand}>
+          <button style={s.logoBtn} onClick={() => navigate("/")} aria-label="INCLUGO — ir al inicio">
+            <img src="/img/InclugoLogo/LogoClaro.png" className="ft-logo ft-logo--light" alt="INCLUGO" style={s.logo} />
+            <img src="/img/InclugoLogo/LogoOscuro.png" className="ft-logo ft-logo--dark"  alt="INCLUGO" style={{...s.logo, display:"none"}} />
+          </button>
+        </div>
+
+      </div>
+
+
+      <style>{css}</style>
+    </footer>
+  );
+}
+
+const s = {
+  footer:   { width: "100%", background: "var(--bg)", borderTop: "1px solid var(--border)", marginTop: "auto" },
+  top:      { maxWidth: "1280px", margin: "0 auto", padding: "clamp(1.5rem,3vw,2.5rem) clamp(1.25rem,5vw,6rem)", display: "flex", gap: "clamp(2rem,5vw,4rem)", alignItems: "flex-start" },
+  brand:    { display: "flex", flexDirection: "column", flexShrink: 0 },
+  logoBtn:  { background: "none", border: "none", cursor: "pointer", padding: 0, alignSelf: "flex-start" },
+  logo:     { height: "clamp(36px,5vw,46px)", width: "auto" },
+  vDivider: { width: "1px", alignSelf: "stretch", background: "var(--border)", flexShrink: 0 },
+  cols:     { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "clamp(1.5rem,4vw,3rem)", flex: 1 },
+  col:      { display: "flex", flexDirection: "column", gap: ".75rem" },
+  colTitle: { fontFamily: "var(--ff-b)", fontSize: ".7rem", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--text-muted)", margin: 0, marginBottom: ".25rem" },
+  list:     { listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: ".35rem" },
+  lnk:      { background: "none", border: "none", cursor: "pointer", fontFamily: "var(--ff-b)", fontSize: ".88rem", color: "var(--text-secondary)", padding: 0, textAlign: "left", transition: "color .15s" },
+  bottom:   { borderTop: "1px solid var(--border)", padding: "1.1rem clamp(1.25rem,5vw,6rem)", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: ".5rem" },
+  copy:     { fontFamily: "var(--ff-b)", fontSize: ".72rem", color: "var(--text-muted)", letterSpacing: ".06em", textTransform: "uppercase" },
+};
+
+const css = `
+  footer button:hover { color: var(--brand) !important; }
+
+  .hi-contrast .ft-logo--light { display: none !important; }
+  .hi-contrast .ft-logo--dark  { display: block !important; }
+
+  @media (max-width: 1024px) {
+    footer > div:first-of-type > div:first-child {
+      grid-template-columns: repeat(2,1fr) !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    footer > div:first-of-type {
+      flex-direction: column !important;
+    }
+    footer > div:first-of-type > div[style*="width: 1px"] {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    footer > div:first-of-type > div:first-child {
+      grid-template-columns: 1fr !important;
+    }
+  }
+`;

@@ -6,6 +6,7 @@ import AgendaPage from "./AgendaPage";
 import EventDetailPage from "./EventDetailPage";
 import PerfilPage from "./PerfilPage";
 import WelcomeSplash from "./WelcomeSplash";
+import Footer from "./Footer";
 
 function App() {
   return (
@@ -17,10 +18,10 @@ function App() {
           <Route path="/eventos/:cat" element={<EventsPage />} />
           <Route path="/agenda"       element={<AgendaPage />} />
           <Route path="/evento/:id"   element={<EventDetailPage />} />
-          <Route path="/perfil"       element={<PerfilPage />}
-           />
-          <Route path="/bienvenida" element={<WelcomeSplash />} />
+          <Route path="/perfil"       element={<PerfilPage />} />
+          <Route path="/bienvenida"   element={<WelcomeSplash />} />
         </Routes>
+        <Footer />
       </BrowserRouter>
     </AuthProvider>
   );
