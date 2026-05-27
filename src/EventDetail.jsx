@@ -236,11 +236,6 @@ function PrefsPanel({ prefs, onChange, onClose, onDownloadMp3 }) {
           {item(<EyeIcon/>,      "Visibilidad de texto mejorada","textVis",    prefs.textVis)}
           {item(<MaskIcon/>,     "Máscara de página",           "pageMask",    prefs.pageMask)}
 
-          <div className="rs-pref-divider"/>
-
-          <button className="rs-pref-download" onClick={onDownloadMp3} aria-label="Descargar audio MP3 de la descripción">
-            <DownloadIcon/> Descargar MP3
-          </button>
         </div>
 
         <div className="rs-panel-foot">
