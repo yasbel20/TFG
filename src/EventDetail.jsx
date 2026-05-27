@@ -234,8 +234,6 @@ function PrefsPanel({ prefs, onChange, onClose, onDownloadMp3 }) {
           {item(<KeyboardIcon/>, "Modo teclado",               "keyboard",    prefs.keyboard)}
           {item(<ClickIcon/>,    "Clic y escuchar",             "clickListen", prefs.clickListen)}
           {item(<EyeIcon/>,      "Visibilidad de texto mejorada","textVis",    prefs.textVis)}
-          {item(<FormIcon/>,     "Lectura de formularios",      "formRead",    prefs.formRead)}
-          {item(<TextIcon/>,     "Modo texto",                  "textMode",    prefs.textMode)}
           {item(<MaskIcon/>,     "Máscara de página",           "pageMask",    prefs.pageMask)}
 
           <div className="rs-pref-divider"/>
