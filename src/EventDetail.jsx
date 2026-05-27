@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "./AuthContext";
+import { useAccessibility } from "./AccessibilityContext";
 import { WheelIcon as WheelIconShared, HandsIcon, BucleIcon as BucleIconShared, PodoIcon as PodoIconShared } from "./AccessibilityIcons";
 
 const P = {
@@ -325,14 +326,15 @@ export default function EventDetail({ ev, onBack }) {
   const [shareMsg, setShareMsg] = useState("");
   const [showPrefs, setShowPrefs] = useState(false);
   const [speechRate, setSpeechRate] = useState(0.95);
-  const [prefs, setPrefs] = useState({
-    keyboard:    false,
-    clickListen: false,
-    textVis:     false,
-    formRead:    false,
-    textMode:    false,
-    pageMask:    false,
-  });
+  const { prefs: globalPrefs, updatePref: updateGlobalPref } = useAccessibility();
+  const [localPrefs, setLocalPrefs] = useState({ textMode: false });
+  const prefs = { ...globalPrefs, ...localPrefs };
+  const setPrefs = (fn) => {
+    const next = typeof fn === "function" ? fn(prefs) : fn;
+    const { textMode, ...globals } = next;
+    Object.entries(globals).forEach(([k, v]) => { if (globalPrefs[k] !== v) updateGlobalPref(k, v); });
+    setLocalPrefs(p => ({ ...p, textMode: next.textMode ?? p.textMode }));
+  };
 
   const fallbackBg = CAT_COLORS[ev.cat] || "#111111";
   // Solo leemos la descripción — así el resaltado palabra a palabra
