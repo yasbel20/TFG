@@ -417,11 +417,6 @@ export default function EventsPage() {
                 </div>
                 <span className="ep-stat-sep"/>
                 <div className="ep-stat-item">
-                  <strong>{loading ? "—" : filtered.length}</strong>
-                  <span>accesibles</span>
-                </div>
-                <span className="ep-stat-sep"/>
-                <div className="ep-stat-item">
                   <strong>{loading ? "—" : freeCount}</strong>
                   <span>gratis</span>
                 </div>

@@ -2,22 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 
-// ─── Paleta INCLUGO ───────────────────────────────────────────────────────────
-const P = {
-  yellow: "#C9D11A",
-  navy:   "#1A237E",
-  blue:   "#3D47C8",
-  cream:  "#F2F0E6",
-};
 
 const CAT_ACCENT = {
   "Música":     "#3D47C8",
-  "Teatro":     "#7B1FA2",
-  "Exposición": "#00695C",
-  "Cine":       "#BF360C",
-  "Danza":      "#AD1457",
+  "Teatro":     "#7C3AED",
+  "Exposición": "#0369A1",
+  "Cine":       "#92400E",
+  "Danza":      "#DB2777",
   "Cultura":    "#1A237E",
-  "Deporte":    "#2E7D32",
 };
 
 // ─── Iconos ───────────────────────────────────────────────────────────────────
@@ -234,7 +226,7 @@ function parseDateKey(dateKey) {
 
 // ─── Tarjeta de evento ────────────────────────────────────────────────────────
 function AgendaRow({ ev, onOpen }) {
-  const accent = CAT_ACCENT[ev.cat] || P.navy;
+  const accent = CAT_ACCENT[ev.cat] || CAT_ACCENT["Cultura"];
   return (
     <article
       className="ag-card"
@@ -575,9 +567,9 @@ const css = `
   .ag-day-num {
     font-family: 'Bebas Neue', var(--ff-h), sans-serif;
     font-size: 3rem; line-height: 1;
-    color: var(--text-primary); letter-spacing: .02em;
+    color: var(--text-muted); letter-spacing: .02em;
   }
-  .ag-day--today .ag-day-num { color: var(--brand); }
+  .ag-day--today .ag-day-num { color: var(--text-primary); }
   .ag-day-month {
     font-family: 'Inter', var(--ff-b), sans-serif;
     font-size: .78rem; font-weight: 700;
@@ -603,8 +595,9 @@ const css = `
   /* ── Tarjeta de evento ── */
   .ag-card {
     background: #ffffff;
-    border: 1px solid #eae6f5;
+    border: none;
     border-left: 5px solid;
+    box-shadow: inset 0 0 0 1px #eae6f5;
     border-radius: 0;
     padding: 1.2rem 1.4rem 1.1rem 1.2rem;
     cursor: pointer;
