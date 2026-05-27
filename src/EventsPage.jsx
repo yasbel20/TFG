@@ -678,7 +678,7 @@ const css = `
   }
   .ep-feat-dot { color:rgba(255,255,255,.35); }
   .ep-feat-bottom { display:flex; align-items:center; justify-content:space-between; gap:.5rem; }
-  .ep-feat-free { font-size:.72rem; font-weight:700; color:#4ade80; letter-spacing:.06em; text-transform:uppercase; flex-shrink:0; }
+  .ep-feat-free { font-size:.72rem; font-weight:700; color:#fff; letter-spacing:.06em; text-transform:uppercase; flex-shrink:0; }
 
   /* ── CTA band ── */
   .ep-cta-band {
@@ -785,7 +785,7 @@ const css = `
   .ep-meta-row { display:flex; align-items:center; gap:5px; font-size:.82rem; color:var(--text-muted); }
   .ep-meta-venue { color:var(--text-tertiary); }
   .ep-bottom-row { display:flex; align-items:center; padding-top:.4rem; border-top:1px solid var(--border); margin-top:auto; }
-  .ep-price-free { font-size:.75rem; font-weight:700; letter-spacing:.06em; color:var(--success); }
+  .ep-price-free { font-size:.75rem; font-weight:700; letter-spacing:.06em; color:var(--text-primary); }
   .ep-price-paid { font-size:.75rem; font-weight:700; color:var(--text-primary); }
   .ep-access-chip { margin-bottom:.45rem; }
 
