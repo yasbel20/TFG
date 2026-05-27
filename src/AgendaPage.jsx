@@ -604,7 +604,7 @@ const css = `
   .ag-card-price-free {
     font-family: 'Inter', var(--ff-b), sans-serif;
     font-size: .82rem; font-weight: 700;
-    color: var(--success); white-space: nowrap;
+    color: var(--text-primary); white-space: nowrap;
   }
   .ag-card-price-paid {
     font-family: 'Inter', var(--ff-b), sans-serif;
