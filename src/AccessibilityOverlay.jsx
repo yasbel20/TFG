@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAccessibility } from "./AccessibilityContext";
 
 const Ico = ({ d, size = 16, fill = "none", stroke = "currentColor", sw = 2 }) => (
@@ -81,11 +81,17 @@ export default function AccessibilityOverlay() {
 
 function PageMask() {
   const [y, setY] = useState(120);
+
+  useEffect(() => {
+    const handler = e => setY(e.clientY);
+    document.addEventListener("mousemove", handler);
+    return () => document.removeEventListener("mousemove", handler);
+  }, []);
+
   return (
     <div
       className="ao-mask"
       style={{ "--mask-y": `${y}px` }}
-      onMouseMove={e => setY(e.clientY)}
       aria-hidden="true"
     />
   );

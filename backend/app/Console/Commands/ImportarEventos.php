@@ -68,6 +68,14 @@ class ImportarEventos extends Command
         return Command::SUCCESS;
     }
 
+    private function extraerImagen(array $item): ?string
+    {
+        $BASE = 'https://www.madrid.es';
+        $raw  = $item['media']['@id']  ?? $item['media']['url'] ?? $item['image'] ?? null;
+        if (!$raw) return null;
+        return str_starts_with($raw, 'http') ? $raw : $BASE . $raw;
+    }
+
     private function procesarEvento(array $item): void
     {
         $apiId = $item['id'] ?? null;
@@ -125,7 +133,7 @@ class ImportarEventos extends Command
                 'fecha_fin'    => isset($item['dtend'])   ? date('Y-m-d H:i:s', strtotime($item['dtend']))   : null,
                 'precio'       => $precio,
                 'gratuito'     => $gratuito,
-                'imagen_url'   => null,
+                'imagen_url'   => $this->extraerImagen($item),
                 'url_externo'  => $item['link'] ?? null,
                 'recinto_id'   => $recinto->id,
             ]

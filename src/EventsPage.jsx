@@ -149,11 +149,20 @@ function useEvents() {
   const [loading, setLoading]     = useState(true);
 
   useEffect(() => {
-    fetch("/api-madrid/egob/catalogo/206974-0-agenda-eventos-culturales-100.json")
-      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-      .then(data => {
+    const madridFetch = fetch("/api-madrid/egob/catalogo/206974-0-agenda-eventos-culturales-100.json")
+      .then(r => { if (!r.ok) throw new Error(); return r.json(); });
+    const imgFetch = fetch("/api/imagenes-eventos")
+      .then(r => r.ok ? r.json() : {})
+      .catch(() => ({}));
+
+    Promise.all([madridFetch, imgFetch])
+      .then(([data, imgMap]) => {
         const parsed = (data["@graph"] || []).map(parseEvent).filter(e => e.access.length > 0);
-        setAllEvents(parsed);
+        const withImgs = parsed.map(ev => ({
+          ...ev,
+          image: imgMap[ev.id] || ev.image,
+        }));
+        setAllEvents(withImgs);
         setLoading(false);
       })
       .catch(() => { setAllEvents(SAMPLE); setLoading(false); });
