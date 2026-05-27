@@ -424,14 +424,6 @@ export default function EventDetail({ ev, onBack }) {
 
       {prefs.pageMask && <PageMask/>}
 
-      {showPrefs && (
-        <PrefsPanel
-          prefs={prefs}
-          onChange={updatePref}
-          onClose={() => setShowPrefs(false)}
-          onDownloadMp3={handleDownloadMp3}
-        />
-      )}
 
       <main className={pageClasses} style={pageStyle} id="main-content">
 
@@ -470,9 +462,7 @@ export default function EventDetail({ ev, onBack }) {
                 onClick={cycleFontSize} aria-label={`Tamaño de texto: ${fontLabel}`}>
                 <span className="ed-font-label">{fontLabel}</span>
               </button>
-              <button className="ed-icon-btn" onClick={() => setShowPrefs(p => !p)} aria-label="Preferencias">
-                <SettingsIcon/>
-              </button>
+
               <button className="ed-icon-btn ed-icon-btn--close" onClick={onBack} aria-label="Cerrar">
                 <CloseIcon/>
               </button>
