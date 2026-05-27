@@ -11,14 +11,14 @@ const CAT_COLORS = {
   "Danza":      "#141414", "Cultura":    "#111111", "Deporte": "#1A1A1A",
 };
 const CAT_HERO = {
-  "Música":     "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1400&q=80",
-  "Teatro":     "https://images.unsplash.com/photo-1503095396549-807759245b35?w=1400&q=80",
-  "Exposición": "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=1400&q=80",
-  "Cine":       "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1400&q=80",
-  "Danza":      "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=1400&q=80",
-  "Cultura":    "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=1400&q=80",
-  "Deporte":    "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1400&q=80",
-  "Todos":      "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1400&q=80",
+  "Música":     "/img/musica.jpg",
+  "Teatro":     "/img/teatro.jpg",
+  "Exposición": "/img/exposicion.jpg",
+  "Cine":       "/img/cine.jpg",
+  "Danza":      "/img/danza.jpg",
+  "Cultura":    "/img/cultura.jpg",
+  "Deporte":    "/img/hero.jpg",
+  "Todos":      "/img/portada.jpg",
 };
 
 // ─── Iconos ───────────────────────────────────────────────────────────────────
