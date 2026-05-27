@@ -191,11 +191,6 @@ function FilterDropdown({ label, active, onClear, children }) {
       {open && (
         <div className="ep-dd-panel" role="dialog" aria-label={`Filtro: ${label}`}>
           {children({ close: () => setOpen(false) })}
-          {active && (
-            <button className="ep-dd-clear" onClick={() => { onClear(); setOpen(false); }}>
-              Quitar filtro
-            </button>
-          )}
         </div>
       )}
     </div>
@@ -255,7 +250,7 @@ function GridCard({ ev, onOpenDetail }) {
       <div className="ep-img-wrap">
         {ev.image && imgOk
           ? <img src={ev.image} alt={ev.title} className="ep-img" onError={() => setImgOk(false)} loading="lazy"/>
-          : <div className="ep-img-fallback" style={{ background: CAT_COLORS[ev.cat] || "#111" }}><div className="ep-fallback-pattern"/></div>
+          : <div className="ep-img-fallback ep-img-noimg"><span className="ep-noimg-cat">{ev.cat}</span></div>
         }
         {user && (
           <button className={`ep-fav-btn${isFav ? " ep-fav-on" : ""}`}
@@ -395,9 +390,9 @@ export default function EventsPage() {
     { key: "mes",    label: "Este mes" },
   ];
   const ACC_FILTER_OPTS = [
-    { key: "silla",  label: "Movilidad reducida" },
+    { key: "silla",  label: "Silla de ruedas" },
     { key: "bucle",  label: "Bucle magnético" },
-    { key: "podo",   label: "Apoyo visual" },
+    { key: "podo",   label: "Podotáctil" },
     { key: "signos", label: "Lengua de signos" },
   ];
 
@@ -413,7 +408,6 @@ export default function EventsPage() {
           <div className="ep-hero-inner">
 
             <div className="ep-hero-left">
-              <span className="ep-hero-tag">{catLabel}</span>
               <h1 className="ep-hero-title">{catLabel}</h1>
               <p className="ep-hero-sub">Eventos culturales accesibles para todas las personas</p>
               <div className="ep-hero-stats">
@@ -434,20 +428,6 @@ export default function EventsPage() {
               </div>
             </div>
 
-            <div className="ep-acc-panel">
-              <p className="ep-acc-panel-q">¿Qué tipo de accesibilidad necesitas?</p>
-              <div className="ep-acc-panel-grid">
-                {ACC_OPTIONS.map(({ key, label, Icon }) => (
-                  <button key={label}
-                    className={`ep-acc-opt${activeAccess === key ? " ep-acc-opt--on" : ""}`}
-                    onClick={() => setActiveAccess(activeAccess === key ? null : key)}
-                    aria-pressed={activeAccess === key}>
-                    <span className="ep-acc-opt-icon"><Icon/></span>
-                    <span>{label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
 
           </div>
         </section>
@@ -470,12 +450,11 @@ export default function EventsPage() {
             >
               {({ close }) => (
                 <>
-                  <p className="ep-dd-heading">Cuándo</p>
                   {DATE_OPTS.map(o => (
                     <button key={o.key}
                       className={`ep-dd-opt${dateFilter === o.key ? " ep-dd-opt--on" : ""}`}
                       onClick={() => { setDateFilter(dateFilter === o.key ? null : o.key); close(); }}>
-                      {o.label}
+                      {o.label.toUpperCase()}
                     </button>
                   ))}
                 </>
@@ -490,12 +469,11 @@ export default function EventsPage() {
             >
               {({ close }) => (
                 <>
-                  <p className="ep-dd-heading">Tipo de accesibilidad</p>
                   {ACC_FILTER_OPTS.map(o => (
                     <button key={o.key}
                       className={`ep-dd-opt${activeAccess === o.key ? " ep-dd-opt--on" : ""}`}
                       onClick={() => { setActiveAccess(activeAccess === o.key ? null : o.key); close(); }}>
-                      {o.label}
+                      {o.label.toUpperCase()}
                     </button>
                   ))}
                 </>
@@ -510,8 +488,7 @@ export default function EventsPage() {
             >
               {({ close }) => (
                 <>
-                  <p className="ep-dd-heading">Precio</p>
-                  {[["gratis","Gratis"],["pago","De pago"]].map(([k,l]) => (
+                  {[["gratis","GRATIS"],["pago","DE PAGO"]].map(([k,l]) => (
                     <button key={k}
                       className={`ep-dd-opt${priceFilter === k ? " ep-dd-opt--on" : ""}`}
                       onClick={() => { setPriceFilter(priceFilter === k ? null : k); close(); }}>
@@ -525,67 +502,8 @@ export default function EventsPage() {
           </div>
         </div>
 
-        {/* ── Eventos destacados ── */}
-        <section className="ep-section">
-          <div className="ep-section-head">
-            <div>
-              <h2 className="ep-section-title">Eventos destacados</h2>
-              <p className="ep-section-sub">Selección accesible para ti</p>
-            </div>
-            <button className="ep-see-all">Ver todos <ArrowRight/></button>
-          </div>
-          <div className="ep-feat-track">
-            {loading
-              ? Array.from({length:5}).map((_,i) => <SkeletonCard key={i} featured/>)
-              : featured.map(ev => <FeaturedCard key={ev.id} ev={ev} onOpenDetail={openDetail}/>)
-            }
-          </div>
-        </section>
 
-        {/* ── CTA band ── */}
-        <div className="ep-cta-band">
-          <div className="ep-cta-inner">
-            <div className="ep-cta-text">
-              <span className="ep-cta-eyebrow">INCLUGO</span>
-              <h3 className="ep-cta-heading">¿Necesitas ayuda para elegir?</h3>
-              <p className="ep-cta-desc">Nuestro equipo puede orientarte hacia los eventos más adecuados para tus necesidades de accesibilidad.</p>
-              <button className="ep-cta-btn">Contáctanos por aquí</button>
-            </div>
-            <div className="ep-trust-grid">
-              {[
-                ["Eventos verificados",          "Información comprobada con fuentes oficiales"],
-                ["Información clara",            "Accesibilidad detallada por tipo de necesidad"],
-                ["Organizaciones comprometidas", "Con la inclusión y la diversidad funcional"],
-              ].map(([title, desc]) => (
-                <div key={title} className="ep-trust-item">
-                  <span className="ep-trust-icon"><CheckIcon/></span>
-                  <div>
-                    <strong>{title}</strong>
-                    <span>{desc}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
 
-        {/* ── Explora por accesibilidad ── */}
-        <section className="ep-section">
-          <div className="ep-section-head">
-            <h2 className="ep-section-title">Explora por accesibilidad</h2>
-            <button className="ep-see-all">Ver todos <ArrowRight/></button>
-          </div>
-          <div className="ep-explore-grid">
-            {ACC_OPTIONS.map(({ key, label, Icon }) => (
-              <button key={label}
-                className={`ep-explore-card${activeAccess === key ? " ep-explore-card--on" : ""}`}
-                onClick={() => setActiveAccess(activeAccess === key ? null : key)}>
-                <span className="ep-explore-icon"><Icon/></span>
-                <span className="ep-explore-label">{label}</span>
-              </button>
-            ))}
-          </div>
-        </section>
 
         {/* ── Eventos próximos ── */}
         <section className="ep-section ep-main-section">
@@ -614,7 +532,8 @@ export default function EventsPage() {
 
 // ─── Estilos ──────────────────────────────────────────────────────────────────
 const css = `
-  .ep-page { min-height:100vh; background:var(--bg-page); font-family:'Inter',var(--ff-b),system-ui,sans-serif; }
+  .ep-page { min-height:100vh; background:#ffffff; font-family:'Inter',var(--ff-b),system-ui,sans-serif; }
+  .hi-contrast .ep-page { background:var(--bg-surface); }
 
   /* ── Hero ── */
   .ep-hero {
@@ -637,7 +556,7 @@ const css = `
     border:1.5px solid rgba(255,255,255,.28); background:rgba(255,255,255,.08);
     color:rgba(255,255,255,.9); font-size:.75rem; font-weight:700;
     letter-spacing:.14em; text-transform:uppercase;
-    padding:.3rem .75rem; border-radius:3px; margin-bottom:.875rem;
+    padding:.3rem .75rem; border-radius:0; margin-bottom:.875rem;
   }
   .ep-hero-title {
     font-family:'Bebas Neue',var(--ff-h),sans-serif; font-weight:400;
@@ -679,14 +598,15 @@ const css = `
   }
 
   /* ── Filter bar ── */
-  .ep-filterbar { background:#fff; border-bottom:1px solid var(--border); padding:.75rem clamp(1.25rem,5vw,6rem); }
+  .ep-filterbar { background:#ffffff; border-bottom:1px solid var(--border); padding:.75rem clamp(1.25rem,5vw,6rem); }
+  .hi-contrast .ep-filterbar { background:var(--bg-surface); }
   .ep-filterbar-inner {
     max-width:1280px; margin:0 auto;
     display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
   }
   .ep-search-wrap {
     display:flex; align-items:center; gap:.5rem;
-    border:1px solid var(--border); border-radius:var(--radius-pill);
+    border:1px solid var(--border); border-radius:0;
     padding:.48rem .9rem; background:#fff;
     flex:1; min-width:160px; max-width:300px;
     color:var(--text-muted); transition:border-color .15s; cursor:text;
@@ -699,10 +619,10 @@ const css = `
   .ep-search::placeholder { color:var(--text-muted); }
   .ep-filter-btn {
     display:inline-flex; align-items:center; gap:.4rem;
-    padding:.45rem .9rem; border-radius:var(--radius-pill);
+    padding:.45rem .9rem; border-radius:0;
     border:1px solid var(--border); background:#fff;
-    color:var(--text-secondary); font-family:'Inter',var(--ff-b),sans-serif;
-    font-size:.87rem; font-weight:500; cursor:pointer;
+    color:var(--text-secondary); font-family:var(--ff-b);
+    font-size:.78rem; font-weight:600; cursor:pointer; text-transform:uppercase; letter-spacing:.1em;
     transition:all .15s; white-space:nowrap;
   }
   .ep-filter-btn:hover { border-color:var(--brand); color:var(--brand); }
@@ -775,7 +695,7 @@ const css = `
   .ep-cta-eyebrow {
     display:inline-block; background:var(--brand-subtle); color:var(--brand);
     font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
-    padding:.25rem .75rem; border-radius:3px; margin-bottom:.875rem;
+    padding:.25rem .75rem; border-radius:0; margin-bottom:.875rem;
   }
   .ep-cta-heading { font-family:'Bebas Neue',var(--ff-h),sans-serif; font-weight:400; font-size:1.7rem; letter-spacing:.04em; color:var(--text-primary); margin:0 0 .6rem; line-height:1.2; }
   .ep-cta-desc { font-size:.95rem; color:var(--text-muted); line-height:1.65; margin:0 0 1.25rem; max-width:370px; }
@@ -839,12 +759,27 @@ const css = `
   .ep-img { width:100%; height:100%; object-fit:cover; transition:transform .35s; display:block; }
   .ep-card:hover .ep-img { transform:scale(1.04); }
   .ep-img-fallback { width:100%; height:100%; }
-  .ep-card:hover .ep-img-fallback { filter:brightness(1.1); }
-  .ep-fallback-pattern {
-    width:100%; height:100%;
-    background-image:repeating-linear-gradient(45deg,transparent,transparent 18px,rgba(255,255,255,.04) 18px,rgba(255,255,255,.04) 19px);
+  .ep-img-noimg {
+    background: #f0eefb;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .6rem;
   }
-  .ep-info { padding:.75rem 0 .5rem; display:flex; flex-direction:column; gap:0; }
+  .ep-img-noimg::before {
+    content: "";
+    display: block;
+    width: 48px; height: 48px;
+    background: var(--brand-subtle);
+    border-radius: 50%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%233D47C8' stroke-width='1.8' stroke-linecap='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2'/%3E%3Ccircle cx='8.5' cy='8.5' r='1.5'/%3E%3Cpath d='m21 15-5-5L5 21'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 24px;
+  }
+  .ep-noimg-cat {
+    font-family: var(--ff-b); font-size: .72rem; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--brand);
+    opacity: .7;
+  }
+  .ep-info { padding:.75rem 0 .5rem; display:flex; flex-direction:column; gap:0; flex:1; }
   .ep-cat { font-family:'Inter',var(--ff-b),sans-serif; font-size:.73rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--brand); margin-bottom:.3rem; }
   .ep-title {
     font-family:'Bebas Neue',var(--ff-h),sans-serif; font-weight:400; font-size:1.45rem; letter-spacing:.04em;
@@ -854,8 +789,8 @@ const css = `
   .ep-meta-block { display:flex; flex-direction:column; gap:.18rem; margin-bottom:.5rem; }
   .ep-meta-row { display:flex; align-items:center; gap:5px; font-size:.82rem; color:var(--text-muted); }
   .ep-meta-venue { color:var(--text-tertiary); }
-  .ep-bottom-row { display:flex; align-items:center; padding-top:.4rem; border-top:1px solid var(--border); }
-  .ep-price-free { font-size:.75rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--success); }
+  .ep-bottom-row { display:flex; align-items:center; padding-top:.4rem; border-top:1px solid var(--border); margin-top:auto; }
+  .ep-price-free { font-size:.75rem; font-weight:700; letter-spacing:.06em; color:var(--success); }
   .ep-price-paid { font-size:.75rem; font-weight:700; color:var(--text-primary); }
   .ep-access-chip { margin-bottom:.45rem; }
 
@@ -876,33 +811,33 @@ const css = `
     background:var(--brand); flex-shrink:0;
   }
   .ep-dd-panel {
-    position:absolute; top:calc(100% + 6px); left:0;
-    background:#fff; border:1px solid var(--border); border-radius:10px;
+    position:absolute; top:calc(100% + .75rem + 1px); left:0;
+    background:var(--bg); border:1px solid var(--border); border-radius:0;
     box-shadow:0 8px 32px rgba(0,0,0,.12);
-    min-width:210px; z-index:300; padding:.625rem;
+    min-width:210px; z-index:300; padding:0; overflow:hidden;
     animation:ep-dd-in .14s ease;
   }
   @keyframes ep-dd-in { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
   .ep-dd-heading {
     font-size:.75rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
-    color:var(--text-muted); margin:0 0 .5rem; padding:0 .375rem;
+    color:var(--text-muted); margin:0; padding:.6rem .9rem .5rem;
   }
   .ep-dd-scroll { max-height:200px; overflow-y:auto; }
   .ep-dd-opt {
     display:flex; align-items:center; width:100%;
-    padding:.45rem .6rem; border-radius:6px;
+    padding:.5rem .9rem; border-radius:0;
     background:none; border:none; cursor:pointer;
-    font-family:'Inter',var(--ff-b),sans-serif; font-size:.9rem; color:var(--text-secondary);
+    font-family:var(--ff-b); font-size:.78rem; font-weight:600; letter-spacing:.1em; color:var(--text-secondary);
     text-align:left; transition:background .1s, color .1s;
   }
   .ep-dd-opt:hover { background:var(--brand-subtle); color:var(--brand); }
   .ep-dd-opt--on { background:var(--brand-subtle); color:var(--brand); font-weight:600; }
-  .ep-dd-empty { font-size:.82rem; color:var(--text-muted); padding:.25rem .6rem; margin:0; }
+  .ep-dd-empty { font-size:.82rem; color:var(--text-muted); padding:.25rem .9rem; margin:0; }
   .ep-dd-clear {
-    display:block; width:100%; margin-top:.5rem;
-    padding:.4rem .6rem; font-family:'Inter',var(--ff-b),sans-serif; font-size:.82rem; font-weight:600;
-    color:var(--error); background:none; border:1px solid var(--error-light);
-    border-radius:6px; cursor:pointer; transition:background .1s;
+    display:block; width:100%; margin-top:0; border-top:1px solid var(--border);
+    padding:.5rem .9rem; font-family:'Inter',var(--ff-b),sans-serif; font-size:.82rem; font-weight:600;
+    color:var(--error); background:none; border-radius:0; cursor:pointer; transition:background .1s;
+    border-left:none; border-right:none; border-bottom:none;
   }
   .ep-dd-clear:hover { background:var(--error-light); }
 

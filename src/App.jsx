@@ -21,7 +21,7 @@ function App() {
           <Route path="/perfil"       element={<PerfilPage />} />
           <Route path="/bienvenida"   element={<WelcomeSplash />} />
         </Routes>
-        <Footer />
+<Footer />
       </BrowserRouter>
     </AuthProvider>
   );

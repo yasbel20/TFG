@@ -251,7 +251,9 @@ function AgendaRow({ ev, onOpen }) {
           <span className="ag-cat-dot" style={{ background: accent }}/>
           {ev.cat}
         </span>
-        <span className="ag-card-price">{ev.price}</span>
+        {ev.price === "Gratis"
+          ? <span className="ag-card-price-free">Gratis</span>
+          : <span className="ag-card-price-paid">{ev.price}</span>}
       </div>
 
       {/* Título */}
@@ -486,7 +488,7 @@ const css = `
   /* ── Base ── */
   .ag-page {
     min-height: 100vh;
-    background: #f6f5fb;
+    background: #ffffff;
     font-family: 'Inter', var(--ff-b), system-ui, sans-serif;
     font-size: 16px;
     line-height: 1.5;
@@ -510,7 +512,7 @@ const css = `
   .ag-week-nav { display: flex; align-items: center; gap: .5rem; }
   .ag-week-btn {
     width: 36px; height: 36px;
-    border: 1.5px solid #ddd8f2; border-radius: 8px;
+    border: 1.5px solid var(--border); border-radius: 0;
     background: transparent; color: var(--text-primary);
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; transition: all .12s; padding: 0; flex-shrink: 0;
@@ -519,16 +521,16 @@ const css = `
   .ag-week-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
   .ag-week-label {
-    font-family: 'Bebas Neue', var(--ff-h), sans-serif;
-    font-size: 1.25rem; letter-spacing: .08em;
+    font-family: var(--ff-b);
+    font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
     color: var(--text-primary); min-width: 210px; text-align: center;
   }
   .ag-week-today {
     background: var(--brand); color: #fff; border: none;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .75rem; font-weight: 700;
-    padding: .3rem .75rem; border-radius: 20px; cursor: pointer;
-    letter-spacing: .06em; text-transform: uppercase;
+    font-family: var(--ff-b);
+    font-size: .78rem; font-weight: 600;
+    padding: .3rem .75rem; border-radius: 0; cursor: pointer;
+    letter-spacing: .1em; text-transform: uppercase;
     transition: opacity .15s; margin-left: .25rem;
   }
   .ag-week-today:hover { opacity: .82; }
@@ -542,10 +544,10 @@ const css = `
   .ag-cat-filters::-webkit-scrollbar { display: none; }
   .ag-cat-btn {
     padding: .38rem 1rem; flex-shrink: 0;
-    border: 1.5px solid #ddd8f2; border-radius: 20px;
+    border: 1.5px solid var(--border); border-radius: 0;
     background: transparent; color: var(--text-muted);
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .78rem; font-weight: 600; letter-spacing: .04em;
+    font-family: var(--ff-b);
+    font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
     cursor: pointer; transition: all .12s; white-space: nowrap;
   }
   .ag-cat-btn:hover { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
@@ -600,17 +602,18 @@ const css = `
 
   /* ── Tarjeta de evento ── */
   .ag-card {
-    background: #fff;
+    background: #ffffff;
     border: 1px solid #eae6f5;
     border-left: 5px solid;
-    border-radius: 0 12px 12px 0;
+    border-radius: 0;
     padding: 1.2rem 1.4rem 1.1rem 1.2rem;
     cursor: pointer;
     display: flex; flex-direction: column; gap: .65rem;
-    transition: box-shadow .18s, transform .18s;
+    transition: background .15s, box-shadow .18s, transform .18s;
     text-align: left;
   }
   .ag-card:hover {
+    background: var(--brand-subtle);
     box-shadow: 0 6px 28px rgba(79,62,200,.11);
     transform: translateX(4px);
   }
@@ -625,10 +628,15 @@ const css = `
     letter-spacing: .1em; text-transform: uppercase;
   }
   .ag-cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .ag-card-price {
+  .ag-card-price-free {
     font-family: 'Inter', var(--ff-b), sans-serif;
     font-size: .82rem; font-weight: 700;
-    color: var(--brand); white-space: nowrap;
+    color: var(--success); white-space: nowrap;
+  }
+  .ag-card-price-paid {
+    font-family: 'Inter', var(--ff-b), sans-serif;
+    font-size: .82rem; font-weight: 700;
+    color: var(--text-primary); white-space: nowrap;
   }
 
   /* Título */
@@ -662,7 +670,7 @@ const css = `
   .ag-badges { display: flex; gap: 4px; }
   .ag-badge {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 26px; height: 26px; border-radius: 5px;
+    width: 26px; height: 26px; border-radius: 0;
     background: #ede9ff; color: var(--brand); border: 1px solid #d4cefc;
     transition: background .12s;
   }
@@ -672,7 +680,7 @@ const css = `
     border: 1.5px solid #ddd8f2; color: var(--text-muted);
     font-family: 'Inter', var(--ff-b), sans-serif;
     font-size: .75rem; font-weight: 600;
-    padding: .45rem 1rem; border-radius: 8px;
+    padding: .45rem 1rem; border-radius: 0;
     transition: all .15s; white-space: nowrap;
   }
   .ag-card:hover .ag-card-btn { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
