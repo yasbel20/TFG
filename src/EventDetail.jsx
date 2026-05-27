@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "./AuthContext";
+import { WheelIcon as WheelIconShared, HandsIcon, BucleIcon as BucleIconShared, PodoIcon as PodoIconShared } from "./AccessibilityIcons";
 
 const P = {
   brand:       "#3D47C8",
@@ -20,10 +21,10 @@ const CAT_COLORS = {
 };
 
 const ACCESS_INFO = {
-  silla:   { label: "Accesible PMR",    desc: "Espacio adaptado para personas usuarias de silla de ruedas.", requestable: false },
-  signos:  { label: "Lengua de signos", desc: "Interpretación en Lengua de Signos Española (LSE).", requestable: true },
-  bucle:   { label: "Bucle magnético",  desc: "Disponible para personas con prótesis auditivas.", requestable: true },
-  braille: { label: "Apoyos visuales",  desc: "Material gráfico de apoyo disponible.", requestable: true },
+  silla:  { label: "Silla de ruedas",   desc: "Espacio adaptado para personas usuarias de silla de ruedas.", requestable: false },
+  signos: { label: "Lenguaje de signos",desc: "Interpretación en Lengua de Signos Española (LSE).", requestable: true },
+  bucle:  { label: "Bucle magnético",   desc: "Disponible para personas con prótesis auditivas.", requestable: true },
+  podo:   { label: "Podotáctil",        desc: "Pavimento táctil para orientación de personas con discapacidad visual.", requestable: false },
 };
 
 // ─── Iconos ───────────────────────────────────────────────────────────────────
@@ -53,10 +54,10 @@ const HeartIcon  = ({ filled }) => (
     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
   </svg>
 );;
-const WheelIcon  = () => <Ico size={16} d={<><circle cx="12" cy="5" r="2" fill="currentColor" stroke="none"/><path d="M10 8h4v5h3l2 4H7l-1.5-4H10V8z" fill="currentColor" stroke="none"/><path d="M6 16a6 6 0 1 0 12 0" fill="none" strokeWidth={2}/></>} fill="currentColor" stroke="currentColor"/>;
-const SignosIcon = () => <Ico size={16} d={<path d="M5 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm14 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM3 9v5h2v7h4v-7h2V9H3zm14 0v5h2v7h4v-7h2V9h-8z" fill="currentColor"/>} fill="currentColor" stroke="none"/>;
-const BucleIcon  = () => <Ico size={16} d={<path d="M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9-4-9-9-9zm0 16a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm-1-9v5l4-2.5L11 10z" fill="currentColor"/>} fill="currentColor" stroke="none"/>;
-const PodoIcon   = () => <Ico size={16} d={<path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" fill="currentColor"/>} fill="currentColor" stroke="none"/>;
+const WheelIcon  = () => <WheelIconShared  size={16}/>;
+const SignosIcon = () => <HandsIcon        size={16}/>;
+const BucleIcon  = () => <BucleIconShared  size={16}/>;
+const PodoIcon   = () => <PodoIconShared   size={16}/>;
 const EuroIcon   = () => <Ico d={<><circle cx="12" cy="12" r="10"/><path d="M14.5 8a4 4 0 1 0 0 8M6 10h8M6 14h8"/></>}/>;
 const CalIcon    = () => <Ico d={<><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></>}/>;
 const PinIcon    = () => <Ico size={16} d={<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>} fill="currentColor" stroke="none"/>;
@@ -496,25 +497,15 @@ export default function EventDetail({ ev, onBack }) {
         <div className="ed-content">
           <div className="ed-content-inner">
 
+            {/* Título y categoría — fila completa encima del grid */}
+            <div className="ed-title-block">
+              <span className="ed-cat-label">{ev.cat}</span>
+              <h1 className="ed-title">{ev.title}</h1>
+
+            </div>
+
             {/* Columna principal */}
             <div className="ed-main-col">
-
-              {/* Título y categoría */}
-              <div className="ed-title-block">
-                <span className="ed-cat-label">{ev.cat}</span>
-                <h1 className="ed-title">{ev.title}</h1>
-
-                {/* Ubicación */}
-                {(ev.venueRaw || ev.venue) && (
-                  <div className="ed-venue-row">
-                    <PinIcon/>
-                    <div>
-                      <span className="ed-venue-name">{ev.venueRaw || ev.venue}</span>
-                      <span className="ed-venue-city">{ev.district}, Madrid</span>
-                    </div>
-                  </div>
-                )}
-              </div>
 
               {/* Metadatos en fila */}
               <div className="ed-meta-row">
@@ -624,26 +615,18 @@ export default function EventDetail({ ev, onBack }) {
                     {ev.access.map(a => {
                       const info = ACCESS_INFO[a];
                       if (!info) return null;
-                      const Icon = { silla: WheelIcon, signos: SignosIcon, bucle: BucleIcon, braille: PodoIcon }[a];
+                      const Icon = { silla: WheelIcon, signos: SignosIcon, bucle: BucleIcon, podo: PodoIcon }[a];
                       return (
                         <div key={a} className="ed-access-card">
                           <span className="ed-access-icon" aria-hidden="true">{Icon && <Icon/>}</span>
                           <div className="ed-access-body">
                             <strong className="ed-access-name">{info.label}</strong>
                             <span className="ed-access-desc">{info.desc}</span>
-                            {info.requestable && (
-                              <a href={info.ticketUrl || ev.url || "#"} target="_blank" rel="noreferrer" className="ed-access-link">
-                                Solicitar en taquilla <ExternalIcon/>
-                              </a>
-                            )}
                           </div>
                         </div>
                       );
                     })}
                   </div>
-                  <p className="ed-access-note">
-                    <InfoIcon/> Si necesitas otras medidas de apoyo, contacta con la organización.
-                  </p>
                 </section>
               )}
 
@@ -653,32 +636,26 @@ export default function EventDetail({ ev, onBack }) {
             <aside className="ed-sidebar" aria-label="Información del evento">
               <div className="ed-sidebar-card">
 
-                <h2 className="ed-sidebar-heading">Detalles del evento</h2>
+                <h2 className="ed-sidebar-heading" style={{textTransform:"uppercase"}}>Ubicación</h2>
                 <div className="ed-sidebar-heading-bar"/>
 
-                <div className="ed-sidebar-item">
-                  <span className="ed-sidebar-icon" aria-hidden="true"><EuroIcon/></span>
-                  <div>
-                    <span className="ed-sidebar-label">Precio</span>
-                    <span className={`ed-sidebar-value${ev.price === "Gratis" ? " ed-val-free" : ""}`}>{ev.price}</span>
+                {/* Nombre del recinto */}
+                {(ev.org || ev.venue) && (
+                  <div className="ed-sidebar-item">
+                    <span className="ed-sidebar-icon" aria-hidden="true"><PinIcon/></span>
+                    <div>
+                      <span className="ed-sidebar-label">Nombre</span>
+                      <span className="ed-sidebar-value">{ev.org || ev.venue}</span>
+                    </div>
                   </div>
-                </div>
+                )}
                 <div className="ed-sidebar-divider"/>
 
-                <div className="ed-sidebar-item">
-                  <span className="ed-sidebar-icon" aria-hidden="true"><CalIcon/></span>
-                  <div>
-                    <span className="ed-sidebar-label">Fecha y hora</span>
-                    <span className="ed-sidebar-value">{ev.date}</span>
-                    {ev.timeStr && <span className="ed-sidebar-sub">a las {ev.timeStr}</span>}
-                  </div>
-                </div>
-                <div className="ed-sidebar-divider"/>
-
+                {/* Dirección */}
                 <div className="ed-sidebar-item">
                   <span className="ed-sidebar-icon" aria-hidden="true"><PinIcon/></span>
                   <div>
-                    <span className="ed-sidebar-label">Lugar</span>
+                    <span className="ed-sidebar-label">Dirección</span>
                     <span className="ed-sidebar-value">{ev.venueRaw || ev.venue}</span>
                     <span className="ed-sidebar-sub">{ev.district}, Madrid</span>
                     <div className="ed-map-embed">
@@ -706,40 +683,10 @@ export default function EventDetail({ ev, onBack }) {
                   <ShareIcon/> Compartir evento
                 </button>
 
-                {/* Información adicional */}
-                {additionalInfo.length > 0 && (
-                  <>
-                    <div className="ed-sidebar-divider" style={{marginTop:"1.25rem"}}/>
-                    <h3 className="ed-addinfo-title">Información adicional</h3>
-                    <ul className="ed-addinfo-list">
-                      {additionalInfo.map((item, i) => (
-                        <li key={i} className="ed-addinfo-item">
-                          <span className="ed-addinfo-icon" aria-hidden="true">{item.icon}</span>
-                          <span>{item.text}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                )}
 
               </div>
 
-              {ev.org && (
-                <>
-                  <div className="ed-sidebar-divider" style={{marginTop:"1rem"}}/>
-                  <div className="ed-org-row">
-                    <span className="ed-org-label">Organismo</span>
-                    <span className="ed-org-name">{ev.org}</span>
-                  </div>
-                </>
-              )}
 
-              <p className="ed-source-note">
-                Datos:{" "}
-                <a href="https://datos.madrid.es/portal/site/egob" target="_blank" rel="noreferrer" className="ed-source-link">
-                  API Ayuntamiento de Madrid
-                </a>
-              </p>
             </aside>
 
           </div>
@@ -804,14 +751,14 @@ const css = `
   .ed-skip {
     position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;
     background:${P.brandSubtle}; color:${P.brand}; font-weight:700; padding:.5rem 1rem;
-    border-radius:0 0 4px 4px; z-index:9999; text-decoration:none;
+    border-radius:0; z-index:9999; text-decoration:none;
   }
   .ed-skip:focus { position:fixed; left:50%; transform:translateX(-50%); top:0; width:auto; height:auto; }
 
   /* ── Iconos en topbar ── */
   .ed-icon-btn {
     display:inline-flex; align-items:center; justify-content:center;
-    width:32px; height:32px; border-radius:6px;
+    width:32px; height:32px; border-radius:0;
     background:transparent; border:1px solid #e5e7eb; color:#6b7280;
     cursor:pointer; transition:all .15s; flex-shrink:0;
   }
@@ -832,7 +779,7 @@ const css = `
   .ed-toast {
     position:absolute; top:100%; left:50%; transform:translateX(-50%);
     background:${P.brand}; color:#fff; font-size:.87rem; font-weight:600;
-    padding:.5rem 1.25rem; border-radius:100px; margin-top:.5rem;
+    padding:.5rem 1.25rem; border-radius:0; margin-top:.5rem;
     animation:ed-toast-in .2s ease; z-index:300; white-space:nowrap;
     max-width:90vw; text-align:center;
   }
@@ -851,7 +798,7 @@ const css = `
   }
   @keyframes rs-fade { from{opacity:0} to{opacity:1} }
   .rs-panel {
-    background:#fff; border:1px solid #ddd; border-radius:8px;
+    background:#fff; border:1px solid #ddd; border-radius:0;
     width:340px; max-width:95vw;
     box-shadow:0 8px 32px rgba(0,0,0,.18);
     animation:rs-slide .18s cubic-bezier(.22,1,.36,1);
@@ -868,7 +815,7 @@ const css = `
   }
   .rs-panel-close {
     background:transparent; border:none; color:#999; cursor:pointer;
-    padding:.25rem; border-radius:4px; display:flex; align-items:center;
+    padding:.25rem; border-radius:0; display:flex; align-items:center;
   }
   .rs-panel-close:hover { color:#111; }
   .rs-panel-close:focus-visible { outline:2px solid ${P.brand}; }
@@ -964,7 +911,7 @@ const css = `
   .ed-content { background:var(--ed-bg); }
   .ed-content-inner {
     max-width:1280px; margin:0 auto;
-    padding:clamp(2rem,4vw,3rem) clamp(1.25rem,5vw,6rem) clamp(3rem,6vw,5rem);
+    padding:clamp(2rem,4vw,3rem) clamp(1.25rem,5vw,6rem) 2rem;
     display:grid; grid-template-columns:1fr 320px; gap:2.5rem; align-items:start;
   }
   @media (max-width:900px) {
@@ -973,13 +920,13 @@ const css = `
   }
 
   /* ── Title block ── */
-  .ed-title-block { margin-bottom:1.25rem; }
+  .ed-title-block { grid-column:1 / -1; margin-bottom:1.25rem; }
   .ed-cat-label {
     display:inline-block; font-size:.75rem; font-weight:800;
     letter-spacing:.14em; text-transform:uppercase;
     color:var(--ed-pill-text); background:var(--ed-pill-bg);
     border:1.5px solid #E0DED4; padding:.28rem .7rem;
-    border-radius:2px; margin-bottom:.75rem;
+    border-radius:0; margin-bottom:.75rem;
   }
   .ed-title {
     font-family:'Inter',sans-serif; font-weight:800;
@@ -997,7 +944,7 @@ const css = `
   /* ── Meta row ── */
   .ed-meta-row {
     display:flex; flex-wrap:wrap; gap:0;
-    border:1px solid #e5e7eb; border-radius:10px;
+    border:1px solid #e5e7eb; border-radius:0;
     overflow:hidden; margin-bottom:2rem;
     background:#fff;
   }
@@ -1019,7 +966,7 @@ const css = `
   /* ── Show block (imagen + sobre el espectáculo) ── */
   .ed-show-block {
     display:grid; grid-template-columns:1fr 1fr; gap:0;
-    border:1px solid #e5e7eb; border-radius:12px;
+    border:1px solid #e5e7eb; border-radius:0;
     overflow:hidden; margin-bottom:2rem;
     box-shadow:0 1px 3px rgba(0,0,0,.05);
   }
@@ -1048,7 +995,7 @@ const css = `
     display:inline-flex; align-items:center; gap:.45rem;
     background:#fff; border:1px solid #e5e7eb; color:#374151;
     font-family:'Inter',sans-serif; font-size:.78rem; font-weight:600;
-    padding:.45rem .9rem; border-radius:100px;
+    padding:.45rem .9rem; border-radius:0; text-transform:uppercase;
     text-decoration:none; transition:all .15s; align-self:flex-start;
   }
   .ed-trailer-btn:hover { background:${P.brand}; color:#fff; border-color:${P.brand}; }
@@ -1060,7 +1007,7 @@ const css = `
     display:inline-flex; align-items:center; gap:.4rem;
     background:var(--ed-pill-bg); border:1.5px solid #E0DED4;
     color:var(--ed-pill-text); font-size:.75rem; font-weight:600;
-    padding:.35rem .85rem; border-radius:100px;
+    padding:.35rem .85rem; border-radius:0;
   }
 
   /* ── Sections ── */
@@ -1081,7 +1028,7 @@ const css = `
   /* ¿Qué encontrarás? */
   .ed-highlights-card {
     background:#fafaf8; border:1.5px solid #E0DED4;
-    border-radius:8px; padding:1.25rem;
+    border-radius:0; padding:1.25rem;
   }
   .ed-highlights-title {
     font-family:'Bebas Neue',sans-serif; font-size:1rem; letter-spacing:.1em;
@@ -1093,7 +1040,7 @@ const css = `
     font-size:.92rem; color:var(--ed-text);
   }
   .ed-highlight-icon {
-    width:28px; height:28px; border-radius:6px;
+    width:28px; height:28px; border-radius:0;
     background:#fff; border:1px solid #d8d8ee; color:${P.brand};
     display:flex; align-items:center; justify-content:center; flex-shrink:0;
   }
@@ -1102,7 +1049,7 @@ const css = `
     display:inline-flex; align-items:center; gap:.4rem;
     background:transparent; border:1.5px solid #CCCAC0; color:#555;
     font-family:'Inter',sans-serif; font-size:.82rem; font-weight:600;
-    padding:.35rem .85rem; border-radius:100px; cursor:pointer; transition:all .15s;
+    padding:.35rem .85rem; border-radius:0; cursor:pointer; transition:all .15s;
   }
   .ed-listen-inline:hover { background:${P.brand}; color:#fff; border-color:${P.brand}; }
   .ed-listen-inline.ed-active { background:${P.brandSubtle}; color:${P.brand}; border-color:${P.brand}; }
@@ -1121,12 +1068,12 @@ const css = `
     gap:1rem; margin-bottom:1rem;
   }
   .ed-access-card {
-    border:1px solid #e5e7eb; border-radius:10px;
+    border:1px solid #e5e7eb; border-radius:0;
     padding:1rem; display:flex; flex-direction:column; gap:.6rem;
     background:#fff;
   }
   .ed-access-icon {
-    width:36px; height:36px; border-radius:8px;
+    width:36px; height:36px; border-radius:0;
     background:${P.brandSubtle}; color:${P.brand};
     display:flex; align-items:center; justify-content:center; flex-shrink:0;
   }
@@ -1147,8 +1094,8 @@ const css = `
 
   /* ── Sidebar ── */
   .ed-sidebar-card {
-    background:#fff; border:1px solid #e5e7eb;
-    border-radius:12px; padding:1.5rem; position:sticky; top:60px;
+    background:var(--brand-subtle,#eef0fe); border:1px solid #e5e7eb;
+    border-radius:0; padding:1.5rem; position:sticky; top:60px;
     box-shadow:0 1px 4px rgba(0,0,0,.06);
   }
   .ed-sidebar-heading {
@@ -1161,7 +1108,7 @@ const css = `
   }
   .ed-sidebar-item { display:flex; align-items:flex-start; gap:.75rem; }
   .ed-sidebar-icon {
-    width:32px; height:32px; border-radius:8px; background:${P.brandSubtle};
+    width:32px; height:32px; border-radius:0; background:${P.brandSubtle};
     color:${P.brand};
     display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:.1rem;
   }
@@ -1177,7 +1124,7 @@ const css = `
   }
   .ed-map-link:hover { text-decoration:underline; }
   .ed-map-embed {
-    margin-top:.75rem; border-radius:8px; overflow:hidden;
+    margin-top:.75rem; border-radius:0; overflow:hidden;
     border:1px solid #e5e7eb;
     animation:ed-in .2s ease;
   }
@@ -1185,19 +1132,19 @@ const css = `
   .ed-cta {
     display:flex; align-items:center; justify-content:center; gap:.5rem;
     background:${P.brand}; color:#fff; font-size:.9rem; font-weight:600;
-    padding:.8rem 1.5rem; border-radius:8px;
+    padding:.8rem 1.5rem; border-radius:0; text-transform:uppercase;
     text-decoration:none; transition:background .15s; width:100%;
     text-align:center; margin-top:.5rem;
   }
   .ed-cta:hover { background:${P.brandHover}; }
   .ed-cta:focus-visible { outline:2px solid ${P.brand}; outline-offset:2px; }
-  .ed-cta-disabled { display:block; text-align:center; font-size:.87rem; color:#9ca3af; padding:.8rem; border:1px dashed #e5e7eb; border-radius:8px; margin-top:.5rem; }
+  .ed-cta-disabled { display:block; text-align:center; font-size:.87rem; color:#9ca3af; padding:.8rem; border:1px dashed #e5e7eb; border-radius:0; margin-top:.5rem; }
 
   .ed-share-btn {
     display:flex; align-items:center; justify-content:center; gap:.5rem;
     width:100%; margin-top:.5rem; background:transparent;
     border:1px solid #e5e7eb; color:#6b7280; font-family:'Inter',sans-serif;
-    font-size:.9rem; font-weight:600; padding:.7rem; border-radius:8px;
+    font-size:.9rem; font-weight:600; padding:.7rem; border-radius:0;
     cursor:pointer; transition:all .15s;
   }
   .ed-share-btn:hover { background:#f9fafb; color:#111827; border-color:#d1d5db; }

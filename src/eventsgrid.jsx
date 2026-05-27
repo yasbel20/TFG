@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import AccessibilityBadge from "./AccessibilityBadge";
 import { useAuth } from "./AuthContext";
+import { WheelIcon as WheelIconShared, HandsIcon, BucleIcon as BucleIconShared, PodoIcon as PodoIconShared } from "./AccessibilityIcons";
 
 // ─── Categorías y colores ─────────────────────────────────────────────────────
 const CAT_COLORS = {
@@ -26,27 +27,10 @@ const PinIcon = () => (
     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
   </svg>
 );
-const WheelIcon = () => (
-  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <circle cx="12" cy="5" r="2"/><path d="M10 8h4v5h3l2 4H7l-1.5-4H10V8z"/>
-    <path d="M6 16a6 6 0 1 0 12 0" fill="none" stroke="currentColor" strokeWidth="2"/>
-  </svg>
-);
-const SignosIcon = () => (
-  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M5 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm14 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM3 9v5h2v7h4v-7h2V9H3zm14 0v5h2v7h4v-7h2V9h-8z"/>
-  </svg>
-);
-const BucleIcon = () => (
-  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9-4-9-9-9zm0 16a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm-1-9v5l4-2.5L11 10z"/>
-  </svg>
-);
-const PodoIcon = () => (
-  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
-  </svg>
-);
+const WheelIcon  = (p) => <WheelIconShared  size={11} {...p}/>;
+const SignosIcon = (p) => <HandsIcon        size={11} {...p}/>;
+const BucleIcon  = (p) => <BucleIconShared  size={11} {...p}/>;
+const PodoIcon   = (p) => <PodoIconShared   size={11} {...p}/>;
 const ChevronRightIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
     <path d="m9 18 6-6-6-6"/>

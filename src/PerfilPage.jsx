@@ -4,6 +4,7 @@ import { useAuth } from "./AuthContext";
 import Navbar from "./Navbar";
 import AccessibilityBadge from "./AccessibilityBadge";
 import OnboardingModal from "./OnboardingModal";
+import { WheelIcon, HandsIcon, BucleIcon, PodoIcon } from "./AccessibilityIcons";
 
 /* ── Constantes ── */
 const ACCESIBILIDAD_LABELS = {
@@ -14,18 +15,18 @@ const ACCESIBILIDAD_LABELS = {
 };
 
 const ACCESIBILIDAD_ICONS = {
-  silla:  "♿",
-  signos: "🤟",
-  podo:   "👣",
-  bucle:  "🔊",
+  silla:  WheelIcon,
+  signos: HandsIcon,
+  podo:   PodoIcon,
+  bucle:  BucleIcon,
 };
 
 const CAT_COLORS = {
   "Música":     "#3D47C8",
-  "Teatro":     "#7B1FA2",
-  "Exposición": "#00695C",
-  "Cine":       "#BF360C",
-  "Danza":      "#AD1457",
+  "Teatro":     "#7C3AED",
+  "Exposición": "#0369A1",
+  "Cine":       "#92400E",
+  "Danza":      "#DB2777",
   "Cultura":    "#1A237E",
 };
 
@@ -91,41 +92,12 @@ const UserIcon = () => (
 );
 
 const SettingsIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <circle cx="12" cy="12" r="3"/>
-    <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
   </svg>
 );
 
-const WheelchairIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true">
-    <circle cx="52" cy="10" r="9"/>
-    <path d="M35 28c0-2 1.5-3.5 3.5-3.5h16c4 0 6 2.5 5.5 6L57 48h14c2 0 3.5 1.5 3.5 3.5S73 55 71 55H55l-3 13c6 2 10 7.5 10 14a15 15 0 0 1-30 0c0-7 4.5-13 11-14.5L47 48H38.5A3.5 3.5 0 0 1 35 44.5V28z"/>
-    <circle cx="42" cy="82" r="13" fill="none" stroke="currentColor" strokeWidth="6"/>
-  </svg>
-);
-
-const EyeIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-    <path d="M2 12c2.5-5 5.5-7 10-7s7.5 2 10 7c-2.5 5-5.5 7-10 7s-7.5-2-10-7z"/>
-    <circle cx="12" cy="12" r="2.8" fill="currentColor" stroke="none"/>
-  </svg>
-);
-
-const EarIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M18 7a6 6 0 0 0-12 0c0 3 1.5 4.5 3 6s2 3 1 5"/>
-    <path d="M10.5 18.5A2.5 2.5 0 0 0 13 21h.5a2.5 2.5 0 0 0 2.5-2.5"/>
-    <circle cx="12" cy="10" r="2" fill="currentColor" stroke="none"/>
-  </svg>
-);
-
-const HandIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M12 3v9M9 5v7M6 7v5c0 3.3 2.7 6 6 6s6-2.7 6-6V7"/>
-    <path d="M15 5v7"/>
-  </svg>
-);
 
 /* ── Componente principal ── */
 export default function PerfilPage() {
@@ -285,7 +257,7 @@ export default function PerfilPage() {
               </div>
             ) : (
               <div className="pf-name-row">
-                <h2 className="pf-sidebar-name">¡Hola! {user.name} 👋</h2>
+                <h2 className="pf-sidebar-name">¡Hola! {user.name}</h2>
                 <button className="pf-inline-btn" onClick={() => { setTmpNombre(user.name); setEditNombre(true); }} title="Editar nombre">
                   <PencilIcon />
                 </button>
@@ -320,7 +292,7 @@ export default function PerfilPage() {
               className={`pf-nav-item${activeTab === "accesibilidad" ? " pf-nav-item--active" : ""}`}
               onClick={() => setActiveTab("accesibilidad")}
             >
-              <SettingsIcon /> Accesibilidad
+              <SettingsIcon /> Preferencias
             </button>
           </nav>
 
@@ -361,25 +333,25 @@ export default function PerfilPage() {
                     Customiza tus herramientas para disfrutar eventos sin ninguna barrera para ti.
                   </p>
                   <button className="pf-acc-callout-btn" onClick={() => setActiveTab("accesibilidad")}>
-                    Configurar accesibilidad
+                    Configurar preferencias 
                   </button>
                 </div>
                 <div className="pf-acc-callout-icons">
                   <div className="pf-acc-icon-item">
-                    <span className="pf-acc-icon-circle"><WheelchairIcon /></span>
-                    <span>Movilidad</span>
+                    <span className="pf-acc-icon-circle"><WheelIcon size={22} /></span>
+                    <span>Silla de ruedas</span>
                   </div>
                   <div className="pf-acc-icon-item">
-                    <span className="pf-acc-icon-circle"><HandIcon /></span>
+                    <span className="pf-acc-icon-circle"><BucleIcon size={22} /></span>
+                    <span>Bucle magnético</span>
+                  </div>
+                  <div className="pf-acc-icon-item">
+                    <span className="pf-acc-icon-circle"><PodoIcon size={22} /></span>
+                    <span>Podotáctil</span>
+                  </div>
+                  <div className="pf-acc-icon-item">
+                    <span className="pf-acc-icon-circle"><HandsIcon size={22} /></span>
                     <span>Lengua de signos</span>
-                  </div>
-                  <div className="pf-acc-icon-item">
-                    <span className="pf-acc-icon-circle"><EyeIcon /></span>
-                    <span>Visual</span>
-                  </div>
-                  <div className="pf-acc-icon-item">
-                    <span className="pf-acc-icon-circle"><EarIcon /></span>
-                    <span>Auditivo</span>
                   </div>
                 </div>
               </div>
@@ -435,7 +407,6 @@ export default function PerfilPage() {
                           <h3 className="pf-card-title">{ev.title}</h3>
                           <p className="pf-card-meta"><CalIcon /> {ev.dateShort}{ev.timeStr && <> · {ev.timeStr}</>}</p>
                           <p className="pf-card-meta"><PinIcon /> {ev.venue}</p>
-                          <p className="pf-card-price">{ev.price}</p>
                           <span className="pf-card-link">Ver detalles <ArrowIcon /></span>
                         </div>
                       </article>
@@ -479,7 +450,6 @@ export default function PerfilPage() {
                         <h3 className="pf-card-title">{ev.title}</h3>
                         <p className="pf-card-meta"><CalIcon /> {ev.dateShort ?? ev.date}{ev.timeStr && <> · {ev.timeStr}</>}</p>
                         <p className="pf-card-meta"><PinIcon /> {ev.venueRaw ?? ev.venue}</p>
-                        <p className="pf-card-price">{ev.price}</p>
                         <div className="pf-card-footer">
                           <span className="pf-card-link">Ver detalles <ArrowIcon /></span>
                           <button
@@ -511,9 +481,7 @@ export default function PerfilPage() {
                       const active = categorias.includes(cat);
                       return (
                         <button key={cat} className={`pf-chip${active ? " pf-chip--on" : ""}`} onClick={() => toggleCat(cat)}>
-                          {active && <span className="pf-chip-check">✓</span>}
                           {cat}
-                          {active && <span className="pf-chip-remove">✕</span>}
                         </button>
                       );
                     })}
@@ -526,10 +494,8 @@ export default function PerfilPage() {
                       const active = accesib.includes(key);
                       return (
                         <button key={key} className={`pf-chip${active ? " pf-chip--on" : ""}`} onClick={() => toggleAcc(key)}>
-                          {active && <span className="pf-chip-check">✓</span>}
-                          <span aria-hidden="true">{ACCESIBILIDAD_ICONS[key]}</span>
+                          {(() => { const Icon = ACCESIBILIDAD_ICONS[key]; return Icon ? <Icon size={14}/> : null; })()}
                           {label}
-                          {active && <span className="pf-chip-remove">✕</span>}
                         </button>
                       );
                     })}
@@ -654,8 +620,8 @@ const css = `
     padding: .85rem 1rem; border-radius: 0;
     text-align: left; transition: background .15s, color .15s;
   }
-  .pf-nav-item:hover { background: #f0eeff; color: var(--brand); }
-  .pf-nav-item--active { background: #ede9ff; color: var(--brand); font-weight: 700; }
+  .pf-nav-item:hover { background: var(--brand-subtle,#eef0fe); color: var(--brand); }
+  .pf-nav-item--active { background: var(--brand-subtle,#eef0fe); color: var(--brand); font-weight: 700; }
   .pf-nav-badge {
     margin-left: auto; background: var(--brand); color: var(--on-brand);
     font-family: 'Inter', var(--ff-b), sans-serif;
@@ -671,7 +637,7 @@ const css = `
     margin-top: 1rem; border-radius: 0;
     transition: color .15s, background .15s; text-align: left;
   }
-  .pf-sidebar-logout:hover { color: var(--error); background: #fff5f5; }
+  .pf-sidebar-logout:hover { color: var(--text-muted); background: var(--bg-surface); }
 
   /* ── CONTENIDO ── */
   .pf-content { flex: 1; padding: 2.5rem clamp(1.25rem, 5vw, 3rem) 5rem; min-width: 0; overflow-y: auto; }
@@ -679,7 +645,7 @@ const css = `
   /* Stats */
   .pf-stats {
     display: flex; align-items: center;
-    background: var(--bg-surface); border: 1px solid var(--border);
+    background: var(--brand-subtle,#eef0fe); border: 1px solid var(--border);
     margin-bottom: 2.25rem; overflow: hidden; border-radius: 0;
   }
   .pf-stat {
@@ -699,7 +665,7 @@ const css = `
 
   /* Callout accesibilidad */
   .pf-acc-callout {
-    background: var(--bg-surface); border: 1px solid var(--border);
+    background: var(--brand-subtle,#eef0fe); border: 1px solid var(--border);
     padding: 1.75rem; margin-bottom: 2.25rem;
     display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
     border-radius: 0;
@@ -729,7 +695,7 @@ const css = `
   }
   .pf-acc-icon-circle {
     width: 52px; height: 52px; border-radius: 0;
-    background: #f0eeff; display: flex; align-items: center; justify-content: center; color: var(--brand);
+    background: #fff; display: flex; align-items: center; justify-content: center; color: var(--brand);
   }
 
   /* Secciones */
@@ -784,10 +750,10 @@ const css = `
   .pf-card {
     border: 1px solid #e8e4f0; cursor: pointer;
     transition: border-color .15s, box-shadow .15s, transform .15s;
-    overflow: hidden; background: var(--bg-surface); display: flex; flex-direction: column; border-radius: 0;
+    overflow: hidden; background: var(--brand-subtle,#eef0fe); display: flex; flex-direction: column; border-radius: 0;
   }
-  .pf-card:hover { border-color: var(--brand); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(99,82,200,.12); }
-  .pf-card--fav:hover { border-color: var(--error); box-shadow: 0 8px 24px rgba(220,38,38,.09); }
+  .pf-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.09); }
+  .pf-card--fav:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.09); }
   .pf-card-img-wrap { width: 100%; height: 160px; overflow: hidden; position: relative; background: #f0eeff; flex-shrink: 0; }
   .pf-card-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
   .pf-card:hover .pf-card-img { transform: scale(1.05); }
@@ -831,7 +797,7 @@ const css = `
 
   /* Tab Accesibilidad */
   .pf-edit {
-    background: var(--bg-surface); border: 1px solid var(--border);
+    background: var(--brand-subtle,#eef0fe); border: 1px solid var(--border);
     padding: 2rem; margin-bottom: 2rem; border-radius: 0;
   }
   .pf-edit-row { display: flex; gap: 2.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
@@ -841,7 +807,7 @@ const css = `
     font-size: .82rem; font-weight: 700; letter-spacing: .06em;
     text-transform: uppercase; color: var(--text-muted); margin: 0 0 .8rem;
   }
-  .pf-chips { display: flex; flex-wrap: wrap; gap: .55rem; }
+  .pf-chips { display: flex; flex-direction: column; gap: .55rem; }
   .pf-chip {
     display: inline-flex; align-items: center; gap: .4rem;
     font-family: 'Inter', var(--ff-b), sans-serif;

@@ -178,7 +178,7 @@ const css = `
     display: flex;
     width: 100%; max-width: 820px;
     min-height: 520px;
-    border-radius: 20px;
+    border-radius: 0;
     overflow: hidden;
     box-shadow: 0 32px 80px rgba(0,0,0,.35);
     background: #fff;
@@ -232,7 +232,7 @@ const css = `
   .am-close {
     position: absolute; top: 1.25rem; right: 1.25rem;
     background: none; border: none; cursor: pointer;
-    color: #9ca3af; width: 36px; height: 36px; border-radius: 8px;
+    color: #9ca3af; width: 36px; height: 36px; border-radius: 0;
     display: flex; align-items: center; justify-content: center;
     transition: background .15s, color .15s;
   }
@@ -263,7 +263,7 @@ const css = `
   }
   .am-field input {
     border: 1.5px solid #e5e7eb;
-    border-radius: 10px;
+    border-radius: 0;
     padding: .7rem 1rem;
     font-family: 'Inter', sans-serif; font-size: .9rem;
     color: #111827; background: #fff;
@@ -289,26 +289,20 @@ const css = `
   .am-error {
     font-family: 'Inter', sans-serif; font-size: .82rem;
     color: #ef4444; margin: 0; padding: .5rem .75rem;
-    background: #fef2f2; border-radius: 8px;
+    background: #fef2f2; border-radius: 0;
     border: 1px solid #fecaca;
   }
 
   .am-submit {
     background: var(--brand, #3d47c8); color: #fff;
-    border: none; border-radius: 10px; cursor: pointer;
+    border: none; border-radius: 0; cursor: pointer;
     font-family: 'Inter', sans-serif; font-size: .95rem; font-weight: 700;
     padding: .85rem; min-height: 48px;
-    transition: background .15s, transform .1s, box-shadow .15s;
+    transition: background .15s;
     margin-top: .25rem;
-    box-shadow: 0 4px 14px rgba(61,71,200,.35);
   }
-  .am-submit:hover:not(:disabled) {
-    background: #2d3ab8;
-    box-shadow: 0 6px 20px rgba(61,71,200,.45);
-    transform: translateY(-1px);
-  }
-  .am-submit:active:not(:disabled) { transform: translateY(0); }
-  .am-submit:disabled { opacity: .6; cursor: default; box-shadow: none; }
+  .am-submit:hover:not(:disabled) { background: #2d3ab8; }
+  .am-submit:disabled { opacity: .6; cursor: default; }
 
   /* ── Switch ── */
   .am-switch {
@@ -328,6 +322,6 @@ const css = `
   @media (max-width: 640px) {
     .am-left { display: none; }
     .am-right { padding: 2rem 1.5rem; }
-    .am-box { border-radius: 16px; }
+    .am-box { border-radius: 0; }
   }
 `;

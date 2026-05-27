@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "./AuthContext";
+import { WheelIcon, HandsIcon, BucleIcon, PodoIcon } from "./AccessibilityIcons";
 
 const IcoMusica    = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>;
 const IcoTeatro    = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 10s3-3 3-8c0 0 5 3 9 3s9-3 9-3c0 5 3 8 3 8"/><path d="M2 10s2 6 9 6c4 0 7-2 9-6"/><path d="M9 17c0 2 1.5 3 3 3s3-1 3-3"/></svg>;
@@ -7,10 +8,10 @@ const IcoExpo      = () => <svg width="18" height="18" viewBox="0 0 24 24" fill=
 const IcoCine      = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 7h5M17 17h5"/></svg>;
 const IcoDanza     = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2"/><path d="m10.5 8.5-2 5 3 1 1 4h1l1-4 3-1-2-5"/><path d="m8.5 13.5-2 3M15.5 13.5l2 3"/></svg>;
 const IcoCultura   = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg>;
-const IcoSilla     = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="4" r="2"/><path d="M9 20l-1-7h8l-1 7"/><path d="M6 13H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h2l2-3"/><path d="M18 13h1a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2l-2-3"/></svg>;
-const IcoSignos    = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 11.5V14l-3 3"/><path d="M9.5 9.5 12 7l3 3"/><path d="m14.5 14.5 3 3"/><path d="M12 7V4"/><path d="M9.5 9.5 7 11.5"/><path d="m14.5 14.5-2.5 2-3-1"/><circle cx="16" cy="5" r="2"/></svg>;
-const IcoPodo      = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M5 9l7-7 7 7"/></svg>;
-const IcoBucle     = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>;
+const IcoSilla  = () => <WheelIcon  size={18}/>;
+const IcoSignos = () => <HandsIcon  size={18}/>;
+const IcoPodo   = () => <PodoIcon   size={18}/>;
+const IcoBucle  = () => <BucleIcon  size={18}/>;
 
 const CATEGORIAS = [
   { key: "Música",     Ico: IcoMusica  },
@@ -23,7 +24,7 @@ const CATEGORIAS = [
 
 const ACCESIBILIDAD = [
   { key: "silla",  label: "Silla de ruedas", Ico: IcoSilla  },
-  { key: "signos", label: "Lengua de signos", Ico: IcoSignos },
+  { key: "signos", label: "Lenguaje de signos", Ico: IcoSignos },
   { key: "podo",   label: "Podotáctil",       Ico: IcoPodo   },
   { key: "bucle",  label: "Bucle magnético",  Ico: IcoBucle  },
 ];
@@ -146,7 +147,7 @@ const css = `
     background: var(--bg);
     width: 100%; max-width: 440px;
     min-height: 580px;
-    border-radius: 10px;
+    border-radius: 0;
     padding: 2.4rem 2.2rem 2rem;
     display: flex; flex-direction: column;
     gap: 1.1rem; position: relative;
@@ -155,7 +156,7 @@ const css = `
 
   .ob-back {
     position: absolute; top: 14px; right: 14px;
-    width: 34px; height: 34px; border-radius: 50%;
+    width: 34px; height: 34px; border-radius: 0;
     background: var(--bg); border: 1.5px solid var(--border);
     cursor: pointer; font-size: 1rem;
     display: flex; align-items: center; justify-content: center;
@@ -184,7 +185,7 @@ const css = `
   .ob-chip {
     display: flex; align-items: center; gap: 8px;
     background: var(--bg); border: 1.5px solid var(--border);
-    border-radius: 8px; padding: 11px 13px;
+    border-radius: 0; padding: 11px 13px;
     font-family: var(--ff-b);
     font-size: .8rem; font-weight: 600;
     cursor: pointer; text-align: left;
@@ -194,7 +195,7 @@ const css = `
   .ob-chip-ico { display: flex; align-items: center; flex-shrink: 0; }
   .ob-chip-txt { transition: color .15s; }
   .ob-chip:hover {
-    background: var(--brand); border-color: var(--brand); color: var(--on-brand);
+    background: var(--brand-subtle,#eef0fe); border-color: var(--brand); color: var(--brand);
   }
   .ob-chip--on {
     background: var(--brand); border-color: var(--brand); color: var(--on-brand);
@@ -202,7 +203,7 @@ const css = `
 
   .ob-cta {
     width: 100%; background: var(--brand); color: var(--on-brand);
-    border: none; border-radius: 6px; cursor: pointer;
+    border: none; border-radius: 0; cursor: pointer;
     font-family: var(--ff-b);
     font-size: .76rem; font-weight: 700;
     letter-spacing: .08em; text-transform: uppercase;
