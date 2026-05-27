@@ -537,7 +537,7 @@ const css = `
   }
   .ep-hero-overlay {
     position:absolute; inset:0;
-    background:linear-gradient(135deg,rgba(8,10,35,.70) 0%,rgba(15,20,60,.55) 55%,rgba(8,10,35,.65) 100%);
+    background:linear-gradient(135deg,rgba(8,10,35,.80) 0%,rgba(15,20,60,.68) 55%,rgba(8,10,35,.75) 100%);
   }
   .ep-hero-inner {
     position:absolute; inset:0;
