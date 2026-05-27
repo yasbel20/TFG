@@ -485,8 +485,7 @@ export default function EventDetail({ ev, onBack }) {
             {/* Título y categoría — fila completa encima del grid */}
             <div className="ed-title-block">
               <span className="ed-cat-label">{ev.cat}</span>
-              <h1 className="ed-title">{ev.title}</h1>
-
+              <h1 className="ed-title" tabIndex="0" aria-label={`${ev.cat}: ${ev.title}`}>{ev.title}</h1>
             </div>
 
             {/* Columna principal */}
@@ -495,7 +494,8 @@ export default function EventDetail({ ev, onBack }) {
               {/* Metadatos en fila */}
               <div className="ed-meta-row">
                 {ev.date && (
-                  <div className="ed-meta-item">
+                  <div className="ed-meta-item" tabIndex="0"
+                    aria-label={`Fecha: ${ev.date}${ev.timeStr ? `, ${ev.timeStr}` : ""}`}>
                     <CalIcon/>
                     <div>
                       <span className="ed-meta-label">Fecha</span>
@@ -504,7 +504,7 @@ export default function EventDetail({ ev, onBack }) {
                   </div>
                 )}
                 {ev.duration && (
-                  <div className="ed-meta-item">
+                  <div className="ed-meta-item" tabIndex="0" aria-label={`Duración: ${ev.duration}`}>
                     <Ico d={<><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>}/>
                     <div>
                       <span className="ed-meta-label">Duración</span>
@@ -513,7 +513,7 @@ export default function EventDetail({ ev, onBack }) {
                   </div>
                 )}
                 {ev.ageMin && (
-                  <div className="ed-meta-item">
+                  <div className="ed-meta-item" tabIndex="0" aria-label={`Edad recomendada: a partir de ${ev.ageMin}`}>
                     <Ico d={<><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></>}/>
                     <div>
                       <span className="ed-meta-label">Edad recomendada</span>
@@ -522,7 +522,7 @@ export default function EventDetail({ ev, onBack }) {
                   </div>
                 )}
                 {ev.price && (
-                  <div className="ed-meta-item">
+                  <div className="ed-meta-item" tabIndex="0" aria-label={`Entrada general: ${ev.price}`}>
                     <EuroIcon/>
                     <div>
                       <span className="ed-meta-label">Entrada general</span>
@@ -541,7 +541,8 @@ export default function EventDetail({ ev, onBack }) {
                     </div>
                   )}
                   <div className="ed-show-info">
-                    <div className="ed-show-info-header">
+                    <div className="ed-show-info-header" tabIndex="0"
+                      aria-label={`Sobre el espectáculo: ${ev.descFull ? ev.descFull.slice(0, 200) : "Sin descripción disponible"}`}>
                       <Ico d={<><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>} size={16}/>
                       <span className="ed-show-info-title">SOBRE EL ESPECTÁCULO</span>
                       {supported && (
@@ -626,7 +627,8 @@ export default function EventDetail({ ev, onBack }) {
 
                 {/* Nombre del recinto */}
                 {(ev.org || ev.venue) && (
-                  <div className="ed-sidebar-item">
+                  <div className="ed-sidebar-item" tabIndex="0"
+                    aria-label={`Lugar: ${ev.org || ev.venue}`}>
                     <span className="ed-sidebar-icon" aria-hidden="true"><PinIcon/></span>
                     <div>
                       <span className="ed-sidebar-label">Nombre</span>
@@ -637,7 +639,8 @@ export default function EventDetail({ ev, onBack }) {
                 <div className="ed-sidebar-divider"/>
 
                 {/* Dirección */}
-                <div className="ed-sidebar-item">
+                <div className="ed-sidebar-item" tabIndex="0"
+                  aria-label={`Dirección: ${ev.venueRaw || ev.venue}, ${ev.district}, Madrid`}>
                   <span className="ed-sidebar-icon" aria-hidden="true"><PinIcon/></span>
                   <div>
                     <span className="ed-sidebar-label">Dirección</span>
