@@ -200,7 +200,7 @@ const css = `
     width: 100%;
   }
   .eg-inner {
-    max-width: 100%;
+    max-width: 1320px;
     margin: 0 auto;
     padding: 0 clamp(1rem, 3vw, 2rem);
   }
