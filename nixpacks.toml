@@ -10,12 +10,12 @@ cmds = [
 [phases.build]
 cmds = [
   "npm run build",
-  "mkdir -p backend/public/assets",
-  "cp -r dist/assets/. backend/public/assets/",
-  "cp -r dist/img/. backend/public/img/ 2>/dev/null || true",
-  "cp dist/index.html backend/resources/views/spa.blade.php",
-  "cd backend && php artisan config:cache && php artisan route:cache && php artisan migrate --force"
+  "cp -r dist/. backend/public/",
+  "rm -f backend/public/index.html",
+  "mkdir -p backend/public/img",
+  "cp -r img/. backend/public/img/ 2>/dev/null || true",
+  "cp dist/index.html backend/resources/views/spa.blade.php"
 ]
 
 [start]
-cmd = "cd backend && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
+cmd = "cd backend && php artisan config:cache && php artisan route:cache && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
