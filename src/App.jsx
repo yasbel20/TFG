@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { AuthProvider } from "./AuthContext";
 import { AccessibilityProvider } from "./AccessibilityContext";
 import AccessibilityOverlay from "./AccessibilityOverlay";
@@ -9,6 +10,12 @@ import EventDetailPage from "./EventDetailPage";
 import PerfilPage from "./PerfilPage";
 import WelcomeSplash from "./WelcomeSplash";
 import Footer from "./Footer";
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 
 function GlobalUI() {
   const { pathname } = useLocation();
@@ -26,6 +33,7 @@ function App() {
     <AccessibilityProvider>
       <AuthProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/"             element={<INCLUGOHome />} />
             <Route path="/eventos"      element={<EventsPage />} />

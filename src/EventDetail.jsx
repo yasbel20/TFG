@@ -353,7 +353,7 @@ export default function EventDetail({ ev, onBack }) {
   const fontLabel = fontSize === 1 ? "A" : fontSize === 1.15 ? "A+" : "A++";
 
   const handleShare = async () => {
-    const url = ev.url !== "#" ? ev.url : window.location.href;
+    const url = `${window.location.origin}/evento/${ev.id}`;
     if (navigator.share) {
       try { await navigator.share({ title: ev.title, text: `${ev.title} — ${ev.date}`, url }); } catch {}
     } else {
@@ -622,44 +622,41 @@ export default function EventDetail({ ev, onBack }) {
             <aside className="ed-sidebar" aria-label="Información del evento">
               <div className="ed-sidebar-card">
 
-                <h2 className="ed-sidebar-heading" style={{textTransform:"uppercase"}}>Ubicación</h2>
-                <div className="ed-sidebar-heading-bar"/>
-
-                {/* Nombre del recinto */}
-                {(ev.org || ev.venue) && (
-                  <div className="ed-sidebar-item" tabIndex="0"
-                    aria-label={`Lugar: ${ev.org || ev.venue}`}>
-                    <span className="ed-sidebar-icon" aria-hidden="true"><PinIcon/></span>
-                    <div>
-                      <span className="ed-sidebar-label">Nombre</span>
-                      <span className="ed-sidebar-value">{ev.org || ev.venue}</span>
+                {/* ── Mapa ── */}
+                <div className="ed-map-block">
+                  <div className="ed-map-header">
+                    <span className="ed-map-header-label">UBICACIÓN</span>
+                    <div className="ed-map-header-line"/>
+                  </div>
+                  <div className="ed-map-frame">
+                    <iframe
+                      title="Mapa del evento"
+                      src={`https://maps.google.com/maps?q=${encodeURIComponent((ev.venueRaw || ev.venue) + ', Madrid')}&output=embed&z=15`}
+                      width="100%" height="220" style={{border:0, display:"block"}}
+                      allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+                    />
+                    <div className="ed-map-overlay-badge" aria-hidden="true">
+                      <PinIcon/> Madrid
                     </div>
                   </div>
-                )}
-                <div className="ed-sidebar-divider"/>
-
-                {/* Dirección */}
-                <div className="ed-sidebar-item" tabIndex="0"
-                  aria-label={`Dirección: ${ev.venueRaw || ev.venue}, ${ev.district}, Madrid`}>
-                  <span className="ed-sidebar-icon" aria-hidden="true"><PinIcon/></span>
-                  <div>
-                    <span className="ed-sidebar-label">Dirección</span>
-                    <span className="ed-sidebar-value">{ev.venueRaw || ev.venue}</span>
-                    <span className="ed-sidebar-sub">{ev.district}, Madrid</span>
-                    <div className="ed-map-embed">
-                      <iframe
-                        title="Mapa del evento"
-                        src={`https://maps.google.com/maps?q=${encodeURIComponent((ev.venueRaw || ev.venue) + ', Madrid')}&output=embed&z=15`}
-                        width="100%" height="180" style={{border:0, display:"block"}}
-                        allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
-                      />
+                  <div className="ed-map-info">
+                    <div className="ed-map-venue-row">
+                      <span className="ed-map-pin-icon" aria-hidden="true"><PinIcon/></span>
+                      <div>
+                        <span className="ed-map-venue-name">{ev.org || ev.venue}</span>
+                        <span className="ed-map-venue-addr">{ev.venueRaw !== ev.org ? ev.venueRaw : ""}</span>
+                        <span className="ed-map-venue-city">{ev.district}, Madrid</span>
+                      </div>
                     </div>
-                    <a href={`https://maps.google.com/?q=${encodeURIComponent((ev.venueRaw || ev.venue) + ', Madrid')}`}
-                      target="_blank" rel="noreferrer" className="ed-map-link">
-                      Ver mapa <ExternalIcon/>
+                    <a
+                      href={`https://maps.google.com/?q=${encodeURIComponent((ev.venueRaw || ev.venue) + ', Madrid')}`}
+                      target="_blank" rel="noreferrer" className="ed-map-cta"
+                      aria-label="Cómo llegar en Google Maps">
+                      <ExternalIcon/> Cómo llegar
                     </a>
                   </div>
                 </div>
+
                 <div className="ed-sidebar-divider"/>
 
                 <button className="ed-share-btn" onClick={handleShare} aria-label="Compartir este evento">
@@ -1199,4 +1196,65 @@ const css = `
     display:flex; align-items:center; gap:.5rem;
     font-family:'Inter',sans-serif; font-size:.87rem; color:#374151;
   }
+
+  /* ── Bloque mapa mejorado ── */
+  .ed-map-block { margin-bottom:.25rem; }
+  .ed-map-header {
+    display:flex; align-items:center; gap:.75rem; margin-bottom:.875rem;
+  }
+  .ed-map-header-label {
+    font-family:'Inter',sans-serif; font-size:.68rem; font-weight:800;
+    letter-spacing:.16em; color:#9ca3af; white-space:nowrap; flex-shrink:0;
+  }
+  .ed-map-header-line { flex:1; height:1px; background:#e5e7eb; }
+
+  .ed-map-frame {
+    position:relative; overflow:hidden; line-height:0;
+    border-radius:0; box-shadow:0 2px 12px rgba(0,0,0,.08);
+  }
+
+  .ed-map-overlay-badge {
+    position:absolute; bottom:10px; left:10px;
+    background:rgba(255,255,255,.95);
+    font-family:'Inter',sans-serif; font-size:.7rem; font-weight:700;
+    letter-spacing:.06em; text-transform:uppercase; color:#374151;
+    padding:.3rem .65rem; display:flex; align-items:center; gap:.3rem;
+    pointer-events:none; box-shadow:0 1px 4px rgba(0,0,0,.12);
+  }
+
+  .ed-map-info {
+    padding:.85rem 0 0; display:flex; flex-direction:column; gap:.75rem;
+  }
+  .ed-map-venue-row {
+    display:flex; align-items:flex-start; gap:.65rem;
+  }
+  .ed-map-pin-icon {
+    width:30px; height:30px;
+    background:${P.brandSubtle}; color:${P.brand};
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    margin-top:2px;
+  }
+  .ed-map-venue-name {
+    display:block; font-family:'Inter',sans-serif; font-size:.92rem;
+    font-weight:700; color:#111827; line-height:1.3;
+  }
+  .ed-map-venue-addr {
+    display:block; font-size:.8rem; color:#6b7280; margin-top:.15rem;
+    line-height:1.35;
+  }
+  .ed-map-venue-addr:empty { display:none; }
+  .ed-map-venue-city {
+    display:block; font-size:.78rem; font-weight:600;
+    color:${P.brand}; margin-top:.1rem; letter-spacing:.03em;
+  }
+  .ed-map-cta {
+    display:flex; align-items:center; justify-content:center; gap:.45rem;
+    background:${P.brandSubtle}; color:${P.brand};
+    font-family:'Inter',sans-serif; font-size:.78rem; font-weight:700;
+    letter-spacing:.08em; text-transform:uppercase;
+    padding:.65rem 1rem; text-decoration:none; border:none;
+    transition:background .15s, color .15s;
+  }
+  .ed-map-cta:hover { background:${P.brand}; color:#fff; }
+  .ed-map-cta:focus-visible { outline:2px solid ${P.brand}; outline-offset:2px; }
 `;

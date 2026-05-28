@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AccessibilityBadge from "./AccessibilityBadge";
 import { useAuth } from "./AuthContext";
 import { WheelIcon as WheelIconShared, HandsIcon, BucleIcon as BucleIconShared, PodoIcon as PodoIconShared } from "./AccessibilityIcons";
+import { JUNE_EVENTS } from "./juneEvents";
 
 // ─── Categorías y colores ─────────────────────────────────────────────────────
 const CAT_COLORS = {
@@ -44,8 +45,8 @@ const HeartIcon = ({ filled }) => (
   </svg>
 );
 
-// ─── Eventos fijos Junio 2026 ─────────────────────────────────────────────────
-const JUNE_EVENTS = [
+// ─── Eventos fijos Junio 2026 (importados desde juneEvents.js) ───────────────
+const _JUNE_EVENTS_UNUSED = [
   // Música
   { id:"m1", cat:"Música",     title:"Jazz en el Conde Duque",        dateShort:"5 JUN",       timeStr:"20:00 h", venue:"C.C. Conde Duque",        district:"Centro",    price:"Gratis", access:["silla","signos"], image:"/img/eventos/musica/Jazz%20en%20el%20Conde%20Duque.jpg", url:"#", descFull:"Una noche de jazz en vivo en el emblemático Centro Cultural Conde Duque. Artistas internacionales y nacionales se unen para ofrecer una experiencia musical única.", date:"5 de junio de 2026", venueRaw:"C.C. Conde Duque", org:"Área de Cultura Madrid" },
   { id:"m2", cat:"Música",     title:"Concierto Flamenco Accesible",  dateShort:"12 JUN",      timeStr:"21:00 h", venue:"Café de las Artes",        district:"Malasaña",  price:"10 €",   access:["silla"],          image:"/img/eventos/musica/Concierto%20Flamenco%20Accesible.jpg", url:"#", descFull:"Noche de flamenco auténtico con artistas del barrio en un espacio completamente accesible. La esencia del flamenco más puro en el corazón de Malasaña.", date:"12 de junio de 2026", venueRaw:"Café de las Artes", org:"" },
