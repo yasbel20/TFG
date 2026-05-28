@@ -1,0 +1,21 @@
+[phases.setup]
+nixPkgs = ["php83", "nodejs_20", "php83Extensions.pdo", "php83Extensions.sqlite3", "php83Extensions.mbstring", "php83Extensions.tokenizer", "php83Extensions.xml", "php83Extensions.ctype", "php83Extensions.fileinfo", "php83Extensions.openssl", "php83Extensions.curl"]
+
+[phases.install]
+cmds = [
+  "npm install",
+  "cd backend && composer install --no-dev --optimize-autoloader --no-interaction"
+]
+
+[phases.build]
+cmds = [
+  "npm run build",
+  "mkdir -p backend/public/assets",
+  "cp -r dist/assets/. backend/public/assets/",
+  "cp -r dist/img/. backend/public/img/ 2>/dev/null || true",
+  "cp dist/index.html backend/resources/views/spa.blade.php",
+  "cd backend && php artisan config:cache && php artisan route:cache && php artisan migrate --force"
+]
+
+[start]
+cmd = "cd backend && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
