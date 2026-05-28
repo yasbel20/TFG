@@ -12,10 +12,10 @@ const CAT_COLORS = {
 };
 const CAT_HERO = {
   "Música":     "/img/musica1.jpg",
-  "Teatro":     "/img/teatro.jpg",
-  "Exposición": "/img/exposicion.jpg",
-  "Cine":       "/img/cine.jpg",
-  "Danza":      "/img/danza.jpg",
+  "Teatro":     "/img/teatro1.jpg",
+  "Exposición": "/img/exposicion1.jpg",
+  "Cine":       "/img/cine1.jpg",
+  "Danza":      "/img/danza1.jpg",
   "Cultura":    "/img/cultura1.jpg",
   "Deporte":    "/img/hero.jpg",
   "Todos":      "/img/portada.jpg",
