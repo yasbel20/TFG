@@ -13,13 +13,17 @@ const DEFAULT_PREFS = {
 
 function readElement(el) {
   if (!el || el === document.body) return null;
-  const label =
+  // Preferir aria-label / title / placeholder
+  const explicit =
     el.getAttribute("aria-label") ||
     el.getAttribute("title") ||
-    el.getAttribute("placeholder") ||
-    el.textContent?.trim().slice(0, 120) ||
-    null;
-  return label && label.length > 1 ? label : null;
+    el.getAttribute("placeholder");
+  if (explicit?.trim().length > 1) return explicit.trim();
+  // Texto visible: clonar y eliminar hijos SVG para evitar leer paths
+  const clone = el.cloneNode(true);
+  clone.querySelectorAll("svg,script,style").forEach(n => n.remove());
+  const text = clone.textContent?.replace(/\s+/g, " ").trim().slice(0, 200);
+  return text && text.length > 1 ? text : null;
 }
 
 export function AccessibilityProvider({ children }) {
@@ -37,13 +41,19 @@ export function AccessibilityProvider({ children }) {
     });
   }, []);
 
-  // Opción A — leer elemento enfocado con Tab
+  // Modo teclado — leer elemento al recibir foco (Tab)
   useEffect(() => {
     if (!prefs.keyboard || !("speechSynthesis" in window)) return;
 
     const handler = (e) => {
-      if (e.target === document.body) return;
-      const text = readElement(e.target);
+      // Subir desde SVG/path al elemento interactivo real
+      let target = e.target;
+      const svgTags = ["svg","path","circle","rect","line","polyline","polygon","g"];
+      if (svgTags.includes(target.tagName?.toLowerCase())) {
+        target = target.closest("button,a,[tabindex]") || target;
+      }
+      if (target === document.body) return;
+      const text = readElement(target);
       if (!text) return;
       window.speechSynthesis.cancel();
       const utt = new SpeechSynthesisUtterance(text);
@@ -59,12 +69,14 @@ export function AccessibilityProvider({ children }) {
     };
   }, [prefs.keyboard]);
 
-  // Clic y escuchar global
+  // Clic y escuchar global — selector amplio para cubrir todas las páginas
   useEffect(() => {
     if (!prefs.clickListen || !("speechSynthesis" in window)) return;
 
     const handler = (e) => {
-      const el = e.target.closest("p,h1,h2,h3,li,label,button,a");
+      const el = e.target.closest(
+        "[aria-label],[tabindex],p,h1,h2,h3,h4,h5,h6,li,label,button,a,[role='button'],[role='article'],[role='listitem']"
+      );
       if (!el) return;
       const text = readElement(el);
       if (!text) return;

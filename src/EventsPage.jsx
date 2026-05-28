@@ -11,12 +11,12 @@ const CAT_COLORS = {
   "Danza":      "#141414", "Cultura":    "#111111", "Deporte": "#1A1A1A",
 };
 const CAT_HERO = {
-  "Música":     "/img/musica.jpg",
+  "Música":     "/img/musica1.jpg",
   "Teatro":     "/img/teatro.jpg",
   "Exposición": "/img/exposicion.jpg",
   "Cine":       "/img/cine.jpg",
   "Danza":      "/img/danza.jpg",
-  "Cultura":    "/img/cultura.jpg",
+  "Cultura":    "/img/cultura1.jpg",
   "Deporte":    "/img/hero.jpg",
   "Todos":      "/img/portada.jpg",
 };
@@ -157,7 +157,10 @@ function useEvents() {
 
     Promise.all([madridFetch, imgFetch])
       .then(([data, imgMap]) => {
-        const parsed = (data["@graph"] || []).map(parseEvent).filter(e => e.access.length > 0);
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        const parsed = (data["@graph"] || []).map(parseEvent)
+          .filter(e => e.access.length > 0)
+          .filter(e => !e.endDate || e.endDate >= today);
         const withImgs = parsed.map(ev => ({
           ...ev,
           image: imgMap[ev.id] || ev.image,

@@ -116,7 +116,7 @@ body {
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: clamp(500px, 80vh, 900px);
+  min-height: clamp(380px, 55vh, 620px);
   background: var(--bg);
   overflow: hidden;
 }
@@ -125,7 +125,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: clamp(3rem, 8vw, 7rem) var(--px) clamp(3rem, 8vw, 7rem) var(--px);
+  padding: clamp(2rem, 5vw, 4rem) var(--px) clamp(2rem, 5vw, 4rem) var(--px);
 }
 
 .hero-eyebrow {

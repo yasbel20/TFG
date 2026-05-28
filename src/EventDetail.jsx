@@ -64,6 +64,7 @@ const CalIcon    = () => <Ico d={<><rect x="3" y="4" width="18" height="18" rx="
 const PinIcon    = () => <Ico size={16} d={<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>} fill="currentColor" stroke="none"/>;
 const ExternalIcon=()=> <Ico d={<><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></>}/>;
 const DownloadIcon=()=><Ico d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>;
+const A11yIcon    = () => <Ico size={22} d={<><circle cx="12" cy="4" r="2"/><path d="M12 6v6l3 3M12 6l-3 6M6 8h12"/></>}/>;
 const KeyboardIcon=()=><Ico d={<><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/></>}/>;
 const ClickIcon  = ()=><Ico d={<><path d="M9 9l2 12 1.8-5.2L18 14z"/><path d="M9 9H3"/><path d="M9 9V3"/></>}/>;
 const TextIcon   = ()=><Ico d={<><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></>}/>;
@@ -198,50 +199,50 @@ function HighlightedText({ text, wordIndex }) {
   );
 }
 
-// ─── Panel de preferencias ────────────────────────────────────────────────────
-function PrefsPanel({ prefs, onChange, onClose, onDownloadMp3 }) {
+// ─── Panel de preferencias (estilo overlay global) ───────────────────────────
+function PrefsPanel({ prefs, onChange, onClose }) {
   const panelRef = useRef(null);
 
-  // Foco al abrir
   useEffect(() => { panelRef.current?.querySelector("button,input")?.focus(); }, []);
-
-  // Cerrar con Escape
   useEffect(() => {
     const h = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", h);
     return () => document.removeEventListener("keydown", h);
   }, [onClose]);
 
-  const item = (icon, label, id, val) => (
-    <div className="rs-pref-row">
-      <span className="rs-pref-icon" aria-hidden="true">{icon}</span>
-      <span className="rs-pref-name">{label}</span>
-      <Toggle id={id} checked={val} onChange={v => onChange(id, v)} label={label}/>
-    </div>
-  );
+  const rows = [
+    [KeyboardIcon, "Modo teclado (voz por Tab)", "keyboard"],
+    [ClickIcon,    "Clic y escuchar",             "clickListen"],
+    [EyeIcon,      "Visibilidad de texto",         "textVis"],
+    [MaskIcon,     "Máscara de página",            "pageMask"],
+  ];
 
   return (
-    <div className="rs-panel-backdrop" onClick={onClose} role="dialog" aria-modal="true" aria-label="Preferencias de accesibilidad">
-      <div className="rs-panel" ref={panelRef} onClick={e => e.stopPropagation()}>
-
-        <div className="rs-panel-head">
-          <span className="rs-panel-title">Preferencias</span>
-          <button className="rs-panel-close" onClick={onClose} aria-label="Cerrar preferencias">
-            <CloseIcon/>
-          </button>
-        </div>
-
-        <div className="rs-panel-body">
-          {item(<KeyboardIcon/>, "Modo teclado",               "keyboard",    prefs.keyboard)}
-          {item(<ClickIcon/>,    "Clic y escuchar",             "clickListen", prefs.clickListen)}
-          {item(<EyeIcon/>,      "Visibilidad de texto mejorada","textVis",    prefs.textVis)}
-          {item(<MaskIcon/>,     "Máscara de página",           "pageMask",    prefs.pageMask)}
-
-        </div>
-
-        <div className="rs-panel-foot">
-          por <strong>INCLUGO</strong> · accesibilidad web
-        </div>
+    <div className="ed-a11y-panel" ref={panelRef} role="dialog" aria-modal="false" aria-label="Preferencias de accesibilidad">
+      <div className="ed-a11y-panel-head">
+        <span className="ed-a11y-panel-title">Accesibilidad</span>
+        <button className="ed-a11y-panel-close" onClick={onClose} aria-label="Cerrar">
+          <CloseIcon/>
+        </button>
+      </div>
+      <div className="ed-a11y-panel-body">
+        {rows.map(([Icon, label, key]) => (
+          <label key={key} className="ed-a11y-toggle" htmlFor={`ed-ao-${key}`}>
+            <span className="ed-a11y-item-label"><Icon/>{label}</span>
+            <span className="rs-toggle-track" aria-hidden="true">
+              <input
+                id={`ed-ao-${key}`}
+                type="checkbox"
+                checked={!!prefs[key]}
+                onChange={e => onChange(key, e.target.checked)}
+                className="rs-toggle-input"
+                role="switch"
+                aria-checked={!!prefs[key]}
+              />
+              <span className="rs-toggle-thumb"/>
+            </span>
+          </label>
+        ))}
       </div>
     </div>
   );
@@ -347,20 +348,6 @@ export default function EventDetail({ ev, onBack }) {
   const isFav = favIds.has(String(ev.id));
   const toggleFav = () => isFav ? removeFav(ev.id) : addFav(ev);
 
-  // Clic y escuchar — click en cualquier párrafo lo lee
-  useEffect(() => {
-    if (!prefs.clickListen || !supported) return;
-    const handler = (e) => {
-      const el = e.target.closest("p,h1,h2,h3");
-      if (!el) return;
-      stop();
-      const utt = new SpeechSynthesisUtterance(el.textContent);
-      utt.lang = "es-ES"; utt.rate = speechRate;
-      window.speechSynthesis.speak(utt);
-    };
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
-  }, [prefs.clickListen, supported, stop, speechRate]);
 
   const cycleFontSize = () => setFontSize(f => f === 1 ? 1.15 : f === 1.15 ? 1.3 : 1);
   const fontLabel = fontSize === 1 ? "A" : fontSize === 1.15 ? "A+" : "A++";
@@ -424,6 +411,13 @@ export default function EventDetail({ ev, onBack }) {
 
       {prefs.pageMask && <PageMask/>}
 
+      {showPrefs && (
+        <PrefsPanel
+          prefs={prefs}
+          onChange={updatePref}
+          onClose={() => setShowPrefs(false)}
+        />
+      )}
 
       <main className={pageClasses} style={pageStyle} id="main-content">
 
@@ -463,8 +457,13 @@ export default function EventDetail({ ev, onBack }) {
                 <span className="ed-font-label">{fontLabel}</span>
               </button>
 
-              <button className="ed-icon-btn ed-icon-btn--close" onClick={onBack} aria-label="Cerrar">
-                <CloseIcon/>
+              <button
+                className={`ed-icon-btn ed-icon-btn--settings${showPrefs ? " ed-active" : ""}`}
+                onClick={() => setShowPrefs(o => !o)}
+                aria-label="Preferencias de accesibilidad"
+                aria-expanded={showPrefs}
+              >
+                <SettingsIcon/>
               </button>
             </div>
           </div>
@@ -582,7 +581,7 @@ export default function EventDetail({ ev, onBack }) {
                   <h2 className="ed-section-title" id="hi-h">¿QUÉ ENCONTRARÁS?</h2>
                   <ul className="ed-highlights-list">
                     {highlights.map((h, i) => (
-                      <li key={i} className="ed-highlight-item">
+                      <li key={i} className="ed-highlight-item" tabIndex="0">
                         <span className="ed-highlight-icon" aria-hidden="true">
                           <Ico d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" size={14}/>
                         </span>
@@ -603,7 +602,8 @@ export default function EventDetail({ ev, onBack }) {
                       if (!info) return null;
                       const Icon = { silla: WheelIcon, signos: SignosIcon, bucle: BucleIcon, podo: PodoIcon }[a];
                       return (
-                        <div key={a} className="ed-access-card">
+                        <div key={a} className="ed-access-card"
+                          tabIndex="0" aria-label={`${info.label}: ${info.desc}`}>
                           <span className="ed-access-icon" aria-hidden="true">{Icon && <Icon/>}</span>
                           <div className="ed-access-body">
                             <strong className="ed-access-name">{info.label}</strong>
@@ -661,11 +661,6 @@ export default function EventDetail({ ev, onBack }) {
                   </div>
                 </div>
                 <div className="ed-sidebar-divider"/>
-
-                {ev.url && ev.url !== "#"
-                  ? <a href={ev.url} target="_blank" rel="noreferrer" className="ed-cta">Ver en web oficial <ExternalIcon/></a>
-                  : <span className="ed-cta-disabled">Más información próximamente</span>
-                }
 
                 <button className="ed-share-btn" onClick={handleShare} aria-label="Compartir este evento">
                   <ShareIcon/> Compartir evento
@@ -1162,5 +1157,46 @@ const css = `
   @media (max-width:640px) {
     .ed-topbar-sep { display:none; }
     .ed-icon-btn--play ~ .ed-icon-btn:not(.ed-icon-btn--text):not(.ed-icon-btn--close) { display:none; }
+  }
+
+  /* ── Botón tuerca en topbar ── */
+  .ed-icon-btn--settings { }
+  .ed-icon-btn--settings.ed-active { background:${P.brandSubtle}; color:${P.brand}; border-color:${P.brand}; }
+
+  /* ── Panel flotante accesibilidad (igual que ao-panel del overlay global) ── */
+  .ed-a11y-panel {
+    position:fixed; top:3.5rem; right:1rem; z-index:9100;
+    width:280px; background:#fff;
+    border:1px solid #e5e7eb; border-radius:0;
+    box-shadow:0 12px 40px rgba(0,0,0,.13);
+    overflow:hidden; animation:ed-a11y-in .15s ease;
+  }
+  @keyframes ed-a11y-in {
+    from { opacity:0; transform:translateY(8px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .ed-a11y-panel-head {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:.75rem 1rem; border-bottom:1px solid #e5e7eb;
+  }
+  .ed-a11y-panel-title {
+    font-family:'Inter',sans-serif; font-size:1rem; font-weight:700;
+    letter-spacing:.04em; color:#111;
+  }
+  .ed-a11y-panel-close {
+    background:none; border:none; cursor:pointer; color:#6b7280;
+    padding:.25rem; display:flex; align-items:center; justify-content:center;
+    border-radius:4px;
+  }
+  .ed-a11y-panel-close:hover { color:#111; }
+  .ed-a11y-panel-body { display:flex; flex-direction:column; gap:.1rem; padding:.5rem 0; }
+  .ed-a11y-toggle {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:.55rem 1rem; cursor:pointer; transition:background .12s;
+  }
+  .ed-a11y-toggle:hover { background:#f9fafb; }
+  .ed-a11y-item-label {
+    display:flex; align-items:center; gap:.5rem;
+    font-family:'Inter',sans-serif; font-size:.87rem; color:#374151;
   }
 `;

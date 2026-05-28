@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./AuthContext";
 import { AccessibilityProvider } from "./AccessibilityContext";
 import AccessibilityOverlay from "./AccessibilityOverlay";
@@ -9,6 +9,17 @@ import EventDetailPage from "./EventDetailPage";
 import PerfilPage from "./PerfilPage";
 import WelcomeSplash from "./WelcomeSplash";
 import Footer from "./Footer";
+
+function GlobalUI() {
+  const { pathname } = useLocation();
+  const isDetail = pathname.startsWith("/evento/");
+  return (
+    <>
+      <Footer />
+      {!isDetail && <AccessibilityOverlay />}
+    </>
+  );
+}
 
 function App() {
   return (
@@ -24,8 +35,7 @@ function App() {
             <Route path="/perfil"       element={<PerfilPage />} />
             <Route path="/bienvenida"   element={<WelcomeSplash />} />
           </Routes>
-          <Footer />
-          <AccessibilityOverlay />
+          <GlobalUI />
         </BrowserRouter>
       </AuthProvider>
     </AccessibilityProvider>

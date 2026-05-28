@@ -70,7 +70,6 @@ export default function AccessibilityOverlay() {
             {item(EyeIcon,      "Visibilidad de texto",        "textVis")}
             {item(MaskIcon,     "Máscara de página",           "pageMask")}
           </div>
-          <div className="ao-panel-foot">por <strong>INCLUGO</strong> · accesibilidad web</div>
         </div>
       )}
 
@@ -124,7 +123,7 @@ const css = `
     width: 280px;
     background: var(--bg, #fff);
     border: 1px solid var(--border, #e5e7eb);
-    border-radius: 12px;
+    border-radius: 0;
     box-shadow: 0 12px 40px rgba(0,0,0,.13);
     overflow: hidden;
     animation: ao-in .15s ease;
@@ -184,13 +183,6 @@ const css = `
     width: 16px; height: 16px; border-radius: 50%;
     background: #fff; transition: left .2s;
     box-shadow: 0 1px 4px rgba(0,0,0,.2);
-  }
-
-  .ao-panel-foot {
-    padding: .5rem 1rem;
-    font-size: .72rem; color: var(--text-muted, #9ca3af);
-    border-top: 1px solid var(--border, #e5e7eb);
-    text-align: center;
   }
 
   /* Máscara de página */

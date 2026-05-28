@@ -44,6 +44,20 @@ class ImagenesEventosSeeder extends Seeder
             '50314803' => '/img/eventos/cine/Abortion.jpg',
             '50316844' => '/img/eventos/cine/Animal Love.jpg',
             '50317384' => '/img/eventos/cine/Blind Love.jpg',
+            '50303632' => '/img/eventos/danza/Actividades lúdico deportivas.jpg',
+            '50322526' => '/img/eventos/exposicion/Apertura extraordinariaNoche en blanco.jpg',
+            '50108251' => '/img/eventos/danza/Compañía Nacional de Danza  Luz Arcas  Kor\'sia.png',
+            '50319726' => '/img/eventos/danza/DanzaLos sueños de Tessa 3. Mestizaje.jpg',
+            '50322287' => '/img/eventos/danza/Espacio Sevillanas Primera Sesión.jpg',
+            '50322252' => '/img/eventos/danza/Espectáculo de Danza `La Costumbre de la Apatía.jpg',
+            '50235568' => '/img/eventos/danza/Festival 4 estaciones.jpg',
+            '50108229' => '/img/eventos/danza/Israel Galván.jpg',
+            '50257645' => '/img/eventos/cultura/4 escenas, 4 estilos.jpeg',
+            '50319880' => '/img/eventos/cultura/80 Aniversario de la revista Ínsula.jpg',
+            '50303712' => '/img/eventos/cultura/Actividades deportivas para mayores.jpg',
+            '50292188' => '/img/eventos/cultura/Allegro ma non troppo. Cía 3 Notas.jpg',
+            '12791885' => '/img/eventos/cultura/Amores a ciegas.jpg',
+            '50316069' => '/img/eventos/cultura/Antología poética y Concurso de relatos de libros Mablaz.jpg',
         ];
 
         foreach ($imagenes as $apiId => $url) {
