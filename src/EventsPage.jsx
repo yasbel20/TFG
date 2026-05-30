@@ -11,14 +11,14 @@ const CAT_COLORS = {
   "Danza":      "#141414", "Cultura":    "#111111", "Deporte": "#1A1A1A",
 };
 const CAT_HERO = {
-  "Música":     "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1400&q=80",
-  "Teatro":     "https://images.unsplash.com/photo-1503095396549-807759245b35?w=1400&q=80",
-  "Exposición": "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=1400&q=80",
-  "Cine":       "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1400&q=80",
-  "Danza":      "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=1400&q=80",
-  "Cultura":    "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=1400&q=80",
-  "Deporte":    "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1400&q=80",
-  "Todos":      "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1400&q=80",
+  "Música":     "/img/musica1.jpg",
+  "Teatro":     "/img/teatro1.jpg",
+  "Exposición": "/img/exposicion1.jpg",
+  "Cine":       "/img/cine1.jpg",
+  "Danza":      "/img/danza1.jpg",
+  "Cultura":    "/img/cultura1.jpg",
+  "Deporte":    "/img/hero.jpg",
+  "Todos":      "/img/portada.jpg",
 };
 
 // ─── Iconos ───────────────────────────────────────────────────────────────────
@@ -149,11 +149,23 @@ function useEvents() {
   const [loading, setLoading]     = useState(true);
 
   useEffect(() => {
-    fetch("/api-madrid/egob/catalogo/206974-0-agenda-eventos-culturales-100.json")
-      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-      .then(data => {
-        const parsed = (data["@graph"] || []).map(parseEvent).filter(e => e.access.length > 0);
-        setAllEvents(parsed);
+    const madridFetch = fetch("/api-madrid/egob/catalogo/206974-0-agenda-eventos-culturales-100.json")
+      .then(r => { if (!r.ok) throw new Error(); return r.json(); });
+    const imgFetch = fetch("/api/imagenes-eventos")
+      .then(r => r.ok ? r.json() : {})
+      .catch(() => ({}));
+
+    Promise.all([madridFetch, imgFetch])
+      .then(([data, imgMap]) => {
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        const parsed = (data["@graph"] || []).map(parseEvent)
+          .filter(e => e.access.length > 0)
+          .filter(e => !e.endDate || e.endDate >= today);
+        const withImgs = parsed.map(ev => ({
+          ...ev,
+          image: imgMap[ev.id] || ev.image,
+        }));
+        setAllEvents(withImgs);
         setLoading(false);
       })
       .catch(() => { setAllEvents(SAMPLE); setLoading(false); });
@@ -537,7 +549,7 @@ const css = `
   }
   .ep-hero-overlay {
     position:absolute; inset:0;
-    background:linear-gradient(135deg,rgba(8,10,35,.92) 0%,rgba(15,20,60,.78) 55%,rgba(8,10,35,.85) 100%);
+    background:linear-gradient(135deg,rgba(8,10,35,.80) 0%,rgba(15,20,60,.68) 55%,rgba(8,10,35,.75) 100%);
   }
   .ep-hero-inner {
     position:absolute; inset:0;

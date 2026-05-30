@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "./AuthContext";
+import { useAccessibility } from "./AccessibilityContext";
 import { WheelIcon as WheelIconShared, HandsIcon, BucleIcon as BucleIconShared, PodoIcon as PodoIconShared } from "./AccessibilityIcons";
 
 const P = {
@@ -63,6 +64,7 @@ const CalIcon    = () => <Ico d={<><rect x="3" y="4" width="18" height="18" rx="
 const PinIcon    = () => <Ico size={16} d={<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>} fill="currentColor" stroke="none"/>;
 const ExternalIcon=()=> <Ico d={<><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></>}/>;
 const DownloadIcon=()=><Ico d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>;
+const A11yIcon    = () => <Ico size={22} d={<><circle cx="12" cy="4" r="2"/><path d="M12 6v6l3 3M12 6l-3 6M6 8h12"/></>}/>;
 const KeyboardIcon=()=><Ico d={<><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/></>}/>;
 const ClickIcon  = ()=><Ico d={<><path d="M9 9l2 12 1.8-5.2L18 14z"/><path d="M9 9H3"/><path d="M9 9V3"/></>}/>;
 const TextIcon   = ()=><Ico d={<><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></>}/>;
@@ -197,57 +199,50 @@ function HighlightedText({ text, wordIndex }) {
   );
 }
 
-// ─── Panel de preferencias ────────────────────────────────────────────────────
-function PrefsPanel({ prefs, onChange, onClose, onDownloadMp3 }) {
+// ─── Panel de preferencias (estilo overlay global) ───────────────────────────
+function PrefsPanel({ prefs, onChange, onClose }) {
   const panelRef = useRef(null);
 
-  // Foco al abrir
   useEffect(() => { panelRef.current?.querySelector("button,input")?.focus(); }, []);
-
-  // Cerrar con Escape
   useEffect(() => {
     const h = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", h);
     return () => document.removeEventListener("keydown", h);
   }, [onClose]);
 
-  const item = (icon, label, id, val) => (
-    <div className="rs-pref-row">
-      <span className="rs-pref-icon" aria-hidden="true">{icon}</span>
-      <span className="rs-pref-name">{label}</span>
-      <Toggle id={id} checked={val} onChange={v => onChange(id, v)} label={label}/>
-    </div>
-  );
+  const rows = [
+    [KeyboardIcon, "Modo teclado (voz por Tab)", "keyboard"],
+    [ClickIcon,    "Clic y escuchar",             "clickListen"],
+    [EyeIcon,      "Visibilidad de texto",         "textVis"],
+    [MaskIcon,     "Máscara de página",            "pageMask"],
+  ];
 
   return (
-    <div className="rs-panel-backdrop" onClick={onClose} role="dialog" aria-modal="true" aria-label="Preferencias de accesibilidad">
-      <div className="rs-panel" ref={panelRef} onClick={e => e.stopPropagation()}>
-
-        <div className="rs-panel-head">
-          <span className="rs-panel-title">Preferencias</span>
-          <button className="rs-panel-close" onClick={onClose} aria-label="Cerrar preferencias">
-            <CloseIcon/>
-          </button>
-        </div>
-
-        <div className="rs-panel-body">
-          {item(<KeyboardIcon/>, "Modo teclado",               "keyboard",    prefs.keyboard)}
-          {item(<ClickIcon/>,    "Clic y escuchar",             "clickListen", prefs.clickListen)}
-          {item(<EyeIcon/>,      "Visibilidad de texto mejorada","textVis",    prefs.textVis)}
-          {item(<FormIcon/>,     "Lectura de formularios",      "formRead",    prefs.formRead)}
-          {item(<TextIcon/>,     "Modo texto",                  "textMode",    prefs.textMode)}
-          {item(<MaskIcon/>,     "Máscara de página",           "pageMask",    prefs.pageMask)}
-
-          <div className="rs-pref-divider"/>
-
-          <button className="rs-pref-download" onClick={onDownloadMp3} aria-label="Descargar audio MP3 de la descripción">
-            <DownloadIcon/> Descargar MP3
-          </button>
-        </div>
-
-        <div className="rs-panel-foot">
-          por <strong>INCLUGO</strong> · accesibilidad web
-        </div>
+    <div className="ed-a11y-panel" ref={panelRef} role="dialog" aria-modal="false" aria-label="Preferencias de accesibilidad">
+      <div className="ed-a11y-panel-head">
+        <span className="ed-a11y-panel-title">Accesibilidad</span>
+        <button className="ed-a11y-panel-close" onClick={onClose} aria-label="Cerrar">
+          <CloseIcon/>
+        </button>
+      </div>
+      <div className="ed-a11y-panel-body">
+        {rows.map(([Icon, label, key]) => (
+          <label key={key} className="ed-a11y-toggle" htmlFor={`ed-ao-${key}`}>
+            <span className="ed-a11y-item-label"><Icon/>{label}</span>
+            <span className="rs-toggle-track" aria-hidden="true">
+              <input
+                id={`ed-ao-${key}`}
+                type="checkbox"
+                checked={!!prefs[key]}
+                onChange={e => onChange(key, e.target.checked)}
+                className="rs-toggle-input"
+                role="switch"
+                aria-checked={!!prefs[key]}
+              />
+              <span className="rs-toggle-thumb"/>
+            </span>
+          </label>
+        ))}
       </div>
     </div>
   );
@@ -332,14 +327,15 @@ export default function EventDetail({ ev, onBack }) {
   const [shareMsg, setShareMsg] = useState("");
   const [showPrefs, setShowPrefs] = useState(false);
   const [speechRate, setSpeechRate] = useState(0.95);
-  const [prefs, setPrefs] = useState({
-    keyboard:    false,
-    clickListen: false,
-    textVis:     false,
-    formRead:    false,
-    textMode:    false,
-    pageMask:    false,
-  });
+  const { prefs: globalPrefs, updatePref: updateGlobalPref } = useAccessibility();
+  const [localPrefs, setLocalPrefs] = useState({ textMode: false });
+  const prefs = { ...globalPrefs, ...localPrefs };
+  const setPrefs = (fn) => {
+    const next = typeof fn === "function" ? fn(prefs) : fn;
+    const { textMode, ...globals } = next;
+    Object.entries(globals).forEach(([k, v]) => { if (globalPrefs[k] !== v) updateGlobalPref(k, v); });
+    setLocalPrefs(p => ({ ...p, textMode: next.textMode ?? p.textMode }));
+  };
 
   const fallbackBg = CAT_COLORS[ev.cat] || "#111111";
   // Solo leemos la descripción — así el resaltado palabra a palabra
@@ -352,26 +348,12 @@ export default function EventDetail({ ev, onBack }) {
   const isFav = favIds.has(String(ev.id));
   const toggleFav = () => isFav ? removeFav(ev.id) : addFav(ev);
 
-  // Clic y escuchar — click en cualquier párrafo lo lee
-  useEffect(() => {
-    if (!prefs.clickListen || !supported) return;
-    const handler = (e) => {
-      const el = e.target.closest("p,h1,h2,h3");
-      if (!el) return;
-      stop();
-      const utt = new SpeechSynthesisUtterance(el.textContent);
-      utt.lang = "es-ES"; utt.rate = speechRate;
-      window.speechSynthesis.speak(utt);
-    };
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
-  }, [prefs.clickListen, supported, stop, speechRate]);
 
   const cycleFontSize = () => setFontSize(f => f === 1 ? 1.15 : f === 1.15 ? 1.3 : 1);
   const fontLabel = fontSize === 1 ? "A" : fontSize === 1.15 ? "A+" : "A++";
 
   const handleShare = async () => {
-    const url = ev.url !== "#" ? ev.url : window.location.href;
+    const url = `${window.location.origin}/evento/${ev.id}`;
     if (navigator.share) {
       try { await navigator.share({ title: ev.title, text: `${ev.title} — ${ev.date}`, url }); } catch {}
     } else {
@@ -434,7 +416,6 @@ export default function EventDetail({ ev, onBack }) {
           prefs={prefs}
           onChange={updatePref}
           onClose={() => setShowPrefs(false)}
-          onDownloadMp3={handleDownloadMp3}
         />
       )}
 
@@ -475,11 +456,14 @@ export default function EventDetail({ ev, onBack }) {
                 onClick={cycleFontSize} aria-label={`Tamaño de texto: ${fontLabel}`}>
                 <span className="ed-font-label">{fontLabel}</span>
               </button>
-              <button className="ed-icon-btn" onClick={() => setShowPrefs(p => !p)} aria-label="Preferencias">
+
+              <button
+                className={`ed-icon-btn ed-icon-btn--settings${showPrefs ? " ed-active" : ""}`}
+                onClick={() => setShowPrefs(o => !o)}
+                aria-label="Preferencias de accesibilidad"
+                aria-expanded={showPrefs}
+              >
                 <SettingsIcon/>
-              </button>
-              <button className="ed-icon-btn ed-icon-btn--close" onClick={onBack} aria-label="Cerrar">
-                <CloseIcon/>
               </button>
             </div>
           </div>
@@ -500,8 +484,7 @@ export default function EventDetail({ ev, onBack }) {
             {/* Título y categoría — fila completa encima del grid */}
             <div className="ed-title-block">
               <span className="ed-cat-label">{ev.cat}</span>
-              <h1 className="ed-title">{ev.title}</h1>
-
+              <h1 className="ed-title" tabIndex="0" aria-label={`${ev.cat}: ${ev.title}`}>{ev.title}</h1>
             </div>
 
             {/* Columna principal */}
@@ -510,7 +493,8 @@ export default function EventDetail({ ev, onBack }) {
               {/* Metadatos en fila */}
               <div className="ed-meta-row">
                 {ev.date && (
-                  <div className="ed-meta-item">
+                  <div className="ed-meta-item" tabIndex="0"
+                    aria-label={`Fecha: ${ev.date}${ev.timeStr ? `, ${ev.timeStr}` : ""}`}>
                     <CalIcon/>
                     <div>
                       <span className="ed-meta-label">Fecha</span>
@@ -519,7 +503,7 @@ export default function EventDetail({ ev, onBack }) {
                   </div>
                 )}
                 {ev.duration && (
-                  <div className="ed-meta-item">
+                  <div className="ed-meta-item" tabIndex="0" aria-label={`Duración: ${ev.duration}`}>
                     <Ico d={<><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>}/>
                     <div>
                       <span className="ed-meta-label">Duración</span>
@@ -528,7 +512,7 @@ export default function EventDetail({ ev, onBack }) {
                   </div>
                 )}
                 {ev.ageMin && (
-                  <div className="ed-meta-item">
+                  <div className="ed-meta-item" tabIndex="0" aria-label={`Edad recomendada: a partir de ${ev.ageMin}`}>
                     <Ico d={<><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></>}/>
                     <div>
                       <span className="ed-meta-label">Edad recomendada</span>
@@ -537,7 +521,7 @@ export default function EventDetail({ ev, onBack }) {
                   </div>
                 )}
                 {ev.price && (
-                  <div className="ed-meta-item">
+                  <div className="ed-meta-item" tabIndex="0" aria-label={`Entrada general: ${ev.price}`}>
                     <EuroIcon/>
                     <div>
                       <span className="ed-meta-label">Entrada general</span>
@@ -556,7 +540,8 @@ export default function EventDetail({ ev, onBack }) {
                     </div>
                   )}
                   <div className="ed-show-info">
-                    <div className="ed-show-info-header">
+                    <div className="ed-show-info-header" tabIndex="0"
+                      aria-label={`Sobre el espectáculo: ${ev.descFull ? ev.descFull.slice(0, 200) : "Sin descripción disponible"}`}>
                       <Ico d={<><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>} size={16}/>
                       <span className="ed-show-info-title">SOBRE EL ESPECTÁCULO</span>
                       {supported && (
@@ -596,7 +581,7 @@ export default function EventDetail({ ev, onBack }) {
                   <h2 className="ed-section-title" id="hi-h">¿QUÉ ENCONTRARÁS?</h2>
                   <ul className="ed-highlights-list">
                     {highlights.map((h, i) => (
-                      <li key={i} className="ed-highlight-item">
+                      <li key={i} className="ed-highlight-item" tabIndex="0">
                         <span className="ed-highlight-icon" aria-hidden="true">
                           <Ico d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" size={14}/>
                         </span>
@@ -617,7 +602,8 @@ export default function EventDetail({ ev, onBack }) {
                       if (!info) return null;
                       const Icon = { silla: WheelIcon, signos: SignosIcon, bucle: BucleIcon, podo: PodoIcon }[a];
                       return (
-                        <div key={a} className="ed-access-card">
+                        <div key={a} className="ed-access-card"
+                          tabIndex="0" aria-label={`${info.label}: ${info.desc}`}>
                           <span className="ed-access-icon" aria-hidden="true">{Icon && <Icon/>}</span>
                           <div className="ed-access-body">
                             <strong className="ed-access-name">{info.label}</strong>
@@ -636,48 +622,42 @@ export default function EventDetail({ ev, onBack }) {
             <aside className="ed-sidebar" aria-label="Información del evento">
               <div className="ed-sidebar-card">
 
-                <h2 className="ed-sidebar-heading" style={{textTransform:"uppercase"}}>Ubicación</h2>
-                <div className="ed-sidebar-heading-bar"/>
-
-                {/* Nombre del recinto */}
-                {(ev.org || ev.venue) && (
-                  <div className="ed-sidebar-item">
-                    <span className="ed-sidebar-icon" aria-hidden="true"><PinIcon/></span>
-                    <div>
-                      <span className="ed-sidebar-label">Nombre</span>
-                      <span className="ed-sidebar-value">{ev.org || ev.venue}</span>
+                {/* ── Mapa ── */}
+                <div className="ed-map-block">
+                  <div className="ed-map-header">
+                    <span className="ed-map-header-label">UBICACIÓN</span>
+                    <div className="ed-map-header-line"/>
+                  </div>
+                  <div className="ed-map-frame">
+                    <iframe
+                      title="Mapa del evento"
+                      src={`https://maps.google.com/maps?q=${encodeURIComponent((ev.venueRaw || ev.venue) + ', Madrid')}&output=embed&z=15`}
+                      width="100%" height="220" style={{border:0, display:"block"}}
+                      allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+                    />
+                    <div className="ed-map-overlay-badge" aria-hidden="true">
+                      <PinIcon/> Madrid
                     </div>
                   </div>
-                )}
-                <div className="ed-sidebar-divider"/>
-
-                {/* Dirección */}
-                <div className="ed-sidebar-item">
-                  <span className="ed-sidebar-icon" aria-hidden="true"><PinIcon/></span>
-                  <div>
-                    <span className="ed-sidebar-label">Dirección</span>
-                    <span className="ed-sidebar-value">{ev.venueRaw || ev.venue}</span>
-                    <span className="ed-sidebar-sub">{ev.district}, Madrid</span>
-                    <div className="ed-map-embed">
-                      <iframe
-                        title="Mapa del evento"
-                        src={`https://maps.google.com/maps?q=${encodeURIComponent((ev.venueRaw || ev.venue) + ', Madrid')}&output=embed&z=15`}
-                        width="100%" height="180" style={{border:0, display:"block"}}
-                        allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
-                      />
+                  <div className="ed-map-info">
+                    <div className="ed-map-venue-row">
+                      <span className="ed-map-pin-icon" aria-hidden="true"><PinIcon/></span>
+                      <div>
+                        <span className="ed-map-venue-name">{ev.org || ev.venue}</span>
+                        <span className="ed-map-venue-addr">{ev.venueRaw !== ev.org ? ev.venueRaw : ""}</span>
+                        <span className="ed-map-venue-city">{ev.district}, Madrid</span>
+                      </div>
                     </div>
-                    <a href={`https://maps.google.com/?q=${encodeURIComponent((ev.venueRaw || ev.venue) + ', Madrid')}`}
-                      target="_blank" rel="noreferrer" className="ed-map-link">
-                      Ver mapa <ExternalIcon/>
+                    <a
+                      href={`https://maps.google.com/?q=${encodeURIComponent((ev.venueRaw || ev.venue) + ', Madrid')}`}
+                      target="_blank" rel="noreferrer" className="ed-map-cta"
+                      aria-label="Cómo llegar en Google Maps">
+                      <ExternalIcon/> Cómo llegar
                     </a>
                   </div>
                 </div>
-                <div className="ed-sidebar-divider"/>
 
-                {ev.url && ev.url !== "#"
-                  ? <a href={ev.url} target="_blank" rel="noreferrer" className="ed-cta">Ver en web oficial <ExternalIcon/></a>
-                  : <span className="ed-cta-disabled">Más información próximamente</span>
-                }
+                <div className="ed-sidebar-divider"/>
 
                 <button className="ed-share-btn" onClick={handleShare} aria-label="Compartir este evento">
                   <ShareIcon/> Compartir evento
@@ -1175,4 +1155,106 @@ const css = `
     .ed-topbar-sep { display:none; }
     .ed-icon-btn--play ~ .ed-icon-btn:not(.ed-icon-btn--text):not(.ed-icon-btn--close) { display:none; }
   }
+
+  /* ── Botón tuerca en topbar ── */
+  .ed-icon-btn--settings { }
+  .ed-icon-btn--settings.ed-active { background:${P.brandSubtle}; color:${P.brand}; border-color:${P.brand}; }
+
+  /* ── Panel flotante accesibilidad (igual que ao-panel del overlay global) ── */
+  .ed-a11y-panel {
+    position:fixed; top:3.5rem; right:1rem; z-index:9100;
+    width:280px; background:#fff;
+    border:1px solid #e5e7eb; border-radius:0;
+    box-shadow:0 12px 40px rgba(0,0,0,.13);
+    overflow:hidden; animation:ed-a11y-in .15s ease;
+  }
+  @keyframes ed-a11y-in {
+    from { opacity:0; transform:translateY(8px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .ed-a11y-panel-head {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:.75rem 1rem; border-bottom:1px solid #e5e7eb;
+  }
+  .ed-a11y-panel-title {
+    font-family:'Inter',sans-serif; font-size:1rem; font-weight:700;
+    letter-spacing:.04em; color:#111;
+  }
+  .ed-a11y-panel-close {
+    background:none; border:none; cursor:pointer; color:#6b7280;
+    padding:.25rem; display:flex; align-items:center; justify-content:center;
+    border-radius:4px;
+  }
+  .ed-a11y-panel-close:hover { color:#111; }
+  .ed-a11y-panel-body { display:flex; flex-direction:column; gap:.1rem; padding:.5rem 0; }
+  .ed-a11y-toggle {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:.55rem 1rem; cursor:pointer; transition:background .12s;
+  }
+  .ed-a11y-toggle:hover { background:#f9fafb; }
+  .ed-a11y-item-label {
+    display:flex; align-items:center; gap:.5rem;
+    font-family:'Inter',sans-serif; font-size:.87rem; color:#374151;
+  }
+
+  /* ── Bloque mapa mejorado ── */
+  .ed-map-block { margin-bottom:.25rem; }
+  .ed-map-header {
+    display:flex; align-items:center; gap:.75rem; margin-bottom:.875rem;
+  }
+  .ed-map-header-label {
+    font-family:'Inter',sans-serif; font-size:.68rem; font-weight:800;
+    letter-spacing:.16em; color:#9ca3af; white-space:nowrap; flex-shrink:0;
+  }
+  .ed-map-header-line { flex:1; height:1px; background:#e5e7eb; }
+
+  .ed-map-frame {
+    position:relative; overflow:hidden; line-height:0;
+    border-radius:0; box-shadow:0 2px 12px rgba(0,0,0,.08);
+  }
+
+  .ed-map-overlay-badge {
+    position:absolute; bottom:10px; left:10px;
+    background:rgba(255,255,255,.95);
+    font-family:'Inter',sans-serif; font-size:.7rem; font-weight:700;
+    letter-spacing:.06em; text-transform:uppercase; color:#374151;
+    padding:.3rem .65rem; display:flex; align-items:center; gap:.3rem;
+    pointer-events:none; box-shadow:0 1px 4px rgba(0,0,0,.12);
+  }
+
+  .ed-map-info {
+    padding:.85rem 0 0; display:flex; flex-direction:column; gap:.75rem;
+  }
+  .ed-map-venue-row {
+    display:flex; align-items:flex-start; gap:.65rem;
+  }
+  .ed-map-pin-icon {
+    width:30px; height:30px;
+    background:${P.brandSubtle}; color:${P.brand};
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    margin-top:2px;
+  }
+  .ed-map-venue-name {
+    display:block; font-family:'Inter',sans-serif; font-size:.92rem;
+    font-weight:700; color:#111827; line-height:1.3;
+  }
+  .ed-map-venue-addr {
+    display:block; font-size:.8rem; color:#6b7280; margin-top:.15rem;
+    line-height:1.35;
+  }
+  .ed-map-venue-addr:empty { display:none; }
+  .ed-map-venue-city {
+    display:block; font-size:.78rem; font-weight:600;
+    color:${P.brand}; margin-top:.1rem; letter-spacing:.03em;
+  }
+  .ed-map-cta {
+    display:flex; align-items:center; justify-content:center; gap:.45rem;
+    background:${P.brandSubtle}; color:${P.brand};
+    font-family:'Inter',sans-serif; font-size:.78rem; font-weight:700;
+    letter-spacing:.08em; text-transform:uppercase;
+    padding:.65rem 1rem; text-decoration:none; border:none;
+    transition:background .15s, color .15s;
+  }
+  .ed-map-cta:hover { background:${P.brand}; color:#fff; }
+  .ed-map-cta:focus-visible { outline:2px solid ${P.brand}; outline-offset:2px; }
 `;
