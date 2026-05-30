@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import AccessibilityBadge from "./AccessibilityBadge";
+import AccessibilityOverlay from "./AccessibilityOverlay";
 import { useAuth } from "./AuthContext";
 
 // ─── Colores y hero images ────────────────────────────────────────────────────
@@ -411,6 +412,7 @@ export default function EventsPage() {
   return (
     <>
       <style>{css}</style>
+      <AccessibilityOverlay/>
       <div className="ep-page">
         <Navbar/>
 

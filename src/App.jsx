@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { AuthProvider } from "./AuthContext";
 import { AccessibilityProvider } from "./AccessibilityContext";
 import AccessibilityOverlay from "./AccessibilityOverlay";
+import CookieBanner from "./CookieBanner";
 import INCLUGOHome from "./home";
 import EventsPage from "./EventsPage";
 import AgendaPage from "./AgendaPage";
@@ -19,11 +20,13 @@ function ScrollToTop() {
 
 function GlobalUI() {
   const { pathname } = useLocation();
-  const isDetail = pathname.startsWith("/evento/");
+  const hasOwnOverlay = pathname.startsWith("/evento/") ||
+                        pathname.startsWith("/eventos") ||
+                        pathname.startsWith("/agenda");
   return (
     <>
       <Footer />
-      {!isDetail && <AccessibilityOverlay />}
+      {!hasOwnOverlay && <AccessibilityOverlay />}
     </>
   );
 }
@@ -44,6 +47,7 @@ function App() {
             <Route path="/bienvenida"   element={<WelcomeSplash />} />
           </Routes>
           <GlobalUI />
+          <CookieBanner />
         </BrowserRouter>
       </AuthProvider>
     </AccessibilityProvider>

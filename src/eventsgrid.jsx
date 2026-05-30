@@ -345,7 +345,7 @@ export default function EventsGrid({ onOpenDetail }) {
 
           <div className="eg-section-head">
             <div>
-              <div className="eg-section-label">Cartelera · Junio 2026</div>
+              <div className="eg-section-label">En Cartelera</div>
               <h2 className="eg-section-title">Eventos en Madrid</h2>
             </div>
           </div>

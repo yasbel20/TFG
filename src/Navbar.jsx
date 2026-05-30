@@ -216,29 +216,23 @@ export default function Navbar({ onMenuOpen }) {
           <ul className="nb-mob-list">
             <li>
               <button
-                className={`nb-mob-item${evOpen ? " nb-mob-item--open" : ""}`}
-                onClick={() => setEvOpen(o => !o)}
-                aria-expanded={evOpen}
+                className="nb-mob-item"
+                onClick={() => { setMobOpen(false); navigate("/eventos"); }}
               >
-                Eventos
-                <span className="nb-mob-chevron" aria-hidden="true">{evOpen ? "^" : "›"}</span>
+                Todos los eventos
+                <span className="nb-mob-chevron" aria-hidden="true">›</span>
               </button>
-              {evOpen && (
-                <ul className="nb-mob-sub">
-                  {CATS.map(cat => (
-                    <li key={cat}>
-                      <button className="nb-mob-sub-item" onClick={() => {
-                        setMobOpen(false);
-                        setEvOpen(false);
-                        navigate(cat === "Todos" ? "/eventos" : `/eventos/${toSlug(cat)}`);
-                      }}>
-                        {cat === "Todos" ? "Todos los eventos" : cat}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </li>
+            {CATS.filter(c => c !== "Todos").map(cat => (
+              <li key={cat}>
+                <button className="nb-mob-sub-item" onClick={() => {
+                  setMobOpen(false);
+                  navigate(`/eventos/${toSlug(cat)}`);
+                }}>
+                  {cat}
+                </button>
+              </li>
+            ))}
             <li>
               <button className="nb-mob-item" onClick={() => { setMobOpen(false); navigate("/agenda"); }}>
                 Agenda

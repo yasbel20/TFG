@@ -9,6 +9,7 @@ const DEFAULT_PREFS = {
   clickListen: false,
   textVis:     false,
   pageMask:    false,
+  grayscale:   false,
 };
 
 function readElement(el) {
@@ -32,6 +33,7 @@ export function AccessibilityProvider({ children }) {
       return { ...DEFAULT_PREFS, ...JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") };
     } catch { return DEFAULT_PREFS; }
   });
+  const [overlayOpen, setOverlayOpen] = useState(false);
 
   const updatePref = useCallback((key, val) => {
     setPrefs(p => {
@@ -96,8 +98,13 @@ export function AccessibilityProvider({ children }) {
     document.body.classList.toggle("a11y-text-vis", !!prefs.textVis);
   }, [prefs.textVis]);
 
+  // Escala de grises — clase en html (no en body para no romper position:fixed)
+  useEffect(() => {
+    document.documentElement.classList.toggle("a11y-grayscale", !!prefs.grayscale);
+  }, [prefs.grayscale]);
+
   return (
-    <AccessibilityContext.Provider value={{ prefs, updatePref }}>
+    <AccessibilityContext.Provider value={{ prefs, updatePref, overlayOpen, setOverlayOpen }}>
       {children}
     </AccessibilityContext.Provider>
   );

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
+import AccessibilityOverlay from "./AccessibilityOverlay";
 import { WheelIcon, HandsIcon as SignosIcon, BucleIcon, PodoIcon } from "./AccessibilityIcons";
 
 
@@ -359,6 +360,7 @@ export default function AgendaPage() {
   return (
     <>
       <style>{css}</style>
+      <AccessibilityOverlay/>
       <div className="ag-page">
 
         {/* ── NAV compartido ── */}
@@ -470,7 +472,7 @@ const css = `
   .ag-controls {
     background: #fff;
     border-bottom: 1px solid #eae6f6;
-    position: sticky; top: 60px; z-index: 40;
+    position: sticky; top: 68px; z-index: 40;
     box-shadow: 0 2px 12px rgba(79,62,200,.06);
   }
   .ag-controls-inner {
@@ -510,7 +512,7 @@ const css = `
   /* Filtros */
   .ag-cat-filters {
     display: flex; gap: .4rem;
-    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
     scrollbar-width: none;
   }
   .ag-cat-filters::-webkit-scrollbar { display: none; }
