@@ -546,50 +546,314 @@ function AccessibilityDropdown() {
 
 
 /* ══════════════════════════════════════════════════
+   TOOLS SHOWCASE
+══════════════════════════════════════════════════ */
+const TOOLS_ITEMS = [
+  {
+    key: "tab",
+    video: "/img/case-tab.mp4",
+    label: "Modo teclado",
+    desc: "Navega con Tab y escucha en voz alta cada elemento de la página.",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <rect x="2" y="6" width="20" height="12" rx="2"/>
+        <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/>
+      </svg>
+    ),
+  },
+  {
+    key: "clic",
+    video: "/img/case-clic.mp4",
+    label: "Clic y escuchar",
+    desc: "Pulsa sobre cualquier texto para que INCLUGO lo lea en voz alta.",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <path d="M9 9l2 12 1.8-5.2L18 14z"/>
+        <path d="M9 9H3M9 9V3"/>
+      </svg>
+    ),
+  },
+  {
+    key: "visibilidad",
+    video: "/img/case-visibilidad.mp4",
+    label: "Texto visible",
+    desc: "Aumenta el espaciado entre letras y líneas para mejorar la lectura.",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+    ),
+  },
+  {
+    key: "mascara",
+    video: "/img/case-mascara.mp4",
+    label: "Máscara de foco",
+    desc: "Resalta la zona activa de la pantalla para reducir la distracción visual.",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <rect x="2" y="3" width="20" height="14" rx="2"/>
+        <path d="M8 21h8M12 17v4M2 10h20" strokeDasharray="3 3"/>
+      </svg>
+    ),
+  },
+  {
+    key: "escala",
+    video: "/img/case-escala.mp4",
+    label: "Escala de grises",
+    desc: "Convierte todos los colores de la web a escala de grises.",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 2a10 10 0 0 1 0 20M2 12h20"/>
+      </svg>
+    ),
+  },
+];
+
+function ToolsShowcase() {
+  const [active, setActive] = useState(0);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.load();
+      videoRef.current.play().catch(() => {});
+    }
+  }, [active]);
+
+  const item = TOOLS_ITEMS[active];
+
+  return (
+    <div className="ts-outer">
+      {/* Título alineado a la izquierda */}
+      <div className="ts-header">
+        <h2 id="tools-heading" className="tools-heading">
+          INCLUYE<br/>
+          <span className="hl">HERRAMIENTAS</span><br/>
+          PARA TODOS
+        </h2>
+      </div>
+
+      {/* Columnas: lista | video */}
+      <div className="ts-wrap">
+        <ul className="ts-list" role="list">
+          {TOOLS_ITEMS.map((t, i) => (
+            <li key={t.key}>
+              <button
+                className={`ts-item${active === i ? " ts-item--active" : ""}`}
+                onClick={() => setActive(i)}
+                aria-pressed={active === i}
+              >
+                <span className="ts-item-icon">{t.icon}</span>
+                <span className="ts-item-text">
+                  <span className="ts-item-label">{t.label}</span>
+                  <span className="ts-item-desc">{t.desc}</span>
+                </span>
+                <span className="ts-item-arrow" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+
+        <div className="ts-right" aria-hidden="true">
+          <video
+            ref={videoRef}
+            key={item.video}
+            className="ts-video"
+            src={item.video}
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════
    HERRAMIENTAS CSS
 ══════════════════════════════════════════════════ */
 const toolsCss = `
   .tools-sec {
-    background: #f4f4f8;
+    background: #fff;
     padding: clamp(2.5rem,5vw,4rem) 0;
     border-top: none;
     position: relative;
   }
   .tools-sec::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 60px;
-    background: linear-gradient(to bottom, #fff, transparent);
-    pointer-events: none;
-    z-index: 1;
+    display: none;
   }
   .tools-sec::after {
-    content: '';
-    position: absolute;
+    display: none;
     bottom: 0; left: 0; right: 0;
     height: 60px;
     background: linear-gradient(to top, #fff, transparent);
     pointer-events: none;
     z-index: 1;
   }
+  /* ── Showcase layout ── */
+  .ts-outer {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 clamp(1rem,4vw,3rem);
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+  .ts-header {
+    text-align: left;
+  }
+  .ts-intro {
+    font-family: 'Inter', sans-serif;
+    font-size: .88rem;
+    color: #6b7280;
+    line-height: 1.65;
+    margin: .6rem 0 0;
+  }
+  .ts-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1.55fr;
+    gap: clamp(2rem,4vw,4rem);
+    align-items: start;
+  }
+  .ts-list {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+  }
+  .ts-list { border-left: 2px solid #e5e7eb; }
+  .ts-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    padding: .9rem 1rem .9rem 1.25rem;
+    background: none;
+    border: none;
+    border-left: 3px solid transparent;
+    margin-left: -2px;
+    border-radius: 0 10px 10px 0;
+    cursor: pointer;
+    text-align: left;
+    transition: background .18s, border-color .18s;
+    position: relative;
+  }
+  .ts-item:hover {
+    background: #f4f4f8;
+    border-left-color: #c7cdf8;
+  }
+  .ts-item:hover .ts-item-icon {
+    background: #eef0fe;
+    color: #3d47c8;
+  }
+  .ts-item:hover .ts-item-label { color: #3d47c8; }
+  .ts-item--active {
+    background: #eef0fe;
+    border-left-color: #3d47c8;
+  }
+  .ts-item-icon {
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    background: #f4f4f8;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: #9ca3af;
+    transition: background .18s, color .18s;
+  }
+  .ts-item--active .ts-item-icon {
+    background: #3d47c8;
+    color: #fff;
+  }
+  .ts-item-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: .18rem;
+  }
+  .ts-item-label {
+    font-family: 'Inter', sans-serif;
+    font-size: .9rem;
+    font-weight: 600;
+    color: #374151;
+    transition: color .18s;
+  }
+  .ts-item--active .ts-item-label { color: #3d47c8; }
+  .ts-item-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: .74rem;
+    color: #9ca3af;
+    line-height: 1.4;
+  }
+  /* Flecha: visible solo en hover y activo */
+  .ts-item-arrow {
+    flex-shrink: 0;
+    color: #d1d5db;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: color .18s, opacity .18s, transform .18s;
+  }
+  .ts-item:hover .ts-item-arrow,
+  .ts-item--active .ts-item-arrow {
+    opacity: 1;
+    transform: translateX(0);
+    color: #3d47c8;
+  }
+  /* Hint "Ver demo" en items no activos */
+  .ts-item:not(.ts-item--active):hover::after {
+    content: 'Ver demo';
+    position: absolute;
+    right: 2.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: .68rem;
+    font-weight: 600;
+    color: #3d47c8;
+    background: #eef0fe;
+    padding: .2rem .55rem;
+    border-radius: 999px;
+  }
+
+  /* ── Video ── */
+  .ts-right {
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow: 0 28px 70px rgba(0,0,0,.18), 0 6px 20px rgba(61,71,200,.12);
+  }
+  .ts-video {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  @media (max-width: 860px) {
+    .ts-wrap { grid-template-columns: 1fr; }
+    .ts-right { order: -1; }
+    .ts-header { max-width: 100%; }
+  }
+  /* ── Mantener estilos legacy del tools-heading ── */
   .tools-inner {
     max-width: 1160px;
     margin: 0 auto;
     padding: 0 clamp(1rem,4vw,3rem);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(2rem,5vw,5rem);
-    align-items: center;
   }
   @media (max-width: 768px) { .tools-inner { grid-template-columns: 1fr; } }
 
   .tools-heading {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2rem,4.5vw,3.2rem);
-    letter-spacing: .04em; color: #111;
-    line-height: 1; margin: .5rem 0 1rem;
+    font-size: clamp(3rem, 7vw, 7rem);
+    letter-spacing: .02em;
+    color: var(--ink);
+    line-height: .9;
+    margin: .4rem 0 1rem;
   }
+  .tools-heading .hl { color: var(--brand); }
   .tools-desc {
     font-family: 'Inter', sans-serif;
     font-size: .93rem; color: #555;
@@ -617,8 +881,9 @@ const toolsCss = `
 
   /* Maqueta del panel real */
   .tools-preview-wrap {
-    display: flex; flex-direction: column;
-    align-items: flex-end; gap: 1rem; position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .tools-panel-mock {
     background: #fff;
@@ -676,6 +941,12 @@ const toolsCss = `
   .tools-left {
     display: flex;
     flex-direction: column;
+  }
+  .tools-video {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
   }
   .wm-widget {
     background: #fff;
@@ -1156,80 +1427,7 @@ export default function INCLUGOHome() {
         {/* ── HERRAMIENTAS DE ACCESIBILIDAD ── */}
         <section className="tools-sec" aria-labelledby="tools-heading">
           <style>{toolsCss}</style>
-          <div className="tools-inner">
-
-            {/* Columna izquierda: lista vertical de herramientas */}
-            <div className="tools-left">
-              <p className="sec-eyebrow">Herramientas de accesibilidad</p>
-              <h2 id="tools-heading" className="tools-heading">
-                Incluye herramientas<br/>para todos
-              </h2>
-              <p className="tools-desc">
-                Activa las funciones de accesibilidad desde el botón&nbsp;♿ disponible en todas las páginas de INCLUGO.
-              </p>
-              <div className="tools-feature-list">
-                {[
-                  {
-                    icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/></svg>,
-                    label: "Modo teclado",
-                    desc: "Navega con Tab y escucha en voz alta cada elemento de la página.",
-                  },
-                  {
-                    icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M9 9l2 12 1.8-5.2L18 14z"/><path d="M9 9H3"/><path d="M9 9V3"/></svg>,
-                    label: "Clic y escuchar",
-                    desc: "Pulsa sobre cualquier texto para que INCLUGO lo lea en voz alta.",
-                  },
-                  {
-                    icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
-                    label: "Texto visible",
-                    desc: "Aumenta el espaciado entre letras y líneas para mejorar la lectura.",
-                  },
-                  {
-                    icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M2 10h20" strokeDasharray="3 3"/></svg>,
-                    label: "Máscara de foco",
-                    desc: "Resalta la zona activa de la pantalla para reducir la distracción visual.",
-                  },
-                ].map(({ icon, label, desc }) => (
-                  <div key={label} className="tools-feature-row">
-                    <span className="tools-feature-icon">{icon}</span>
-                    <span>
-                      <span className="tools-feature-label">{label}</span>
-                      <span className="tools-feature-desc">{desc}</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Columna derecha: maqueta real del panel */}
-            <div className="tools-preview-wrap" aria-hidden="true">
-              <div className="tools-panel-mock">
-                <div className="tpm-header">
-                  <span className="tpm-title">Accesibilidad</span>
-                  <span className="tpm-close">✕</span>
-                </div>
-                {[
-                  { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/></svg>, label: "Modo teclado (voz por Tab)", on: true },
-                  { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M9 9l2 12 1.8-5.2L18 14z"/><path d="M9 9H3"/><path d="M9 9V3"/></svg>, label: "Clic y escuchar", on: false },
-                  { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>, label: "Visibilidad de texto", on: true },
-                  { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M2 10h20" strokeDasharray="3 3"/></svg>, label: "Máscara de página", on: false },
-                ].map(({ icon, label, on }) => (
-                  <div key={label} className="tpm-row">
-                    <span className="tpm-row-icon">{icon}</span>
-                    <span className="tpm-row-label">{label}</span>
-                    <span className={`tpm-toggle ${on ? "tpm-toggle--on" : ""}`}>
-                      <span className="tpm-thumb"/>
-                    </span>
-                  </div>
-                ))}
-              </div>
-              {/* Botón FAB de muestra */}
-              <div className="tools-fab-mock">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="4" r="2"/><path d="M12 6v6l3 3M12 6l-3 6M6 8h12"/></svg>
-              </div>
-            </div>
-
-          </div>
+          <ToolsShowcase />
         </section>
 
         {/* ── HOW IT WORKS ── */}
