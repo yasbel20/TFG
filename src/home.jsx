@@ -132,6 +132,24 @@ const TYPE_CARDS = [
     desc:  "Museos y galerías con señalización en braille, audioguías y acceso PMR completo.",
     cat:   "Exposición",
   },
+  {
+    label: "CINE",
+    sub:   "Subtítulos · Audiodescripción · Ciclos",
+    desc:  "Proyecciones accesibles con subtítulos para personas sordas y audiodescripción integrada.",
+    cat:   "Cine",
+  },
+  {
+    label: "DANZA",
+    sub:   "Ballet · Contemporáneo · Flamenco",
+    desc:  "Espectáculos de danza con intérpretes de LSE y espacios totalmente accesibles para PMR.",
+    cat:   "Danza",
+  },
+  {
+    label: "CULTURA",
+    sub:   "Talleres · Conferencias · Festivales",
+    desc:  "Actividades culturales diversas adaptadas para todos los públicos y necesidades.",
+    cat:   "Cultura",
+  },
 ];
 
 const toSlug = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/\s+/g,"-");
@@ -258,6 +276,37 @@ export default function INCLUGOHome() {
           </div>
         </section>
 
+                {/* ── HOW IT WORKS ── */}
+        <section className="how-sec" aria-labelledby="how-heading">
+          <div className="how-inner">
+            <p className="sec-eyebrow">¿Cómo funciona?</p>
+            <h2 id="how-heading" className="how-heading">
+              TRES PASOS,<br/>
+              <span className="hl">SIN BARRERAS</span>
+            </h2>
+            <ol className="steps" aria-label="Pasos para usar INCLUGO">
+              <li className="step">
+                <span className="step-num-bg" aria-hidden="true">01</span>
+                <span className="step-num-label" aria-hidden="true">— 01</span>
+                <h3 className="step-title">Elige tus filtros</h3>
+                <p className="step-desc">Selecciona los recursos de accesibilidad que necesitas: silla de ruedas, lengua de signos, audiodescripción y más.</p>
+              </li>
+              <li className="step">
+                <span className="step-num-bg" aria-hidden="true">02</span>
+                <span className="step-num-label" aria-hidden="true">— 02</span>
+                <h3 className="step-title">Explora eventos</h3>
+                <p className="step-desc">Visualiza únicamente los eventos de Madrid que cumplen tus criterios, actualizados diariamente desde la API del Ayuntamiento.</p>
+              </li>
+              <li className="step">
+                <span className="step-num-bg" aria-hidden="true">03</span>
+                <span className="step-num-label" aria-hidden="true">— 03</span>
+                <h3 className="step-title">Ve y disfruta</h3>
+                <p className="step-desc">Consulta información del recinto, transporte accesible cercano y accede directamente a la compra de entradas.</p>
+              </li>
+            </ol>
+          </div>
+        </section>
+
         {/* ── SHOWCASE: collage + lista de características ── */}
         <section className="showcase-sec" aria-labelledby="showcase-heading">
           <div className="showcase-inner">
@@ -301,22 +350,34 @@ export default function INCLUGOHome() {
                 ))}
               </ul>
             </div>
-
-            {/* Bloque de texto destacado */}
-            <div className="showcase-callout">
-              <p className="showcase-callout-text">
-                Una experiencia cultural en Madrid que no se parece a ninguna otra
-              </p>
-              <p className="showcase-callout-sub">
-                INCLUGO redefine cómo descubrir la cultura accesible en Madrid.
-                Una sola plataforma te da acceso a <strong>más de 800 eventos culturales</strong> filtrados
-                por tus necesidades reales de accesibilidad, actualizados cada día desde la
-                <strong> API oficial del Ayuntamiento de Madrid</strong>.
-              </p>
-            </div>
-
           </div>
         </section>
+
+          {/* ── ACCESIBILIDAD ── */}
+        <section className="access-sec" aria-labelledby="access-heading">
+          <div className="access-inner">
+            <div className="access-head">
+              <p className="sec-eyebrow">Accesibilidad</p>
+              <h2 id="access-heading" className="access-heading">
+                CUATRO TIPOS<br/>
+                <span className="hl">CUBIERTOS</span>
+              </h2>
+            </div>
+            <ul className="ac-grid" role="list" aria-label="Tipos de accesibilidad disponibles">
+              {ACCESS_CARDS.map(item => {
+                const info = ACCESS_INFO[item.key];
+                return (
+                  <li key={item.key} className="ac-card">
+                    <div className="ac-icon" aria-hidden="true">{info && <info.Icon size={22}/>}</div>
+                    <h3 className="ac-title">{info?.label || item.key}</h3>
+                    <p className="ac-desc">{item.desc}</p>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </section>
+
         <section className="types-sec" aria-labelledby="types-heading">
           <div className="types-inner">
             <div className="types-head">
@@ -349,100 +410,11 @@ export default function INCLUGOHome() {
           </div>
         </section>
 
-        {/* ── HOW IT WORKS ── */}
-        <section className="how-sec" aria-labelledby="how-heading">
-          <div className="how-inner">
-            <p className="sec-eyebrow">¿Cómo funciona?</p>
-            <h2 id="how-heading" className="how-heading">
-              TRES PASOS,<br/>
-              <span className="hl">SIN BARRERAS</span>
-            </h2>
-            <ol className="steps" aria-label="Pasos para usar INCLUGO">
-              <li className="step">
-                <span className="step-num-bg" aria-hidden="true">01</span>
-                <span className="step-num-label" aria-hidden="true">— 01</span>
-                <h3 className="step-title">Elige tus filtros</h3>
-                <p className="step-desc">Selecciona los recursos de accesibilidad que necesitas: silla de ruedas, lengua de signos, audiodescripción y más.</p>
-              </li>
-              <li className="step">
-                <span className="step-num-bg" aria-hidden="true">02</span>
-                <span className="step-num-label" aria-hidden="true">— 02</span>
-                <h3 className="step-title">Explora eventos</h3>
-                <p className="step-desc">Visualiza únicamente los eventos de Madrid que cumplen tus criterios, actualizados diariamente desde la API del Ayuntamiento.</p>
-              </li>
-              <li className="step">
-                <span className="step-num-bg" aria-hidden="true">03</span>
-                <span className="step-num-label" aria-hidden="true">— 03</span>
-                <h3 className="step-title">Ve y disfruta</h3>
-                <p className="step-desc">Consulta información del recinto, transporte accesible cercano y accede directamente a la compra de entradas.</p>
-              </li>
-            </ol>
-          </div>
-        </section>
 
         {/* ── EVENTS GRID ── */}
         <div ref={evRef} tabIndex={-1}>
           <EventsGrid onOpenDetail={(ev) => navigate(`/evento/${ev.id}`, { state: { ev } })}/>
         </div>
-
-
-
-        {/* ── ACCESIBILIDAD ── */}
-        <section className="access-sec" aria-labelledby="access-heading">
-          <div className="access-inner">
-            <div className="access-head">
-              <p className="sec-eyebrow">Accesibilidad</p>
-              <h2 id="access-heading" className="access-heading">
-                TODO TIPO<br/>
-                <span className="hl">CUBIERTO</span>
-              </h2>
-            </div>
-            <ul className="ac-grid" role="list" aria-label="Tipos de accesibilidad disponibles">
-              {ACCESS_CARDS.map(item => {
-                const info = ACCESS_INFO[item.key];
-                return (
-                  <li key={item.key} className="ac-card">
-                    <div className="ac-icon" aria-hidden="true">{info && <info.Icon size={22}/>}</div>
-                    <h3 className="ac-title">{info?.label || item.key}</h3>
-                    <p className="ac-desc">{item.desc}</p>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </section>
-
-        {/* ── BANNER AGENDA (estilo WAH "Cualquier excusa…") ── */}
-        <section className="agenda-banner" aria-labelledby="agenda-banner-h">
-          <div className="agenda-banner-inner">
-            <div className="agenda-banner-head">
-              <p className="sec-eyebrow" style={{ color: "#fff" }}>Planifica tu semana</p>
-              <h2 id="agenda-banner-h" className="agenda-banner-h2">
-                CUALQUIER DÍA<br/>
-                <span className="hl-white">ES BUENO</span><br/>
-                PARA LA CULTURA
-              </h2>
-            </div>
-            <div className="agenda-banner-cards">
-              <button className="agenda-banner-card" onClick={() => navigate("/eventos")}
-                aria-label="Ver todos los eventos">
-                <span className="agenda-banner-card-icon" aria-hidden="true">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-                </span>
-                <strong className="agenda-banner-card-title">Para cualquier plan</strong>
-                <p className="agenda-banner-card-desc">Más de 800 eventos culturales accesibles disponibles en Madrid.</p>
-              </button>
-              <button className="agenda-banner-card" onClick={() => navigate("/agenda")}
-                aria-label="Ver agenda semanal">
-                <span className="agenda-banner-card-icon" aria-hidden="true">
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
-                </span>
-                <strong className="agenda-banner-card-title">Ver agenda semanal</strong>
-                <p className="agenda-banner-card-desc">Todos los eventos de la semana agrupados por día, como una cartelera.</p>
-              </button>
-            </div>
-          </div>
-        </section>
 
         {/* ── CTA ── */}
         <section className="cta-sec" aria-labelledby="cta-heading">

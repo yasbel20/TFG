@@ -48,9 +48,7 @@ body {
 }
 .skip-link:focus { top: 0; }
 
-/* ── FOCO (WCAG 2.4.7) ── */
-:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
-:focus:not(:focus-visible) { outline: none; }
+/* Foco manejado globalmente por index.css */
 
 .sr-only {
   position: absolute; width: 1px; height: 1px;
@@ -331,7 +329,7 @@ h1.hero-h1 .hl { color: var(--brand); }
 .how-sec {
   width: 100%;
   background: var(--bg);
-  padding: clamp(4rem, 9vw, 8rem) var(--px);
+  padding: clamp(2.5rem, 5vw, 4rem) var(--px);
   border-top: none;
 }
 .how-inner { max-width: var(--inner); margin: 0 auto; }
@@ -364,12 +362,12 @@ h1.hero-h1 .hl { color: var(--brand); }
 }
 .step {
   padding: clamp(2rem, 4vw, 3rem);
-  border-right: 1.5px solid var(--border-home);
+  border-right: 1.5px solid rgba(255,255,255,.2);
   position: relative;
   transition: background .2s;
 }
 .step:last-child { border-right: none; }
-.step:hover { background: var(--bg2); }
+.step:hover { background: var(--brand-subtle, #eef0fe); }
 
 .step-num-bg {
   font-family: 'Bebas Neue', sans-serif;
@@ -436,7 +434,7 @@ h1.hero-h1 .hl { color: var(--brand); }
 .access-sec {
   width: 100%;
   background: var(--bg);
-  padding: clamp(4rem, 9vw, 8rem) var(--px);
+  padding: clamp(2.5rem, 5vw, 4rem) var(--px);
   border-top: none;
 }
 .access-inner { max-width: var(--inner); margin: 0 auto; }
@@ -474,7 +472,7 @@ h1.hero-h1 .hl { color: var(--brand); }
   transform: scaleX(0); transform-origin: left;
   transition: transform .25s;
 }
-.ac-card:hover { background: var(--bg2); }
+.ac-card:hover { background: var(--brand-subtle, #eef0fe); }
 .ac-card:hover::before { transform: scaleX(1); }
 
 .ac-icon {
@@ -497,7 +495,7 @@ h1.hero-h1 .hl { color: var(--brand); }
 .cta-sec {
   width: 100%;
   background: var(--brand);
-  padding: clamp(5rem, 12vw, 11rem) var(--px);
+  padding: clamp(2.5rem, 5vw, 4rem) var(--px);
   text-align: center;
   border-top: none;
   position: relative;
@@ -514,40 +512,41 @@ h1.hero-h1 .hl { color: var(--brand); }
 
 .cta-h2 {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(4rem, 10vw, 11rem);
+  font-size: clamp(3rem, 7vw, 7rem);
   color: #fff; letter-spacing: .02em;
-  line-height: .88; margin-bottom: 1.5rem;
+  line-height: .88; margin-bottom: 1rem;
 }
 
 .cta-sub {
   font-size: clamp(.95rem, 1.8vw, 1.15rem);
   color: rgba(255,255,255,.75);
-  max-width: 480px; margin: 0 auto 3rem; line-height: 1.7;
+  max-width: 480px; margin: 0 auto 2rem; line-height: 1.7;
 }
 
 .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
 .btn-p {
   background: #fff; color: var(--brand);
-  border: none; padding: 1rem 2.75rem; min-height: 52px;
+  border: none; padding: .85rem 2.5rem; min-height: 46px;
   font-family: 'Inter', sans-serif;
   font-weight: 700; font-size: .85rem;
   letter-spacing: .1em; text-transform: uppercase;
   cursor: pointer; transition: background .15s, color .15s;
-  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  border-radius: 0; clip-path: none;
 }
 .btn-p:hover { background: var(--bg2); color: var(--brand-hover); }
 
 .btn-s {
-  background: transparent; color: #fff;
-  border: 2px solid rgba(255,255,255,.6);
-  padding: 1rem 2.75rem; min-height: 52px;
+  background: #fff; color: var(--brand);
+  border: 2px solid #fff;
+  padding: .85rem 2.5rem; min-height: 46px;
   font-family: 'Inter', sans-serif;
   font-weight: 700; font-size: .85rem;
   letter-spacing: .1em; text-transform: uppercase;
   cursor: pointer; transition: background .15s, color .15s, border-color .15s;
+  border-radius: 0;
 }
-.btn-s:hover { background: #fff; color: var(--brand); border-color: #fff; }
+.btn-s:hover { background: var(--bg2); color: var(--brand-hover); border-color: var(--bg2); }
 
 /* ══════════════════════════════════════════════════
    FOOTER
@@ -564,8 +563,9 @@ h1.hero-h1 .hl { color: var(--brand); }
 
 .footer-logo {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.8rem; letter-spacing: .06em;
+  font-size: clamp(6rem, 12vw, 11rem); letter-spacing: .06em;
   color: var(--ink);
+  line-height: 1;
 }
 .footer-logo em { color: var(--y-dim); font-style: normal; }
 
@@ -697,7 +697,6 @@ h1.hero-h1 .hl { color: var(--brand); }
 }
 .nav-hamburger:hover { opacity: .6; }
 .nav-hamburger:focus-visible {
-  outline: 3px solid var(--ink);
   outline-offset: 3px;
 }
 
@@ -804,8 +803,8 @@ h1.hero-h1 .hl { color: var(--brand); }
 ══════════════════════════════════════════════════ */
 .showcase-sec {
   width: 100%;
-  background: var(--bg);
-  padding: clamp(4rem, 9vw, 8rem) var(--px);
+  background: var(--bg2);
+  padding: clamp(2.5rem, 5vw, 4rem) var(--px);
   border-top: none;
   border-bottom: none;
 }
@@ -926,8 +925,8 @@ h1.hero-h1 .hl { color: var(--brand); }
 ══════════════════════════════════════════════════ */
 .types-sec {
   width: 100%;
-  background: var(--bg2);
-  padding: clamp(4rem, 9vw, 8rem) var(--px);
+  background: var(--bg);
+  padding: clamp(2.5rem, 5vw, 4rem) var(--px);
   border-top: none;
   border-bottom: none;
 }
@@ -952,32 +951,35 @@ h1.hero-h1 .hl { color: var(--brand); }
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
-  border: 1.5px solid var(--border-home);
+  border: 1.5px solid rgba(255,255,255,.2);
 }
 
 .type-card {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: clamp(1.75rem, 4vw, 2.75rem);
-  background: var(--bg);
+  gap: .75rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  min-height: unset;
+  background: var(--brand);
   border: none;
-  border-right: 1.5px solid var(--border-home);
+  border-right: 1.5px solid rgba(255,255,255,.2);
   cursor: pointer;
   text-align: left;
   transition: background .2s;
   position: relative;
 }
-.type-card:last-child { border-right: none; }
+.type-card:nth-child(3n) { border-right: none; }
+.type-card:nth-child(-n+3) { border-bottom: 1.5px solid rgba(255,255,255,.2); }
 .type-card:first-child {
   background: var(--brand);
 }
 .type-card:first-child .type-card-num,
 .type-card:first-child .type-card-title,
-.type-card:first-child .type-card-sub,
-.type-card:first-child .type-card-desc,
 .type-card:first-child .type-card-arrow { color: #fff; }
-.type-card:first-child .type-card-sub { opacity: .75; }
+.type-card:first-child:hover .type-card-sub,
+.type-card:first-child:focus-visible .type-card-sub { color: rgba(255,255,255,.75); }
+.type-card:first-child:hover .type-card-desc,
+.type-card:first-child:focus-visible .type-card-desc { color: rgba(255,255,255,.9); }
 .type-card:hover { background: var(--ink); }
 .type-card:hover .type-card-title,
 .type-card:hover .type-card-sub,
@@ -993,18 +995,22 @@ h1.hero-h1 .hl { color: var(--brand); }
   font-family: 'Bebas Neue', sans-serif;
   font-size: .9rem;
   letter-spacing: .16em;
-  color: var(--dim);
+  color: rgba(255,255,255,.6);
   transition: color .2s;
 }
 .type-card-body { flex: 1; }
 .type-card-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-size: clamp(3rem, 5vw, 4.5rem);
   letter-spacing: .04em;
-  color: var(--ink);
+  color: #fff;
   line-height: 1;
   margin-bottom: .4rem;
-  transition: color .2s;
+  transition: color .2s, font-size .2s ease;
+}
+.type-card:hover .type-card-title,
+.type-card:focus-visible .type-card-title {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
 }
 .type-card-sub {
   font-size: .72rem;
@@ -1013,16 +1019,35 @@ h1.hero-h1 .hl { color: var(--brand); }
   text-transform: uppercase;
   color: var(--muted);
   margin-bottom: .85rem;
-  transition: color .2s;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: color .2s, opacity .22s ease, transform .22s ease;
 }
 .type-card-desc {
   font-size: .85rem;
   color: var(--muted);
   line-height: 1.65;
-  transition: color .2s;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: color .2s, opacity .22s ease .04s, transform .22s ease .04s;
+}
+.type-card:hover .type-card-sub,
+.type-card:focus-visible .type-card-sub,
+.type-card:hover .type-card-desc,
+.type-card:focus-visible .type-card-desc {
+  opacity: 1;
+  transform: translateY(0);
+}
+.type-card:hover .type-card-sub,
+.type-card:focus-visible .type-card-sub {
+  color: rgba(255,255,255,.75);
+}
+.type-card:hover .type-card-desc,
+.type-card:focus-visible .type-card-desc {
+  color: rgba(255,255,255,.9);
 }
 .type-card-arrow {
-  color: var(--ink);
+  color: rgba(255,255,255,.7);
   transition: color .2s, transform .2s;
   align-self: flex-end;
 }
@@ -1036,7 +1061,7 @@ h1.hero-h1 .hl { color: var(--brand); }
 .features-sec {
   width: 100%;
   background: var(--bg);
-  padding: clamp(4rem, 9vw, 8rem) var(--px);
+  padding: clamp(2.5rem, 5vw, 4rem) var(--px);
   border-top: none;
 }
 .features-inner {
@@ -1155,10 +1180,6 @@ h1.hero-h1 .hl { color: var(--brand); }
   border-color: var(--brand-light);
   background: rgba(61,71,200,.06);
 }
-.agenda-banner-card:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 2px;
-}
 
 .agenda-banner-card-icon {
   display: flex;
@@ -1188,9 +1209,11 @@ h1.hero-h1 .hl { color: var(--brand); }
    RESPONSIVE NUEVAS SECCIONES
 ══════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
-  .types-grid    { grid-template-columns: 1fr; }
-  .type-card     { border-right: none; border-bottom: none; }
-  .type-card:last-child { border-bottom: none; }
+  .types-grid    { grid-template-columns: repeat(2, 1fr); }
+  .type-card     { border-right: 1.5px solid rgba(255,255,255,.2); border-bottom: 1.5px solid rgba(255,255,255,.2); }
+  .type-card:nth-child(2n) { border-right: none; }
+  .type-card:nth-last-child(-n+2) { border-bottom: none; }
+  .type-card:nth-child(3n) { border-right: 1.5px solid rgba(255,255,255,.2); }
   .features-grid { grid-template-columns: repeat(2, 1fr); }
   .agenda-banner-inner { grid-template-columns: 1fr; }
 }
@@ -1199,6 +1222,9 @@ h1.hero-h1 .hl { color: var(--brand); }
   .features-grid   { grid-template-columns: 1fr; }
   .nav-hamburger   { display: flex; }
   .agenda-banner-inner { gap: 2rem; }
+  .types-grid    { grid-template-columns: 1fr; }
+  .type-card     { border-right: none !important; border-bottom: 1.5px solid rgba(255,255,255,.2) !important; }
+  .type-card:last-child { border-bottom: none !important; }
 }
 
 /* Asegurar que el hamburguesa siempre se muestra */

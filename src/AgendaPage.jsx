@@ -490,7 +490,6 @@ const css = `
     cursor: pointer; transition: all .12s; padding: 0; flex-shrink: 0;
   }
   .ag-week-btn:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
-  .ag-week-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
   .ag-week-label {
     font-family: var(--ff-b);
@@ -524,7 +523,6 @@ const css = `
   }
   .ag-cat-btn:hover { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
   .ag-cat-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); font-weight: 700; }
-  .ag-cat-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
   /* ── Área principal ── */
   .ag-main { padding: 2.5rem clamp(1rem, 5vw, 3rem) 7rem; }
@@ -590,7 +588,6 @@ const css = `
     box-shadow: 0 6px 28px rgba(79,62,200,.11);
     transform: translateX(4px);
   }
-  .ag-card:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
   /* Fila superior */
   .ag-card-top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }

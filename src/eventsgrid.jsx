@@ -196,8 +196,8 @@ function EventRow({ cat, events, onOpenDetail }) {
 const css = `
   .eg-wrap {
     background: #FFFFFF;
-    padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(3rem, 7vw, 6rem);
-    border-top: 1.5px solid #111111;
+    padding: 0 0 clamp(3rem, 7vw, 6rem);
+    border-top: none;
     width: 100%;
   }
   .eg-inner {
@@ -207,7 +207,7 @@ const css = `
   }
   .eg-section-head {
     display: flex; align-items: flex-end; justify-content: space-between;
-    border-bottom: 1.5px solid #111111; padding-bottom: 1.25rem; margin-bottom: 2.5rem;
+    border-bottom: none; padding-bottom: 1.25rem; margin-bottom: 2.5rem;
   }
   .eg-section-label {
     font-size: .68rem; font-weight: 700; letter-spacing: .12em;
@@ -239,7 +239,6 @@ const css = `
     padding: .15rem 0; cursor: pointer; transition: opacity .15s; white-space: nowrap;
   }
   .eg-view-all:hover { opacity: .5; }
-  .eg-view-all:focus-visible { outline: 2px solid #C9D11A; outline-offset: 2px; }
 
   .eg-grid {
     display: grid;
@@ -257,7 +256,6 @@ const css = `
     cursor: pointer; border-radius: 0;
   }
   .eg-card:hover { transform: translateY(-5px); }
-  .eg-card:focus-visible { outline: 2px solid #C9D11A; outline-offset: 3px; border-radius: 2px; }
 
   .eg-img-wrap { position: relative; width: 100%; height: 380px; overflow: hidden; flex-shrink: 0; }
   .eg-img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; display: block; }
@@ -345,8 +343,7 @@ export default function EventsGrid({ onOpenDetail }) {
 
           <div className="eg-section-head">
             <div>
-              <div className="eg-section-label">Cartelera · Junio 2026</div>
-              <h2 className="eg-section-title">Eventos en Madrid</h2>
+              <h2 className="eg-section-title">Próximos eventos</h2>
             </div>
           </div>
 
