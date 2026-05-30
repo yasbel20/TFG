@@ -211,11 +211,6 @@ function AgendaRow({ ev, onOpen }) {
     <article
       className="ag-card"
       style={{ borderLeftColor: accent }}
-      onClick={() => onOpen(ev)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={e => e.key === "Enter" && onOpen(ev)}
-      aria-label={`Ver detalle de ${ev.title}`}
     >
       {/* Fila superior: categoría · precio */}
       <div className="ag-card-top">
@@ -248,7 +243,9 @@ function AgendaRow({ ev, onOpen }) {
               {ev.access.includes("braille") && <span className="ag-badge" title="Podotáctil"><PodoIcon/></span>}
             </div>
           )}
-          <span className="ag-card-btn">Ver detalles <ArrowSm/></span>
+          <button className="ag-card-btn" onClick={() => onOpen(ev)} aria-label={`Ver detalles de ${ev.title}`}>
+            Ver detalles <ArrowSm/>
+          </button>
         </div>
       </div>
     </article>
@@ -578,7 +575,7 @@ const css = `
     box-shadow: inset 0 0 0 1px #eae6f5;
     border-radius: 0;
     padding: 1.2rem 1.4rem 1.1rem 1.2rem;
-    cursor: pointer;
+    cursor: default;
     display: flex; flex-direction: column; gap: .65rem;
     transition: background .15s, box-shadow .18s, transform .18s;
     text-align: left;
@@ -617,7 +614,6 @@ const css = `
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     transition: color .15s;
   }
-  .ag-card:hover .ag-card-title { color: var(--brand); }
 
   /* Fila inferior */
   .ag-card-bottom {
@@ -644,16 +640,17 @@ const css = `
     background: #ede9ff; color: var(--brand); border: 1px solid #d4cefc;
     transition: background .12s;
   }
-  .ag-card:hover .ag-badge { background: var(--brand); color: #fff; border-color: var(--brand); }
   .ag-card-btn {
     display: inline-flex; align-items: center; gap: .35rem;
     border: 1.5px solid #ddd8f2; color: var(--text-muted);
+    background: #fff;
     font-family: 'Inter', var(--ff-b), sans-serif;
     font-size: .75rem; font-weight: 600;
     padding: .45rem 1rem; border-radius: 0;
+    cursor: pointer;
     transition: all .15s; white-space: nowrap;
   }
-  .ag-card:hover .ag-card-btn { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
+  .ag-card-btn:hover { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
 
   /* ── Empty state ── */
   .ag-empty {
