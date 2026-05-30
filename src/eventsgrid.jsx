@@ -210,14 +210,16 @@ const css = `
     border-bottom: 1.5px solid #111111; padding-bottom: 1.25rem; margin-bottom: 2.5rem;
   }
   .eg-section-label {
-    font-size: .68rem; font-weight: 700; letter-spacing: .12em;
-    text-transform: uppercase; color: #555555; margin-bottom: .35rem;
-    font-family: 'Inter', sans-serif;
+    font-size: .72rem; font-weight: 700; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--brand, #3D47C8); margin-bottom: .5rem;
+    font-family: 'Inter', sans-serif; display: block;
   }
   .eg-section-title {
     font-family: 'Bebas Neue', sans-serif; font-weight: 400;
-    font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: .04em; color: #111111; line-height: 1;
+    font-size: clamp(3rem, 7vw, 7rem); letter-spacing: .02em; color: #111111; line-height: .9;
+    margin: 0;
   }
+  .eg-hl { color: var(--brand, #3D47C8); }
 
   .eg-row-section { margin-bottom: 3.5rem; }
   .eg-row-header {
@@ -346,7 +348,7 @@ export default function EventsGrid({ onOpenDetail }) {
           <div className="eg-section-head">
             <div>
               <div className="eg-section-label">En Cartelera</div>
-              <h2 className="eg-section-title">Eventos en Madrid</h2>
+              <h2 className="eg-section-title">EVENTOS<br/><span className="eg-hl">EN MADRID</span></h2>
             </div>
           </div>
 

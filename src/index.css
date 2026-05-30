@@ -124,8 +124,8 @@ body.hi-contrast .hero::after {
 }
 
 /* ── Focus ring global ── */
-:focus-visible,
-:focus {
+:focus { outline: none; }
+:focus-visible {
   outline: 2px solid var(--brand, #3D47C8);
   outline-offset: 3px;
   box-shadow: 0 0 0 4px rgba(61,71,200,.15);

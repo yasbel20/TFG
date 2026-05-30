@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
-import AccessibilityOverlay from "./AccessibilityOverlay";
 import { WheelIcon, HandsIcon as SignosIcon, BucleIcon, PodoIcon } from "./AccessibilityIcons";
 
 
@@ -212,11 +211,6 @@ function AgendaRow({ ev, onOpen }) {
     <article
       className="ag-card"
       style={{ borderLeftColor: accent }}
-      onClick={() => onOpen(ev)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={e => e.key === "Enter" && onOpen(ev)}
-      aria-label={`Ver detalle de ${ev.title}`}
     >
       {/* Fila superior: categoría · precio */}
       <div className="ag-card-top">
@@ -249,7 +243,9 @@ function AgendaRow({ ev, onOpen }) {
               {ev.access.includes("braille") && <span className="ag-badge" title="Podotáctil"><PodoIcon/></span>}
             </div>
           )}
-          <span className="ag-card-btn">Ver detalles <ArrowSm/></span>
+          <button className="ag-card-btn" onClick={() => onOpen(ev)} aria-label={`Ver detalles de ${ev.title}`}>
+            Ver detalles <ArrowSm/>
+          </button>
         </div>
       </div>
     </article>
@@ -360,7 +356,6 @@ export default function AgendaPage() {
   return (
     <>
       <style>{css}</style>
-      <AccessibilityOverlay/>
       <div className="ag-page">
 
         {/* ── NAV compartido ── */}
@@ -472,7 +467,7 @@ const css = `
   .ag-controls {
     background: #fff;
     border-bottom: 1px solid #eae6f6;
-    position: sticky; top: 68px; z-index: 40;
+    position: sticky; top: 60px; z-index: 40;
     box-shadow: 0 2px 12px rgba(79,62,200,.06);
   }
   .ag-controls-inner {
@@ -492,7 +487,6 @@ const css = `
     cursor: pointer; transition: all .12s; padding: 0; flex-shrink: 0;
   }
   .ag-week-btn:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
-  .ag-week-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
   .ag-week-label {
     font-family: var(--ff-b);
@@ -512,7 +506,7 @@ const css = `
   /* Filtros */
   .ag-cat-filters {
     display: flex; gap: .4rem;
-    overflow-x: auto;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
   .ag-cat-filters::-webkit-scrollbar { display: none; }
@@ -526,7 +520,6 @@ const css = `
   }
   .ag-cat-btn:hover { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
   .ag-cat-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); font-weight: 700; }
-  .ag-cat-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
   /* ── Área principal ── */
   .ag-main { padding: 2.5rem clamp(1rem, 5vw, 3rem) 7rem; }
@@ -582,7 +575,7 @@ const css = `
     box-shadow: inset 0 0 0 1px #eae6f5;
     border-radius: 0;
     padding: 1.2rem 1.4rem 1.1rem 1.2rem;
-    cursor: pointer;
+    cursor: default;
     display: flex; flex-direction: column; gap: .65rem;
     transition: background .15s, box-shadow .18s, transform .18s;
     text-align: left;
@@ -592,7 +585,6 @@ const css = `
     box-shadow: 0 6px 28px rgba(79,62,200,.11);
     transform: translateX(4px);
   }
-  .ag-card:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
   /* Fila superior */
   .ag-card-top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
@@ -622,7 +614,6 @@ const css = `
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     transition: color .15s;
   }
-  .ag-card:hover .ag-card-title { color: var(--brand); }
 
   /* Fila inferior */
   .ag-card-bottom {
@@ -649,16 +640,17 @@ const css = `
     background: #ede9ff; color: var(--brand); border: 1px solid #d4cefc;
     transition: background .12s;
   }
-  .ag-card:hover .ag-badge { background: var(--brand); color: #fff; border-color: var(--brand); }
   .ag-card-btn {
     display: inline-flex; align-items: center; gap: .35rem;
     border: 1.5px solid #ddd8f2; color: var(--text-muted);
+    background: #fff;
     font-family: 'Inter', var(--ff-b), sans-serif;
     font-size: .75rem; font-weight: 600;
     padding: .45rem 1rem; border-radius: 0;
+    cursor: pointer;
     transition: all .15s; white-space: nowrap;
   }
-  .ag-card:hover .ag-card-btn { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
+  .ag-card-btn:hover { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
 
   /* ── Empty state ── */
   .ag-empty {

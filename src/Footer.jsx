@@ -73,10 +73,10 @@ export default function Footer() {
 
 const s = {
   footer:   { width: "100%", background: "var(--bg)", borderTop: "1px solid var(--border)", marginTop: "auto" },
-  top:      { maxWidth: "1280px", margin: "0 auto", padding: "clamp(1.5rem,3vw,2.5rem) clamp(1.25rem,5vw,6rem)", display: "flex", gap: "clamp(2rem,5vw,4rem)", alignItems: "flex-start" },
-  brand:    { display: "flex", flexDirection: "column", flexShrink: 0 },
+  top:      { width: "100%", padding: "clamp(1.5rem,3vw,2.5rem) clamp(1.25rem,5vw,6rem)", display: "flex", gap: "clamp(2rem,5vw,4rem)", alignItems: "center" },
+  brand:    { display: "flex", flexDirection: "column", flexShrink: 0, marginLeft: "auto" },
   logoBtn:  { background: "none", border: "none", cursor: "pointer", padding: 0, alignSelf: "flex-start" },
-  logo:     { height: "clamp(36px,5vw,46px)", width: "auto" },
+  logo:     { height: "clamp(80px,10vw,140px)", width: "auto" },
   vDivider: { width: "1px", alignSelf: "stretch", background: "var(--border)", flexShrink: 0 },
   cols:     { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "clamp(1.5rem,4vw,3rem)", flex: 1 },
   col:      { display: "flex", flexDirection: "column", gap: ".75rem" },

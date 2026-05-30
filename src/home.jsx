@@ -155,7 +155,7 @@ function AgendaDestacada() {
     setSelKey(toKey(d));
   };
 
-  const dayEvs = events.filter(e => e.dateKey===selKey).slice(0,5);
+  const dayEvs = events.filter(e => e.dateKey===selKey).slice(0,4);
   const selDate = parseDateKeyAg(selKey);
   const selLabel = selDate.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
 
@@ -163,8 +163,9 @@ function AgendaDestacada() {
     <section className="ad-sec" aria-labelledby="ad-title">
       <style>{agendaCss}</style>
       <div className="ad-inner">
+        <p className="sec-eyebrow">Planifica tu semana</p>
         <h2 id="ad-title" className="ad-heading">
-          Agenda <span className="ad-hl">destacada</span>
+          AGENDA<br/><span className="ad-hl">DESTACADA</span>
         </h2>
 
         {/* Franja de días */}
@@ -206,13 +207,6 @@ function AgendaDestacada() {
               tabIndex={0} onKeyDown={e=>e.key==="Enter"&&navigate(`/evento/${ev.id}`,{state:{ev}})}
               aria-label={ev.title}
             >
-              <div className="ad-thumb">
-                <img
-                  src={ev.image || "/img/AGENDA.jpg"}
-                  alt=""
-                  onError={e=>{ e.target.onerror=null; e.target.src="/img/AGENDA.jpg"; }}
-                />
-              </div>
               <div className="ad-info">
                 <strong className="ad-ev-title">{ev.title}</strong>
                 <span className="ad-ev-venue">{ev.venue}</span>
@@ -245,14 +239,15 @@ const agendaCss = `
     padding: 0 clamp(1rem,4vw,2rem);
   }
   .ad-heading {
-    font-family: 'Inter', sans-serif;
-    font-size: clamp(1.6rem,3vw,2.2rem);
-    font-weight: 700;
-    color: #111;
-    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 7vw, 7rem);
+    letter-spacing: .02em;
+    color: var(--ink);
+    line-height: .9;
+    text-align: left;
     margin: 0 0 2rem;
   }
-  .ad-hl { color: #3d47c8; }
+  .ad-hl { color: var(--brand); }
 
   /* Franja de días */
   .ad-strip-wrap {
@@ -481,6 +476,24 @@ const TYPE_CARDS = [
     sub:   "Arte · Fotografía · Historia · Ciencia",
     desc:  "Museos y galerías con señalización en braille, audioguías y acceso PMR completo.",
     cat:   "Exposición",
+  },
+  {
+    label: "CINE",
+    sub:   "Subtítulos · Audiodescripción · Ciclos",
+    desc:  "Proyecciones accesibles con subtítulos para personas sordas y audiodescripción integrada.",
+    cat:   "Cine",
+  },
+  {
+    label: "DANZA",
+    sub:   "Ballet · Contemporáneo · Flamenco",
+    desc:  "Espectáculos de danza con intérpretes de LSE y espacios totalmente accesibles para PMR.",
+    cat:   "Danza",
+  },
+  {
+    label: "CULTURA",
+    sub:   "Talleres · Conferencias · Festivales",
+    desc:  "Actividades culturales diversas adaptadas para todos los públicos y necesidades.",
+    cat:   "Cultura",
   },
 ];
 
@@ -1248,18 +1261,17 @@ function FaqSection() {
     <section className="faq-sec" aria-labelledby="faq-heading">
       <style>{faqCss}</style>
       <div className="faq-inner">
-        <h2 id="faq-heading" className="faq-heading">
-          Preguntas <span className="faq-hl">frecuentes</span>
-        </h2>
+        <div className="faq-header">
+          <p className="sec-eyebrow">Soporte</p>
+          <h2 id="faq-heading" className="faq-heading">
+            PREGUNTAS<br/><span className="faq-hl">FRECUENTES</span>
+          </h2>
+        </div>
         <div className="faq-grid">
-          {[FAQ_ITEMS.slice(0, 3), FAQ_ITEMS.slice(3)].map((col, c) => (
-            <div key={c} className="faq-col">
-              {col.map((item, j) => (
-                <div key={c * 3 + j} className="faq-item">
-                  <p className="faq-q-static">{item.q}</p>
-                  <p className="faq-a">{item.a}</p>
-                </div>
-              ))}
+          {FAQ_ITEMS.map((item, i) => (
+            <div key={i} className="faq-item">
+              <p className="faq-q-static">{item.q}</p>
+              <p className="faq-a">{item.a}</p>
             </div>
           ))}
         </div>
@@ -1275,48 +1287,56 @@ const faqCss = `
     border-top: 1px solid #e5e7eb;
   }
   .faq-inner {
-    max-width: 960px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 0 clamp(1rem,4vw,3rem);
   }
+  .faq-header { margin-bottom: 2.5rem; }
   .faq-heading {
-    font-family: 'Inter', sans-serif;
-    font-size: clamp(1.6rem,3vw,2.2rem);
-    font-weight: 700;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 6vw, 6rem);
+    letter-spacing: .02em;
     color: #111;
-    text-align: center;
-    margin-bottom: 2.5rem;
+    line-height: .9;
+    margin: .4rem 0 0;
   }
   .faq-hl { color: #3d47c8; }
   .faq-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0 3rem;
-    align-items: start;
   }
   @media (max-width: 640px) { .faq-grid { grid-template-columns: 1fr; } }
-  .faq-col {
-    display: flex;
-    flex-direction: column;
-  }
   .faq-item {
-    border-bottom: 1px solid #e5e7eb;
+    border-top: 1px solid #e5e7eb;
+    padding: 1.75rem 0 1.75rem 1.25rem;
+    border-left: 3px solid transparent;
+    transition: border-left-color .2s, padding-left .2s, background .2s;
+    cursor: default;
+    align-self: start;
+  }
+  .faq-item:hover {
+    border-left-color: #3d47c8;
+    padding-left: 1.75rem;
+    background: #fafbff;
   }
   .faq-q-static {
-    padding: 1rem 0 .25rem;
     font-family: 'Inter', sans-serif;
-    font-size: .9rem;
-    font-weight: 600;
-    color: #111;
-    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f0f0f;
+    margin: 0 0 .65rem;
+    letter-spacing: -.01em;
   }
+  .faq-item:hover .faq-q-static { color: #3d47c8; }
   .faq-a {
     font-family: 'Inter', sans-serif;
-    font-size: .855rem;
-    color: #555;
-    line-height: 1.7;
-    padding-bottom: 1rem;
+    font-size: .82rem;
+    color: #6b7280;
+    line-height: 1.75;
+    padding-bottom: 0;
     margin: 0;
+    letter-spacing: .01em;
   }
 `;
 
@@ -1339,8 +1359,6 @@ export default function INCLUGOHome() {
       {/* ── NAV compartido ── */}
       <Navbar />
 
-      {/* ── MAIN ── */}
-     
       <main id="main-content">
 
         {/* ── HERO ── */}
@@ -1363,71 +1381,22 @@ export default function INCLUGOHome() {
           </div>
         </section>
 
-
-        {/* ── SHOWCASE ── */}
-        <section className="showcase-sec" aria-labelledby="showcase-heading">
-          <div className="showcase-inner">
-
-            {/* Callout superior: texto izq + foto derecha */}
-            <div className="showcase-callout">
-              <div className="showcase-callout-left">
-                <p className="showcase-callout-text">Una experiencia cultural en Madrid que no se parece a ninguna otra</p>
-                <p className="showcase-callout-sub">
-                  INCLUGO redefine cómo descubrir la cultura accesible en Madrid. Una sola plataforma te da acceso a <strong>más de 800 eventos culturales</strong> filtrados por tus necesidades reales de accesibilidad, actualizados cada día desde la <strong>API oficial del Ayuntamiento de Madrid</strong>.
-                </p>
-              </div>
-              <div className="showcase-callout-img" aria-hidden="true">
-                <img src="/img/lenguaje.jpg" alt="" loading="lazy"/>
-              </div>
+        {/* ── STATS ── */}
+        <section className="stats" aria-label="Cifras clave de INCLUGO">
+          <div className="stats-grid">
+            <div className="stat">
+              <span className="stat-num" aria-label="500.000">500<sup aria-hidden="true">K</sup></span>
+              <span className="stat-label">Personas con discapacidad en Madrid</span>
             </div>
-
-            <div className="showcase-body">
-              {/* Columna 1: fotos pequeñas + checklist */}
-              <div className="showcase-right-col">
-                <div className="sc-pair" aria-hidden="true">
-                  <div className="sc-small"><img src="/img/accesible.jpg" alt="" loading="lazy"/></div>
-                  <div className="sc-small"><img src="/img/cultura.jpg" alt="" loading="lazy"/></div>
-                  <div className="sc-small"><img src="/img/interprete.jpg" alt="" loading="lazy"/></div>
-                  <div className="sc-small"><img src="/img/lenguaje.jpg" alt="" loading="lazy"/></div>
-                </div>
-                <ul className="showcase-list" aria-label="Características">
-                  {[
-                    "Cubre todos los tipos de accesibilidad",
-                    "8 tipos de accesibilidad verificados",
-                    "Lector de voz con resaltado en tiempo real",
-                    "Filtros por distrito y zona de Madrid",
-                    "Enlace directo a compra de entradas",
-                  ].map(text => (
-                    <li key={text} className="showcase-list-item">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3d47c8" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-                      <span>{text}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Columna 2: foto alta central */}
-              <div className="sc-center" aria-hidden="true">
-                <img src="/img/vertical1.png" alt="" loading="lazy"/>
-              </div>
-
-              {/* Columna 3: texto */}
-              <div className="showcase-left">
-                <h2 id="showcase-heading" className="showcase-heading">
-                  La plataforma de{" "}
-                  <span className="showcase-hl">cultura accesible</span>{" "}
-                  más completa de Madrid
-                </h2>
-                <p className="showcase-sub">Eventos accesibles, información verificada y herramientas para toda la comunidad.</p>
-              </div>
+            <div className="stat">
+              <span className="stat-num" aria-label="Más de 800">800<sup aria-hidden="true">+</sup></span>
+              <span className="stat-label">Eventos culturales activos</span>
             </div>
-
+            <div className="stat">
+              <span className="stat-num">4</span>
+              <span className="stat-label">Tipos de accesibilidad cubiertos</span>
+            </div>
           </div>
-        </section>
-        {/* ── HERRAMIENTAS DE ACCESIBILIDAD ── */}
-        <section className="tools-sec" aria-labelledby="tools-heading">
-          <style>{toolsCss}</style>
-          <ToolsShowcase />
         </section>
 
         {/* ── HOW IT WORKS ── */}
@@ -1461,13 +1430,11 @@ export default function INCLUGOHome() {
           </div>
         </section>
 
-        {/* ── AGENDA DESTACADA ── */}
-        <AgendaDestacada/>
-
-        {/* ── EVENTS GRID ── */}
-        <div ref={evRef} tabIndex={-1}>
-          <EventsGrid onOpenDetail={(ev) => navigate(`/evento/${ev.id}`, { state: { ev } })}/>
-        </div>
+        {/* ── HERRAMIENTAS DE ACCESIBILIDAD ── */}
+        <section className="tools-sec" aria-labelledby="tools-heading">
+          <style>{toolsCss}</style>
+          <ToolsShowcase />
+        </section>
 
         {/* ── ACCESIBILIDAD ── */}
         <section className="access-sec" aria-labelledby="access-heading">
@@ -1494,8 +1461,61 @@ export default function INCLUGOHome() {
           </div>
         </section>
 
+        {/* ── TYPES ── */}
+        <section className="types-sec" aria-labelledby="types-heading">
+          <div className="types-inner">
+            <div className="types-head">
+              <p className="sec-eyebrow">Lo que encontrarás</p>
+              <h2 id="types-heading" className="types-heading">
+                TODA LA CULTURA<br/>
+                <span className="hl">DE MADRID</span>
+              </h2>
+            </div>
+            <div className="types-grid">
+              {TYPE_CARDS.map((t, i) => (
+                <button
+                  key={t.label}
+                  className="type-card"
+                  onClick={() => navigate(`/eventos/${toSlug(t.cat)}`)}
+                  aria-label={`Ver eventos de ${t.label}`}
+                >
+                  <span className="type-card-num" aria-hidden="true">0{i + 1}</span>
+                  <div className="type-card-body">
+                    <h3 className="type-card-title">{t.label}</h3>
+                    <p className="type-card-sub">{t.sub}</p>
+                    <p className="type-card-desc">{t.desc}</p>
+                  </div>
+                  <span className="type-card-arrow" aria-hidden="true">
+                    <ArrowRightIcon/>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── AGENDA DESTACADA ── */}
+        <AgendaDestacada/>
+
+        {/* ── EVENTS GRID ── */}
+        <div ref={evRef} tabIndex={-1}>
+          <EventsGrid onOpenDetail={(ev) => navigate(`/evento/${ev.id}`, { state: { ev } })}/>
+        </div>
+
         {/* ── FAQ ── */}
         <FaqSection/>
+
+        {/* ── CTA ── */}
+        <section className="cta-sec" aria-labelledby="cta-heading">
+          <div className="cta-inner">
+            <h2 id="cta-heading" className="cta-h2">DESCUBRE<br/>MADRID</h2>
+            <p className="cta-sub">Más de 800 eventos culturales accesibles al alcance de todos. Sin barreras, sin frustraciones.</p>
+            <div className="cta-btns">
+              <button className="btn-p" onClick={scrollToEvents}>Explorar eventos</button>
+              <button className="btn-s" onClick={() => navigate("/agenda")}>Ver agenda</button>
+            </div>
+          </div>
+        </section>
 
       </main>
 
