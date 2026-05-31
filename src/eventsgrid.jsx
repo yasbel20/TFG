@@ -241,7 +241,7 @@ const css = `
     padding: .15rem 0; cursor: pointer; transition: opacity .15s; white-space: nowrap;
   }
   .eg-view-all:hover { opacity: .5; }
-  .eg-view-all:focus-visible { outline: 2px solid #C9D11A; outline-offset: 2px; }
+  .eg-view-all:focus-visible { outline: 2px solid #111827; outline-offset: 2px; }
 
   .eg-grid {
     display: grid;
@@ -259,7 +259,7 @@ const css = `
     cursor: pointer; border-radius: 0;
   }
   .eg-card:hover { transform: translateY(-5px); }
-  .eg-card:focus-visible { outline: 2px solid #C9D11A; outline-offset: 3px; border-radius: 2px; }
+  .eg-card:focus-visible { outline: 2px solid #111827; outline-offset: 3px; border-radius: 2px; }
 
   .eg-img-wrap { position: relative; width: 100%; height: 380px; overflow: hidden; flex-shrink: 0; }
   .eg-img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; display: block; }

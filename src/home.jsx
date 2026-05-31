@@ -1129,7 +1129,7 @@ const ghostCss = `
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  .gh-wrap:focus-visible { outline: 2px solid #3d47c8; outline-offset: 4px; border-radius: 4px; }
+  .gh-wrap:focus-visible { outline: 2px solid #111827; outline-offset: 4px; border-radius: 4px; }
 
   /* Bocadillo: alineado por la base con la chica */
   .gh-bubble {

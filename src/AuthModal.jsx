@@ -271,8 +271,8 @@ const css = `
     min-height: 46px; width: 100%; box-sizing: border-box;
   }
   .am-field input:focus {
-    border-color: var(--brand, #3d47c8);
-    box-shadow: 0 0 0 3px rgba(61,71,200,.12);
+    border-color: #111827;
+    box-shadow: 0 0 0 3px rgba(17,24,39,.12);
   }
   .am-field input::placeholder { color: #9ca3af; }
 
