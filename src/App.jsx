@@ -21,8 +21,7 @@ function ScrollToTop() {
 function GlobalUI() {
   const { pathname } = useLocation();
   const hasOwnOverlay = pathname.startsWith("/evento/") ||
-                        pathname.startsWith("/eventos") ||
-                        pathname.startsWith("/agenda");
+                        pathname.startsWith("/eventos");
   return (
     <>
       <Footer />

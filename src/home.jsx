@@ -163,7 +163,6 @@ function AgendaDestacada() {
     <section className="ad-sec" aria-labelledby="ad-title">
       <style>{agendaCss}</style>
       <div className="ad-inner">
-        <p className="sec-eyebrow">Planifica tu semana</p>
         <h2 id="ad-title" className="ad-heading">
           AGENDA<br/><span className="ad-hl">DESTACADA</span>
         </h2>
@@ -230,13 +229,12 @@ function AgendaDestacada() {
 const agendaCss = `
   .ad-sec {
     background: #fff;
-    padding: clamp(2.5rem,5vw,4rem) 0;
+    padding: clamp(2.5rem,5vw,4rem) clamp(1.25rem,5vw,6rem);
     border-top: 1px solid #f0f0f0;
   }
   .ad-inner {
-    max-width: 860px;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 0 clamp(1rem,4vw,2rem);
   }
   .ad-heading {
     font-family: 'Bebas Neue', sans-serif;
@@ -564,7 +562,7 @@ function AccessibilityDropdown() {
 const TOOLS_ITEMS = [
   {
     key: "tab",
-    video: "/img/case-tab.mp4",
+    video: "/img/eventos/case/TAB1.mp4",
     label: "Modo teclado",
     desc: "Navega con Tab y escucha en voz alta cada elemento de la página.",
     icon: (
@@ -576,7 +574,7 @@ const TOOLS_ITEMS = [
   },
   {
     key: "clic",
-    video: "/img/case-clic.mp4",
+    video: "/img/eventos/case/ESCUCHAR.mp4",
     label: "Clic y escuchar",
     desc: "Pulsa sobre cualquier texto para que INCLUGO lo lea en voz alta.",
     icon: (
@@ -588,7 +586,7 @@ const TOOLS_ITEMS = [
   },
   {
     key: "visibilidad",
-    video: "/img/case-visibilidad.mp4",
+    video: "/img/eventos/case/VISIBILIDAD1.mp4",
     label: "Texto visible",
     desc: "Aumenta el espaciado entre letras y líneas para mejorar la lectura.",
     icon: (
@@ -600,7 +598,7 @@ const TOOLS_ITEMS = [
   },
   {
     key: "mascara",
-    video: "/img/case-mascara.mp4",
+    video: "/img/eventos/case/MASCARA1.mp4",
     label: "Máscara de foco",
     desc: "Resalta la zona activa de la pantalla para reducir la distracción visual.",
     icon: (
@@ -612,7 +610,7 @@ const TOOLS_ITEMS = [
   },
   {
     key: "escala",
-    video: "/img/case-escala.mp4",
+    video: "/img/eventos/case/ESCALA1.mp4",
     label: "Escala de grises",
     desc: "Convierte todos los colores de la web a escala de grises.",
     icon: (
@@ -694,7 +692,7 @@ function ToolsShowcase() {
 const toolsCss = `
   .tools-sec {
     background: #fff;
-    padding: clamp(2.5rem,5vw,4rem) 0;
+    padding: clamp(2.5rem,5vw,4rem) clamp(1.25rem,5vw,6rem);
     border-top: none;
     position: relative;
   }
@@ -713,7 +711,6 @@ const toolsCss = `
   .ts-outer {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 0 clamp(1rem,4vw,3rem);
     display: flex;
     flex-direction: column;
     gap: 2.5rem;
@@ -1262,7 +1259,6 @@ function FaqSection() {
       <style>{faqCss}</style>
       <div className="faq-inner">
         <div className="faq-header">
-          <p className="sec-eyebrow">Soporte</p>
           <h2 id="faq-heading" className="faq-heading">
             PREGUNTAS<br/><span className="faq-hl">FRECUENTES</span>
           </h2>
@@ -1283,18 +1279,17 @@ function FaqSection() {
 const faqCss = `
   .faq-sec {
     background: #fff;
-    padding: clamp(3rem,6vw,5rem) 0;
+    padding: clamp(3rem,6vw,5rem) clamp(1.25rem,5vw,6rem);
     border-top: 1px solid #e5e7eb;
   }
   .faq-inner {
-    max-width: 1100px;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 0 clamp(1rem,4vw,3rem);
   }
   .faq-header { margin-bottom: 2.5rem; }
   .faq-heading {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(3rem, 6vw, 6rem);
+    font-size: clamp(3rem, 7vw, 7rem);
     letter-spacing: .02em;
     color: #111;
     line-height: .9;
@@ -1402,7 +1397,6 @@ export default function INCLUGOHome() {
         {/* ── HOW IT WORKS ── */}
         <section className="how-sec" aria-labelledby="how-heading">
           <div className="how-inner">
-            <p className="sec-eyebrow">¿Cómo funciona?</p>
             <h2 id="how-heading" className="how-heading">
               TRES PASOS,<br/>
               <span className="hl">SIN BARRERAS</span>
@@ -1440,7 +1434,6 @@ export default function INCLUGOHome() {
         <section className="access-sec" aria-labelledby="access-heading">
           <div className="access-inner">
             <div className="access-head">
-              <p className="sec-eyebrow">Accesibilidad</p>
               <h2 id="access-heading" className="access-heading">
                 TODO TIPO<br/>
                 <span className="hl">CUBIERTO</span>
@@ -1465,7 +1458,6 @@ export default function INCLUGOHome() {
         <section className="types-sec" aria-labelledby="types-heading">
           <div className="types-inner">
             <div className="types-head">
-              <p className="sec-eyebrow">Lo que encontrarás</p>
               <h2 id="types-heading" className="types-heading">
                 TODA LA CULTURA<br/>
                 <span className="hl">DE MADRID</span>

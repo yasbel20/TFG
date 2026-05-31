@@ -446,7 +446,7 @@ h1.hero-h1 .hl { color: var(--brand); }
 
 .access-heading {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(2.5rem, 6vw, 6rem);
+  font-size: clamp(3rem, 7vw, 7rem);
   letter-spacing: .02em; color: var(--ink);
   line-height: .9; margin-top: 1rem;
 }
@@ -496,7 +496,7 @@ h1.hero-h1 .hl { color: var(--brand); }
   width: 100%;
   background: url('/img/CTA.jpg') center center / cover no-repeat;
   padding: clamp(4rem, 8vw, 7rem) var(--px);
-  text-align: center;
+  text-align: left;
   border-top: none;
   position: relative;
   overflow: hidden;
@@ -519,10 +519,10 @@ h1.hero-h1 .hl { color: var(--brand); }
 .cta-sub {
   font-size: clamp(.95rem, 1.8vw, 1.15rem);
   color: rgba(255,255,255,.75);
-  max-width: 480px; margin: 0 auto 2rem; line-height: 1.7;
+  max-width: 480px; margin: 0 0 2rem; line-height: 1.7;
 }
 
-.cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.cta-btns { display: flex; gap: 1rem; justify-content: flex-start; flex-wrap: wrap; }
 
 .btn-p {
   background: #fff; color: var(--brand);
@@ -940,7 +940,7 @@ h1.hero-h1 .hl { color: var(--brand); }
 }
 .types-heading {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(2.5rem, 6vw, 6rem);
+  font-size: clamp(3rem, 7vw, 7rem);
   letter-spacing: .02em;
   color: var(--ink);
   line-height: .9;
@@ -1074,7 +1074,7 @@ h1.hero-h1 .hl { color: var(--brand); }
 }
 .features-heading {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(2.5rem, 6vw, 6rem);
+  font-size: clamp(3rem, 7vw, 7rem);
   letter-spacing: .02em;
   color: var(--ink);
   line-height: .9;
@@ -1151,7 +1151,7 @@ h1.hero-h1 .hl { color: var(--brand); }
 
 .agenda-banner-h2 {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(2.5rem, 5vw, 5rem);
+  font-size: clamp(3rem, 7vw, 7rem);
   letter-spacing: .02em;
   color: #ffffff;
   line-height: .9;

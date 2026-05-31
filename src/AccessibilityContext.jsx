@@ -38,18 +38,18 @@ const SKIP_CONTAINERS = [
 ];
 
 function isVisible(el) {
-  // Ignorar aria-hidden
   if (el.closest('[aria-hidden="true"]')) return false;
-  // Ignorar contenedores de utilidad (cookie banner, splash, overlays)
   if (SKIP_CONTAINERS.some(sel => { try { return el.closest(sel); } catch { return false; } })) return false;
-  // Ignorar elementos sin texto útil (vacíos o solo espacios)
+  const s = window.getComputedStyle(el);
+  if (s.display === "none" || s.visibility === "hidden" || el.offsetHeight === 0) return false;
+  // Botones con aria-label/title (solo icono) → siempre incluir
+  const explicit = el.getAttribute("aria-label") || el.getAttribute("title");
+  if (explicit?.trim().length > 1) return true;
+  // Resto: necesita texto visible
   const clone = el.cloneNode(true);
   clone.querySelectorAll("svg,script,style").forEach(n => n.remove());
   const text = clone.textContent?.replace(/\s+/g, " ").trim();
-  if (!text || text.length < 2) return false;
-  // Ignorar elementos ocultos por CSS
-  const s = window.getComputedStyle(el);
-  return s.display !== "none" && s.visibility !== "hidden" && el.offsetHeight > 0;
+  return !!(text && text.length > 1);
 }
 
 function readElement(el) {
@@ -111,9 +111,11 @@ export function AccessibilityProvider({ children }) {
     if (!prefs.keyboard || !("speechSynthesis" in window)) return;
 
     let idx = -1;
+    let cachedEls = null;
 
     function applyTabindex() {
       document.querySelectorAll(CONTENT_SELECTOR).forEach(ensureFocusable);
+      cachedEls = null; // invalidar caché al cambiar el DOM
     }
     applyTabindex();
 
@@ -122,11 +124,24 @@ export function AccessibilityProvider({ children }) {
     observer.observe(document.body, { childList: true, subtree: true });
 
     function getElements() {
-      return Array.from(document.querySelectorAll(CONTENT_SELECTOR)).filter(isVisible);
+      if (!cachedEls) {
+        const all = Array.from(document.querySelectorAll(CONTENT_SELECTOR)).filter(isVisible);
+        const set = new Set(all);
+        // Excluir elementos cuyo ancestro ya está en la lista (evita leer padre e hijo)
+        cachedEls = all.filter(el => {
+          let p = el.parentElement;
+          while (p) {
+            if (set.has(p)) return false;
+            p = p.parentElement;
+          }
+          return true;
+        });
+      }
+      return cachedEls;
     }
 
-    // ── Reset índice al navegar (React Router usa history.pushState) ──
-    const resetIdx = () => { idx = -1; };
+    // ── Reset índice y caché al navegar (React Router usa history.pushState) ──
+    const resetIdx = () => { idx = -1; cachedEls = null; };
 
     const _origPush    = history.pushState.bind(history);
     const _origReplace = history.replaceState.bind(history);

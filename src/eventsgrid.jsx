@@ -134,7 +134,7 @@ function EventCard({ ev, onOpenDetail }) {
 
       <div className="eg-info">
         <span className="eg-cat">{ev.cat}</span>
-        <h3 className="eg-title">{ev.title}</h3>
+        <h3 className="eg-title" style={{ color: CAT_ACCENT[ev.cat] || "#111111" }}>{ev.title}</h3>
         {ev.access.length > 0 && (
           <AccessibilityBadge types={ev.access} className="eg-access-chip"
             style={{color:"#6b7280"}}/>
@@ -215,7 +215,7 @@ const css = `
     font-family: 'Inter', sans-serif; display: block;
   }
   .eg-section-title {
-    font-family: 'Bebas Neue', sans-serif; font-weight: 400;
+    font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(3rem, 7vw, 7rem); letter-spacing: .02em; color: #111111; line-height: .9;
     margin: 0;
   }
@@ -347,7 +347,6 @@ export default function EventsGrid({ onOpenDetail }) {
 
           <div className="eg-section-head">
             <div>
-              <div className="eg-section-label">En Cartelera</div>
               <h2 className="eg-section-title">EVENTOS<br/><span className="eg-hl">EN MADRID</span></h2>
             </div>
           </div>
