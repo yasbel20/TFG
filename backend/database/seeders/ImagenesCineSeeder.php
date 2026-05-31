@@ -10,7 +10,7 @@ class ImagenesCineSeeder extends Seeder
     public function run(): void
     {
         $imagenes = [
-            '50307948' => '/img/eventos/cine/Capítulo XXXII Recuerdo de Aram Slobodian (una poética de la desaparición).png',
+            '50307948' => '/img/eventos/cine/Capítulo XXXII Recuerdo de Aram Slobodian (una poética de la desaparición).jpg',
             '50315898' => '/img/eventos/cine/Change the Battery Pack (LAV 2026).jpeg',
             '50290944' => '/img/eventos/cine/El recuerdo de Marnie.jpg',
             '50285684' => '/img/eventos/cine/A River\'s Gaze.jpg',
@@ -44,7 +44,6 @@ class ImagenesCineSeeder extends Seeder
             '50324649' => '/img/eventos/cine/Cinefórum IVÁNdVARGAS.png',
             '50324811' => '/img/eventos/musica/DecirSioNo.jpeg',
             '50325172' => '/img/eventos/cine/Este cuerpo es mío.jpg',
-            '50307948' => '/img/eventos/cine/Encuadres LAV #07 - Inquietudes.jpg',
             '50311507' => '/img/eventos/danza/Ballet Accesible Madrid.jpg',
             '50316499' => '/img/eventos/exposicion/Apertura extraordinariaNoche en blanco.jpg',
             '50314807' => '/img/eventos/exposicion/Limpiar y ordenar.jpg',
