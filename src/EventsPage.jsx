@@ -90,8 +90,9 @@ function parseEvent(item, i) {
   if (codes.includes("6"))  access.push("bucle");
 
   let price = "Gratis";
-  const fee = item["event-free"] ?? item.free;
-  if (fee === false || fee === "false" || fee === 0 || fee === "0") {
+  const feeRaw = item["event-free"] ?? item.free;
+  const isFree = feeRaw == null || Number(feeRaw) !== 0;
+  if (!isFree) {
     const raw = String(item["event-fee"] || item.price || "").trim();
     price = /^\d+([.,]\d+)?$/.test(raw) ? `Desde ${raw.replace(",", ".")} €` : "Ver precio";
   }
@@ -131,7 +132,7 @@ function parseEvent(item, i) {
   return {
     id:       item.id || `ev-${i}`,
     title:    item.title || "Evento sin título",
-    cat, dateShort, date, timeStr, price, access, image,
+    cat, dateShort, date, timeStr, price, isFree, access, image,
     startDate, endDate,
     url:      item.link || "#",
     venue:    venue.length > 40 ? venue.slice(0, 38) + "…" : venue,
@@ -370,9 +371,9 @@ export default function EventsPage() {
 
 
   if (priceFilter === "gratis") {
-    filtered = filtered.filter(ev => ev.price === "Gratis");
+    filtered = filtered.filter(ev => ev.isFree === true);
   } else if (priceFilter === "pago") {
-    filtered = filtered.filter(ev => ev.price !== "Gratis");
+    filtered = filtered.filter(ev => ev.isFree === false);
   }
 
   if (dateFilter) {
@@ -385,21 +386,20 @@ export default function EventsPage() {
         ? new Date(ev.endDate.getFullYear(), ev.endDate.getMonth(), ev.endDate.getDate())
         : s;
       if (dateFilter === "hoy") {
-        return s <= today && e >= today;
+        return s.getTime() === today.getTime();
       }
       if (dateFilter === "semana") {
         const limit = new Date(today); limit.setDate(today.getDate() + 7);
-        return s <= limit && e >= today;
+        return s >= today && s <= limit;
       }
       if (dateFilter === "finde") {
-        const dow  = today.getDay();
-        const sat  = new Date(today); sat.setDate(today.getDate() + (dow === 6 ? 0 : 6 - dow));
-        const sun  = new Date(sat); sun.setDate(sat.getDate() + (dow === 0 ? 0 : 1));
-        return s <= sun && e >= sat;
+        const dow = today.getDay();
+        const sat = new Date(today); sat.setDate(today.getDate() + (dow === 6 ? 0 : 6 - dow));
+        const sun = new Date(sat); sun.setDate(sat.getDate() + 1);
+        return s >= sat && s <= sun;
       }
       if (dateFilter === "mes") {
-        return s.getMonth() === today.getMonth() && s.getFullYear() === today.getFullYear()
-          || (s <= today && e.getMonth() === today.getMonth() && e.getFullYear() === today.getFullYear());
+        return s.getMonth() === today.getMonth() && s.getFullYear() === today.getFullYear();
       }
       return true;
     });
