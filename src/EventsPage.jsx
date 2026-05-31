@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import AccessibilityBadge from "./AccessibilityBadge";
+import AccessibilityOverlay from "./AccessibilityOverlay";
 import { useAuth } from "./AuthContext";
 
 // ─── Colores y hero images ────────────────────────────────────────────────────
@@ -9,6 +10,15 @@ const CAT_COLORS = {
   "Música":     "#1A1A1A", "Teatro":     "#141414",
   "Exposición": "#181818", "Cine":       "#1A1A1A",
   "Danza":      "#141414", "Cultura":    "#111111", "Deporte": "#1A1A1A",
+};
+const CAT_ACCENT = {
+  "Música":     "#3D47C8",
+  "Teatro":     "#7C3AED",
+  "Exposición": "#0369A1",
+  "Cine":       "#92400E",
+  "Danza":      "#DB2777",
+  "Cultura":    "#1A237E",
+  "Deporte":    "#1A1A1A",
 };
 const CAT_HERO = {
   "Música":     "/img/musica1.jpg",
@@ -80,8 +90,9 @@ function parseEvent(item, i) {
   if (codes.includes("6"))  access.push("bucle");
 
   let price = "Gratis";
-  const fee = item["event-free"] ?? item.free;
-  if (fee === false || fee === "false" || fee === 0 || fee === "0") {
+  const feeRaw = item["event-free"] ?? item.free;
+  const isFree = feeRaw == null || Number(feeRaw) !== 0;
+  if (!isFree) {
     const raw = String(item["event-fee"] || item.price || "").trim();
     price = /^\d+([.,]\d+)?$/.test(raw) ? `Desde ${raw.replace(",", ".")} €` : "Ver precio";
   }
@@ -121,7 +132,7 @@ function parseEvent(item, i) {
   return {
     id:       item.id || `ev-${i}`,
     title:    item.title || "Evento sin título",
-    cat, dateShort, date, timeStr, price, access, image,
+    cat, dateShort, date, timeStr, price, isFree, access, image,
     startDate, endDate,
     url:      item.link || "#",
     venue:    venue.length > 40 ? venue.slice(0, 38) + "…" : venue,
@@ -234,7 +245,7 @@ function FeaturedCard({ ev, onOpenDetail }) {
           </button>
         )}
         <div className="ep-feat-info">
-          <h3 className="ep-feat-title">{ev.title}</h3>
+          <h3 className="ep-feat-title" style={{ color: CAT_ACCENT["Cultura"] }}>{ev.title}</h3>
           <div className="ep-feat-meta">
             <CalendarIcon/>{ev.dateShort}
             {ev.venue && <><span className="ep-feat-dot">·</span><PinIcon/>{ev.venue}</>}
@@ -274,7 +285,7 @@ function GridCard({ ev, onOpenDetail }) {
       </div>
       <div className="ep-info">
         <span className="ep-cat">{ev.cat}</span>
-        <h3 className="ep-title">{ev.title}</h3>
+        <h3 className="ep-title" style={{ color: CAT_ACCENT["Cultura"] }}>{ev.title}</h3>
         <AccessibilityBadge types={ev.access} className="ep-access-chip"
           style={{color:"#6b7280"}}/>
         <div className="ep-meta-block">
@@ -325,15 +336,19 @@ export default function EventsPage() {
   const [activeAccess,   setActiveAccess]   = useState(null);
   const [dateFilter,     setDateFilter]     = useState(null);  // null | "hoy" | "semana" | "finde" | "mes"
   const [priceFilter,    setPriceFilter]    = useState(null);  // null | "gratis" | "pago"
+  const [page,           setPage]           = useState(1);
+  const PAGE_SIZE = 24;
 
   useEffect(() => {
     setActiveCategory(resolvedCat);
     setSearchQ("");
     setActiveAccess(null);
     setDateFilter(null);
-
     setPriceFilter(null);
+    setPage(1);
   }, [resolvedCat]);
+
+  useEffect(() => { setPage(1); }, [activeCategory, searchQ, activeAccess, dateFilter, priceFilter]);
 
   const { byCategory, loading } = useEvents();
   const openDetail = ev => navigate(`/evento/${ev.id}`, { state: { ev } });
@@ -356,9 +371,9 @@ export default function EventsPage() {
 
 
   if (priceFilter === "gratis") {
-    filtered = filtered.filter(ev => ev.price === "Gratis");
+    filtered = filtered.filter(ev => ev.isFree === true);
   } else if (priceFilter === "pago") {
-    filtered = filtered.filter(ev => ev.price !== "Gratis");
+    filtered = filtered.filter(ev => ev.isFree === false);
   }
 
   if (dateFilter) {
@@ -371,21 +386,20 @@ export default function EventsPage() {
         ? new Date(ev.endDate.getFullYear(), ev.endDate.getMonth(), ev.endDate.getDate())
         : s;
       if (dateFilter === "hoy") {
-        return s <= today && e >= today;
+        return s.getTime() === today.getTime();
       }
       if (dateFilter === "semana") {
         const limit = new Date(today); limit.setDate(today.getDate() + 7);
-        return s <= limit && e >= today;
+        return s >= today && s <= limit;
       }
       if (dateFilter === "finde") {
-        const dow  = today.getDay();
-        const sat  = new Date(today); sat.setDate(today.getDate() + (dow === 6 ? 0 : 6 - dow));
-        const sun  = new Date(sat); sun.setDate(sat.getDate() + (dow === 0 ? 0 : 1));
-        return s <= sun && e >= sat;
+        const dow = today.getDay();
+        const sat = new Date(today); sat.setDate(today.getDate() + (dow === 6 ? 0 : 6 - dow));
+        const sun = new Date(sat); sun.setDate(sat.getDate() + 1);
+        return s >= sat && s <= sun;
       }
       if (dateFilter === "mes") {
-        return s.getMonth() === today.getMonth() && s.getFullYear() === today.getFullYear()
-          || (s <= today && e.getMonth() === today.getMonth() && e.getFullYear() === today.getFullYear());
+        return s.getMonth() === today.getMonth() && s.getFullYear() === today.getFullYear();
       }
       return true;
     });
@@ -411,6 +425,7 @@ export default function EventsPage() {
   return (
     <>
       <style>{css}</style>
+      <AccessibilityOverlay/>
       <div className="ep-page">
         <Navbar/>
 
@@ -516,7 +531,7 @@ export default function EventsPage() {
         <section className="ep-section ep-main-section">
           <div className="ep-section-head">
             <div>
-              <h2 className="ep-section-title">Eventos próximos</h2>
+              <h2 className="ep-section-title">EVENTOS <span style={{color:'var(--brand)'}}>PRÓXIMOS</span></h2>
               <p className="ep-section-sub">
                 {loading ? "Cargando eventos…" : `${filtered.length} eventos encontrados`}
               </p>
@@ -527,9 +542,16 @@ export default function EventsPage() {
               ? Array.from({length:12}).map((_,i) => <SkeletonCard key={i}/>)
               : filtered.length === 0
                 ? <p className="ep-empty">No hay eventos para esta selección.</p>
-                : filtered.map(ev => <GridCard key={ev.id} ev={ev} onOpenDetail={openDetail}/>)
+                : filtered.slice(0, page * PAGE_SIZE).map(ev => <GridCard key={ev.id} ev={ev} onOpenDetail={openDetail}/>)
             }
           </div>
+          {!loading && filtered.length > page * PAGE_SIZE && (
+            <div style={{textAlign:"center", marginTop:"2rem"}}>
+              <button className="ep-load-more" onClick={() => setPage(p => p + 1)}>
+                Cargar más ({filtered.length - page * PAGE_SIZE} restantes)
+              </button>
+            </div>
+          )}
         </section>
 
       </div>
@@ -541,6 +563,8 @@ export default function EventsPage() {
 const css = `
   .ep-page { min-height:100vh; background:#ffffff; font-family:'Inter',var(--ff-b),system-ui,sans-serif; }
   .hi-contrast .ep-page { background:var(--bg-surface); }
+  .ep-load-more { background:none; border:1.5px solid var(--brand,#3d47c8); color:var(--brand,#3d47c8); font-family:'Inter',var(--ff-b),sans-serif; font-size:.88rem; font-weight:700; padding:.7rem 2rem; cursor:pointer; border-radius:0; transition:background .15s,color .15s; }
+  .ep-load-more:hover { background:var(--brand,#3d47c8); color:#fff; }
 
   /* ── Hero ── */
   .ep-hero {
@@ -640,7 +664,7 @@ const css = `
     display:flex; align-items:flex-end; justify-content:space-between;
     margin-bottom:1.5rem; gap:1rem; flex-wrap:wrap;
   }
-  .ep-section-title { font-family:'Bebas Neue',var(--ff-h),sans-serif; font-weight:400; font-size:1.55rem; letter-spacing:.04em; color:var(--text-primary); margin:0 0 .2rem; }
+  .ep-section-title { font-family:'Bebas Neue',var(--ff-h),sans-serif; font-size:clamp(3rem,7vw,7rem); letter-spacing:.02em; color:var(--text-primary); line-height:.9; margin:0 0 .5rem; }
   .ep-section-sub { font-size:.87rem; color:var(--text-muted); margin:0; }
   .ep-see-all {
     display:inline-flex; align-items:center; gap:.35rem;

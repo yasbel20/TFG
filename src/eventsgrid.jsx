@@ -134,7 +134,7 @@ function EventCard({ ev, onOpenDetail }) {
 
       <div className="eg-info">
         <span className="eg-cat">{ev.cat}</span>
-        <h3 className="eg-title">{ev.title}</h3>
+        <h3 className="eg-title" style={{ color: CAT_ACCENT[ev.cat] || "#111111" }}>{ev.title}</h3>
         {ev.access.length > 0 && (
           <AccessibilityBadge types={ev.access} className="eg-access-chip"
             style={{color:"#6b7280"}}/>
@@ -196,8 +196,8 @@ function EventRow({ cat, events, onOpenDetail }) {
 const css = `
   .eg-wrap {
     background: #FFFFFF;
-    padding: 0 0 clamp(3rem, 7vw, 6rem);
-    border-top: none;
+    padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(3rem, 7vw, 6rem);
+    border-top: 1.5px solid #111111;
     width: 100%;
   }
   .eg-inner {
@@ -207,17 +207,19 @@ const css = `
   }
   .eg-section-head {
     display: flex; align-items: flex-end; justify-content: space-between;
-    border-bottom: none; padding-bottom: 1.25rem; margin-bottom: 2.5rem;
+    border-bottom: 1.5px solid #111111; padding-bottom: 1.25rem; margin-bottom: 2.5rem;
   }
   .eg-section-label {
-    font-size: .68rem; font-weight: 700; letter-spacing: .12em;
-    text-transform: uppercase; color: #555555; margin-bottom: .35rem;
-    font-family: 'Inter', sans-serif;
+    font-size: .72rem; font-weight: 700; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--brand, #3D47C8); margin-bottom: .5rem;
+    font-family: 'Inter', sans-serif; display: block;
   }
   .eg-section-title {
-    font-family: 'Bebas Neue', sans-serif; font-weight: 400;
-    font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: .04em; color: #111111; line-height: 1;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 7vw, 7rem); letter-spacing: .02em; color: #111111; line-height: .9;
+    margin: 0;
   }
+  .eg-hl { color: var(--brand, #3D47C8); }
 
   .eg-row-section { margin-bottom: 3.5rem; }
   .eg-row-header {
@@ -239,6 +241,7 @@ const css = `
     padding: .15rem 0; cursor: pointer; transition: opacity .15s; white-space: nowrap;
   }
   .eg-view-all:hover { opacity: .5; }
+  .eg-view-all:focus-visible { outline: 2px solid #C9D11A; outline-offset: 2px; }
 
   .eg-grid {
     display: grid;
@@ -256,6 +259,7 @@ const css = `
     cursor: pointer; border-radius: 0;
   }
   .eg-card:hover { transform: translateY(-5px); }
+  .eg-card:focus-visible { outline: 2px solid #C9D11A; outline-offset: 3px; border-radius: 2px; }
 
   .eg-img-wrap { position: relative; width: 100%; height: 380px; overflow: hidden; flex-shrink: 0; }
   .eg-img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; display: block; }
@@ -343,7 +347,7 @@ export default function EventsGrid({ onOpenDetail }) {
 
           <div className="eg-section-head">
             <div>
-              <h2 className="eg-section-title">Próximos eventos</h2>
+              <h2 className="eg-section-title">EVENTOS<br/><span className="eg-hl">EN MADRID</span></h2>
             </div>
           </div>
 

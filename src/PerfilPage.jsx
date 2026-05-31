@@ -400,7 +400,7 @@ export default function PerfilPage() {
                         onKeyDown={e => e.key === "Enter" && navigate(`/evento/${ev.id}`, { state: { ev } })}
                       >
                         <div className="pf-card-img-wrap">
-                          <img className="pf-card-img" src={CAT_IMAGES[ev.cat] ?? CAT_IMAGES["Cultura"]} alt="" loading="lazy" />
+                          <img className="pf-card-img" src={ev.image || CAT_IMAGES[ev.cat] || CAT_IMAGES["Cultura"]} alt={ev.title} loading="lazy" onError={e => { e.currentTarget.src = CAT_IMAGES[ev.cat] ?? CAT_IMAGES["Cultura"]; }} />
                           <span className="pf-card-cat" style={{ background: CAT_COLORS[ev.cat] ?? "#111" }}>{ev.cat}</span>
                         </div>
                         <div className="pf-card-body">
@@ -443,7 +443,7 @@ export default function PerfilPage() {
                       onKeyDown={e => e.key === "Enter" && navigate(`/evento/${ev.id}`, { state: { ev } })}
                     >
                       <div className="pf-card-img-wrap">
-                        <img className="pf-card-img" src={CAT_IMAGES[ev.cat] ?? CAT_IMAGES["Cultura"]} alt="" loading="lazy" />
+                        <img className="pf-card-img" src={ev.image || CAT_IMAGES[ev.cat] || CAT_IMAGES["Cultura"]} alt={ev.title} loading="lazy" onError={e => { e.currentTarget.src = CAT_IMAGES[ev.cat] ?? CAT_IMAGES["Cultura"]; }} />
                         <span className="pf-card-cat" style={{ background: CAT_COLORS[ev.cat] ?? "#111" }}>{ev.cat}</span>
                       </div>
                       <div className="pf-card-body">

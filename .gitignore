@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Screenshot utility scripts
+screenshot_*.cjs
+screenshot_*.png

@@ -68,7 +68,8 @@ const A11yIcon    = () => <Ico size={22} d={<><circle cx="12" cy="4" r="2"/><pat
 const KeyboardIcon=()=><Ico d={<><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8"/></>}/>;
 const ClickIcon  = ()=><Ico d={<><path d="M9 9l2 12 1.8-5.2L18 14z"/><path d="M9 9H3"/><path d="M9 9V3"/></>}/>;
 const TextIcon   = ()=><Ico d={<><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></>}/>;
-const MaskIcon   = ()=><Ico d={<><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M2 10h20" strokeDasharray="3 3"/></>}/>;
+const MaskIcon      = ()=><Ico d={<><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M2 10h20" strokeDasharray="3 3"/></>}/>;
+const GrayscaleIcon = ()=><Ico d={<><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20V2z" fill="currentColor" stroke="none"/></>}/>;
 const EyeIcon    = ()=><Ico d={<><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>}/>;
 const FormIcon   = ()=><Ico d={<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></>}/>;
 
@@ -211,10 +212,11 @@ function PrefsPanel({ prefs, onChange, onClose }) {
   }, [onClose]);
 
   const rows = [
-    [KeyboardIcon, "Modo teclado (voz por Tab)", "keyboard"],
-    [ClickIcon,    "Clic y escuchar",             "clickListen"],
-    [EyeIcon,      "Visibilidad de texto",         "textVis"],
-    [MaskIcon,     "Máscara de página",            "pageMask"],
+    [KeyboardIcon,   "Modo teclado (voz por Tab)", "keyboard"],
+    [ClickIcon,      "Clic y escuchar",             "clickListen"],
+    [EyeIcon,        "Visibilidad de texto",         "textVis"],
+    [MaskIcon,       "Máscara de página",            "pageMask"],
+    [GrayscaleIcon,  "Escala de grises",             "grayscale"],
   ];
 
   return (
