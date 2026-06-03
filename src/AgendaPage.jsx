@@ -56,7 +56,6 @@ function parseEvent(item, i) {
   else if (/exposici|muestra|exhibit|galería/.test(t + desc))    cat = "Exposición";
   else if (/cine|film|pelícu/.test(t + desc))                    cat = "Cine";
   else if (/danza|baile/.test(t + desc))                         cat = "Danza";
-  else if (/deporte|sport|carrera|maratón/.test(t + desc))       cat = "Deporte";
 
   const accRaw = item.organization?.["accesibility"] || "";
   const codes  = accRaw.toString().split(",").map(c => c.trim()).filter(Boolean);
@@ -256,7 +255,7 @@ function AgendaRow({ ev, onOpen }) {
 function DayBlock({ dateKey, events, onOpen }) {
   const { dia, numero, mes, isToday } = parseDateKey(dateKey);
   return (
-    <section className={`ag-day${isToday ? " ag-day--today" : ""}`} aria-label={`${dia} ${numero} de ${mes}`}>
+    <section className={`ag-day${isToday ? " ag-day--today" : ""} reveal`} aria-label={`${dia} ${numero} de ${mes}`}>
       {/* Cabecera horizontal del día */}
       <div className="ag-day-head">
         <div className="ag-day-label">
@@ -486,7 +485,8 @@ const css = `
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; transition: all .12s; padding: 0; flex-shrink: 0;
   }
-  .ag-week-btn:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .ag-week-btn:hover,
+  .ag-week-btn:focus-visible { background: var(--brand); color: #fff; border-color: var(--brand); }
 
   .ag-week-label {
     font-family: var(--ff-b);
@@ -501,7 +501,8 @@ const css = `
     letter-spacing: .1em; text-transform: uppercase;
     transition: opacity .15s; margin-left: .25rem;
   }
-  .ag-week-today:hover { opacity: .82; }
+  .ag-week-today:hover,
+  .ag-week-today:focus-visible { opacity: .82; }
 
   /* Filtros */
   .ag-cat-filters {
@@ -518,7 +519,8 @@ const css = `
     font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
     cursor: pointer; transition: all .12s; white-space: nowrap;
   }
-  .ag-cat-btn:hover { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
+  .ag-cat-btn:hover,
+  .ag-cat-btn:focus-visible { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
   .ag-cat-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); font-weight: 700; }
 
   /* ── Área principal ── */
@@ -650,7 +652,8 @@ const css = `
     cursor: pointer;
     transition: all .15s; white-space: nowrap;
   }
-  .ag-card-btn:hover { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
+  .ag-card-btn:hover,
+  .ag-card-btn:focus-visible { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
 
   /* ── Empty state ── */
   .ag-empty {

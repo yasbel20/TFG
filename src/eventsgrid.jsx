@@ -99,7 +99,7 @@ function EventCard({ ev, onOpenDetail }) {
 
   return (
     <div
-      className="eg-card"
+      className="eg-card reveal"
       onClick={() => onOpenDetail(ev)}
       role="button"
       tabIndex={0}
@@ -196,8 +196,7 @@ function EventRow({ cat, events, onOpenDetail }) {
 const css = `
   .eg-wrap {
     background: #FFFFFF;
-    padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(3rem, 7vw, 6rem);
-    border-top: 1.5px solid #111111;
+    padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(1rem, 2vw, 2rem);
     width: 100%;
   }
   .eg-inner {
@@ -207,7 +206,7 @@ const css = `
   }
   .eg-section-head {
     display: flex; align-items: flex-end; justify-content: space-between;
-    border-bottom: 1.5px solid #111111; padding-bottom: 1.25rem; margin-bottom: 2.5rem;
+    padding-bottom: 1.25rem; margin-bottom: 2.5rem;
   }
   .eg-section-label {
     font-size: .72rem; font-weight: 700; letter-spacing: .18em;
@@ -240,7 +239,8 @@ const css = `
     color: #111111; background: none; border: none; border-bottom: 1.5px solid #111111;
     padding: .15rem 0; cursor: pointer; transition: opacity .15s; white-space: nowrap;
   }
-  .eg-view-all:hover { opacity: .5; }
+  .eg-view-all:hover,
+  .eg-view-all:focus-visible { opacity: .5; }
   .eg-view-all:focus-visible { outline: 2px solid #111827; outline-offset: 2px; }
 
   .eg-grid {
@@ -258,12 +258,14 @@ const css = `
     display: flex; flex-direction: column; transition: transform .2s;
     cursor: pointer; border-radius: 0;
   }
-  .eg-card:hover { transform: translateY(-5px); }
+  .eg-card:hover,
+  .eg-card:focus-visible { transform: translateY(-5px); }
   .eg-card:focus-visible { outline: 2px solid #111827; outline-offset: 3px; border-radius: 2px; }
 
   .eg-img-wrap { position: relative; width: 100%; height: 380px; overflow: hidden; flex-shrink: 0; }
   .eg-img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; display: block; }
-  .eg-card:hover .eg-img { transform: scale(1.04); }
+  .eg-card:hover .eg-img,
+  .eg-card:focus-visible .eg-img { transform: scale(1.04); }
   .eg-fav-btn {
     position: absolute; top: 8px; right: 8px;
     width: 32px; height: 32px; border-radius: 50%;
@@ -272,14 +274,16 @@ const css = `
     transition: background .15s, transform .15s;
     backdrop-filter: blur(4px);
   }
-  .eg-fav-btn:hover { background: rgba(0,0,0,.7); transform: scale(1.1); }
+  .eg-fav-btn:hover,
+  .eg-fav-btn:focus-visible { background: rgba(0,0,0,.7); transform: scale(1.1); }
   .eg-fav-on { background: rgba(231,76,60,.2)!important; }
   .eg-fav-on:hover { background: rgba(231,76,60,.35)!important; }
   .eg-img-fallback {
     width: 100%; height: 100%; display: flex;
     align-items: center; justify-content: center; transition: filter .35s;
   }
-  .eg-card:hover .eg-img-fallback { filter: brightness(1.1); }
+  .eg-card:hover .eg-img-fallback,
+  .eg-card:focus-visible .eg-img-fallback { filter: brightness(1.1); }
   .eg-fallback-pattern {
     width: 100%; height: 100%;
     background-image: repeating-linear-gradient(
@@ -339,17 +343,12 @@ const css = `
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function EventsGrid({ onOpenDetail }) {
+
   return (
     <>
       <style>{css}</style>
       <section className="eg-wrap">
         <div className="eg-inner">
-
-          <div className="eg-section-head">
-            <div>
-              <h2 className="eg-section-title">EVENTOS<br/><span className="eg-hl">EN MADRID</span></h2>
-            </div>
-          </div>
 
           {CATEGORIES.map(cat => (
             <EventRow

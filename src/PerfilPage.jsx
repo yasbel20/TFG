@@ -308,7 +308,7 @@ export default function PerfilPage() {
           {activeTab === "perfil" && (
             <>
               {/* Estadísticas */}
-              <section className="pf-stats" aria-label="Estadísticas de perfil">
+              <section className="pf-stats reveal" aria-label="Estadísticas de perfil">
                 <div className="pf-stat">
                   <span className="pf-stat-num">{favs.length}</span>
                   <span className="pf-stat-label">Favoritos</span>
@@ -326,7 +326,7 @@ export default function PerfilPage() {
               </section>
 
               {/* Callout accesibilidad */}
-              <div className="pf-acc-callout">
+              <div className="pf-acc-callout reveal">
                 <div className="pf-acc-callout-text">
                   <h3 className="pf-acc-callout-title">Haz que tu experiencia sea más cómoda</h3>
                   <p className="pf-acc-callout-desc">
@@ -357,7 +357,7 @@ export default function PerfilPage() {
               </div>
 
               {/* Eventos recomendados */}
-              <section className="pf-recs">
+              <section className="pf-recs reveal">
                 <div className="pf-section-header">
                   <h2 className="pf-section-title">
                     {tienePreferencias ? "Eventos recomendados para ti" : "Eventos destacados"}
@@ -419,7 +419,7 @@ export default function PerfilPage() {
 
           {/* ── TAB: FAVORITOS ── */}
           {activeTab === "favoritos" && (
-            <section className="pf-recs pf-favs-section">
+            <section className="pf-recs pf-favs-section reveal">
               <h2 className="pf-section-title">
                 <HeartFilledIcon /> Mis favoritos
               </h2>
@@ -471,7 +471,7 @@ export default function PerfilPage() {
 
           {/* ── TAB: ACCESIBILIDAD ── */}
           {activeTab === "accesibilidad" && (
-            <section className="pf-edit">
+            <section className="pf-edit reveal">
               <h2 className="pf-section-title">Editar preferencias</h2>
               <div className="pf-edit-row">
                 <div className="pf-edit-group">

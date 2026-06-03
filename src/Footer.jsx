@@ -23,13 +23,22 @@ export default function Footer() {
             <p style={s.colTitle}>Explorar</p>
             <ul style={s.list}>
               <li><button style={s.lnk} onClick={() => navigate("/eventos")}>Todos los eventos</button></li>
-              <li><button style={s.lnk} onClick={() => navigate("/agenda")}>Agenda</button></li>
               <li><button style={s.lnk} onClick={() => navigate("/eventos/musica")}>Música</button></li>
               <li><button style={s.lnk} onClick={() => navigate("/eventos/teatro")}>Teatro</button></li>
               <li><button style={s.lnk} onClick={() => navigate("/eventos/exposicion")}>Exposiciones</button></li>
               <li><button style={s.lnk} onClick={() => navigate("/eventos/cine")}>Cine</button></li>
               <li><button style={s.lnk} onClick={() => navigate("/eventos/danza")}>Danza</button></li>
               <li><button style={s.lnk} onClick={() => navigate("/eventos/cultura")}>Cultura</button></li>
+              <li><button style={s.lnk} onClick={() => navigate("/agenda")}>Agenda</button></li>
+            </ul>
+          </div>
+
+          <div style={s.col}>
+            <p style={s.colTitle}>Descubre</p>
+            <ul style={s.list}>
+              <li><button style={s.lnk} onClick={() => scrollToSection("how-heading")}>Cómo funciona</button></li>
+              <li><button style={s.lnk} onClick={() => scrollToSection("access-heading")}>Accesibilidad</button></li>
+              <li><button style={s.lnk} onClick={() => navigate("/perfil")}>Mi cuenta</button></li>
             </ul>
           </div>
 
@@ -38,25 +47,15 @@ export default function Footer() {
             <ul style={s.list}>
               <li><button style={s.lnk} onClick={() => scrollToSection("faq-heading")}>Preguntas frecuentes</button></li>
               <li><button style={s.lnk} onClick={() => scrollToSection("tools-heading")}>Herramientas de accesibilidad</button></li>
-              <li><button style={s.lnk} onClick={() => navigate("/perfil")}>Mi cuenta</button></li>
-            </ul>
-          </div>
-
-          <div style={s.col}>
-            <p style={s.colTitle}>Compañía</p>
-            <ul style={s.list}>
-              <li><button style={s.lnk} onClick={() => scrollToSection("how-heading")}>Cómo funciona</button></li>
-              <li><button style={s.lnk} onClick={() => scrollToSection("access-heading")}>Accesibilidad</button></li>
-              <li><button style={s.lnk} onClick={() => navigate("/eventos")}>Explorar cultura</button></li>
             </ul>
           </div>
 
           <div style={s.col}>
             <p style={s.colTitle}>Legal</p>
             <ul style={s.list}>
-              <li><button style={s.lnk} onClick={() => scrollToSection("faq-heading")}>Política de privacidad</button></li>
-              <li><button style={s.lnk} onClick={() => scrollToSection("faq-heading")}>Política de cookies</button></li>
-              <li><button style={s.lnk} onClick={() => scrollToSection("faq-heading")}>Aviso legal</button></li>
+              <li><button style={s.lnk}>Política de privacidad</button></li>
+              <li><button style={s.lnk}>Política de cookies</button></li>
+              <li><button style={s.lnk}>Aviso legal</button></li>
             </ul>
           </div>
 

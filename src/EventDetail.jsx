@@ -18,7 +18,6 @@ const CAT_COLORS = {
   "Cine":       "#1A1A1A",
   "Danza":      "#141414",
   "Cultura":    "#111111",
-  "Deporte":    "#1A1A1A",
 };
 
 const ACCESS_INFO = {
@@ -484,7 +483,7 @@ export default function EventDetail({ ev, onBack }) {
           <div className="ed-content-inner">
 
             {/* Título y categoría — fila completa encima del grid */}
-            <div className="ed-title-block">
+            <div className="ed-title-block reveal">
               <span className="ed-cat-label">{ev.cat}</span>
               <h1 className="ed-title" tabIndex="0" aria-label={`${ev.cat}: ${ev.title}`}>{ev.title}</h1>
             </div>
@@ -493,7 +492,7 @@ export default function EventDetail({ ev, onBack }) {
             <div className="ed-main-col">
 
               {/* Metadatos en fila */}
-              <div className="ed-meta-row">
+              <div className="ed-meta-row reveal">
                 {ev.date && (
                   <div className="ed-meta-item" tabIndex="0"
                     aria-label={`Fecha: ${ev.date}${ev.timeStr ? `, ${ev.timeStr}` : ""}`}>
@@ -535,7 +534,7 @@ export default function EventDetail({ ev, onBack }) {
 
               {/* Imagen + descripción lado a lado */}
               {(imgOk || ev.descFull || ev.trailerUrl) && (
-                <div className="ed-show-block" id="ed-desc">
+                <div className="ed-show-block reveal" id="ed-desc">
                   {imgOk && (
                     <div className="ed-show-img-wrap">
                       <img src={imgSrc} alt={ev.title} className="ed-show-img" onError={() => setImgOk(false)}/>
@@ -579,7 +578,7 @@ export default function EventDetail({ ev, onBack }) {
 
               {/* ¿Qué encontrarás? */}
               {highlights.length > 0 && (
-                <section className="ed-section" aria-labelledby="hi-h">
+                <section className="ed-section reveal" aria-labelledby="hi-h">
                   <h2 className="ed-section-title" id="hi-h">¿QUÉ ENCONTRARÁS?</h2>
                   <ul className="ed-highlights-list">
                     {highlights.map((h, i) => (
@@ -596,7 +595,7 @@ export default function EventDetail({ ev, onBack }) {
 
               {/* Accesibilidad detallada */}
               {ev.access.length > 0 && (
-                <section className="ed-section" aria-labelledby="acc-h">
+                <section className="ed-section reveal" aria-labelledby="acc-h">
                   <h2 className="ed-section-title" id="acc-h">Accesibilidad</h2>
                   <div className="ed-access-grid">
                     {ev.access.map(a => {
@@ -622,7 +621,7 @@ export default function EventDetail({ ev, onBack }) {
 
             {/* Sidebar */}
             <aside className="ed-sidebar" aria-label="Información del evento">
-              <div className="ed-sidebar-card">
+              <div className="ed-sidebar-card reveal">
 
                 {/* ── Mapa ── */}
                 <div className="ed-map-block">

@@ -96,7 +96,7 @@ export default function Navbar({ onMenuOpen }) {
     <>
       <style>{css}</style>
       <header className="nb-header" role="banner">
-        <a href="#main-content" className="nb-skip">Saltar al contenido principal</a>
+        <a href="#hero-cta" className="nb-skip">Saltar al contenido principal</a>
         <nav className="nb-nav" aria-label="Navegación principal">
 
           {/* ── Izquierda: hamburger + logo ── */}
@@ -206,12 +206,45 @@ export default function Navbar({ onMenuOpen }) {
 
       {/* ── Menú móvil ── */}
       {mobOpen && <div className="nb-mob-overlay" onClick={() => setMobOpen(false)} aria-hidden="true" />}
-      <div className={`nb-mob-menu${mobOpen ? " nb-mob-menu--open" : ""}`} role="dialog" aria-modal="true" aria-label="Menú principal">
+      <div className={`nb-mob-menu${mobOpen ? " nb-mob-menu--open" : ""}`} role="dialog" aria-modal="true" aria-label="Menú principal" aria-hidden={!mobOpen} inert={!mobOpen}>
         <div className="nb-mob-header">
           <img src="/img/InclugoLogo/LogoClaro.png" className="nb-mob-logo nb-mob-logo--light" alt="INCLUGO" />
           <img src="/img/InclugoLogo/LogoOscuro.png" className="nb-mob-logo nb-mob-logo--dark" alt="INCLUGO" />
           <button className="nb-mob-close" onClick={() => setMobOpen(false)} aria-label="Cerrar menú">✕</button>
         </div>
+
+        {/* ── Sección de usuario ── */}
+        {user ? (
+          <div className="nb-mob-user-section">
+            <div className="nb-mob-user-header">
+              <div className="nb-user-avatar">
+                {user.avatar
+                  ? <img src={user.avatar} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", borderRadius:"50%" }}/>
+                  : user.name.charAt(0).toUpperCase()
+                }
+              </div>
+              <div>
+                <p className="nb-user-name">{user.name}</p>
+                <p className="nb-user-email">{user.email}</p>
+              </div>
+            </div>
+            <button className="nb-mob-item" onClick={() => { setMobOpen(false); navigate("/perfil"); }}>
+              Mi perfil <span className="nb-mob-chevron" aria-hidden="true">›</span>
+            </button>
+            <button className="nb-mob-item nb-mob-item--logout" onClick={() => { setMobOpen(false); logout(); }}>
+              Cerrar sesión
+            </button>
+          </div>
+        ) : (
+          <div className="nb-mob-user-section">
+            <button className="nb-mob-item" onClick={() => { setMobOpen(false); setAuthOpen(true); }}>
+              Iniciar sesión <span className="nb-mob-chevron" aria-hidden="true">›</span>
+            </button>
+          </div>
+        )}
+
+        <div className="nb-mob-divider" role="separator" />
+
         <nav aria-label="Menú de navegación">
           <ul className="nb-mob-list">
             <li>
@@ -256,12 +289,17 @@ const css = `
   }
   .nb-skip:focus {
     position: fixed;
-    top: 0; left: 0;
-    background: var(--text-primary); color: var(--on-brand);
-    padding: .5rem 1rem;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    background: #111827; color: #fff;
+    padding: .75rem 1.5rem;
     z-index: 9999;
     font-family: var(--ff-b);
-    font-size: .85rem;
+    font-size: .9rem;
+    font-weight: 600;
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+    border-radius: 0 0 6px 6px;
   }
 
   .nb-header {
@@ -332,7 +370,7 @@ const css = `
     transition: color .15s;
     white-space: nowrap;
   }
-  .nb-link:hover, .nb-active { color: var(--text-primary); }
+  .nb-link:hover, .nb-link:focus-visible, .nb-active { color: var(--text-primary); }
 
   .nb-drop-wrap { position: relative; }
   .nb-dropdown {
@@ -385,12 +423,14 @@ const css = `
     transform: scaleY(0);
     transition: transform .15s;
   }
-  .nb-dropdown-item:hover {
+  .nb-dropdown-item:hover,
+  .nb-dropdown-item:focus-visible {
     color: var(--brand);
     padding-left: 2rem;
     background: var(--brand-subtle);
   }
-  .nb-dropdown-item:hover::before { transform: scaleY(1); }
+  .nb-dropdown-item:hover::before,
+  .nb-dropdown-item:focus-visible::before { transform: scaleY(1); }
 
   .nb-actions {
     display: flex;
@@ -415,13 +455,15 @@ const css = `
     font-size: .85rem;
     font-weight: 700;
   }
-  .nb-user-btn:hover { border-color: var(--text-primary); color: var(--text-primary); }
+  .nb-user-btn:hover,
+  .nb-user-btn:focus-visible { border-color: var(--text-primary); color: var(--text-primary); }
   .nb-user-btn--active { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
-  .nb-user-btn--active:hover { background: var(--brand-hover); border-color: var(--brand-hover); color: var(--on-brand); }
+  .nb-user-btn--active:hover,
+  .nb-user-btn--active:focus-visible { background: var(--brand-hover); border-color: var(--brand-hover); color: var(--on-brand); }
   .nb-user-menu {
-    position: fixed;
-    top: 68px;
-    right: 1rem;
+    position: absolute;
+    top: calc(100% + 16px);
+    right: calc(-1 * clamp(1.25rem, 5vw, 6rem));
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 0;
@@ -431,12 +473,9 @@ const css = `
     padding: 0;
     z-index: 600;
     box-shadow: 0 16px 40px rgba(0,0,0,.10);
-    animation: nb-menu-in .15s ease;
     overflow: hidden;
   }
-  .nb-user-menu::before {
-    content: none;
-  }
+  .nb-user-menu::before { content: none; }
   @keyframes nb-menu-in {
     from { opacity:0; transform:translateY(-6px); }
     to   { opacity:1; transform:translateY(0); }
@@ -479,8 +518,10 @@ const css = `
     width: 3px; background: var(--brand);
     transform: scaleY(0); transition: transform .15s;
   }
-  .nb-user-menu-item:hover { color: var(--brand); padding-left: 2rem; background: var(--brand-subtle); }
-  .nb-user-menu-item:hover::before { transform: scaleY(1); }
+  .nb-user-menu-item:hover,
+  .nb-user-menu-item:focus-visible { color: var(--brand); padding-left: 2rem; background: var(--brand-subtle); }
+  .nb-user-menu-item:hover::before,
+  .nb-user-menu-item:focus-visible::before { transform: scaleY(1); }
   .nb-user-logout {
     background: none; border: none; cursor: pointer;
     font-family: var(--ff-h); font-size: 1.9rem; font-weight: 400;
@@ -495,8 +536,10 @@ const css = `
     width: 3px; background: var(--brand);
     transform: scaleY(0); transition: transform .15s;
   }
-  .nb-user-logout:hover { color: var(--brand); padding-left: 2rem; background: var(--brand-subtle); }
-  .nb-user-logout:hover::before { transform: scaleY(1); }
+  .nb-user-logout:hover,
+  .nb-user-logout:focus-visible { color: var(--brand); padding-left: 2rem; background: var(--brand-subtle); }
+  .nb-user-logout:hover::before,
+  .nb-user-logout:focus-visible::before { transform: scaleY(1); }
 
   .nb-hamburger {
     display: none;
@@ -512,6 +555,7 @@ const css = `
   @media (max-width: 768px) {
     .nb-links { display: none; }
     .nb-hamburger { display: flex; }
+    .nb-user-wrap { display: none; }
   }
 
   /* ── Menú móvil ── */
@@ -526,12 +570,13 @@ const css = `
     background: #fff;
     z-index: 9000;
     transform: translateY(-100%);
-    transition: transform .3s ease;
+    visibility: hidden;
+    transition: transform .3s ease, visibility .3s;
     box-shadow: 0 8px 32px rgba(0,0,0,.12);
     max-height: 90vh;
     overflow-y: auto;
   }
-  .nb-mob-menu--open { transform: translateY(0); }
+  .nb-mob-menu--open { transform: translateY(0); visibility: visible; }
 
   .nb-mob-header {
     display: flex;
@@ -553,6 +598,14 @@ const css = `
   }
   .nb-mob-close:hover { color: var(--text-primary); }
 
+  .nb-mob-user-section { padding: .5rem 0; }
+  .nb-mob-user-header {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .75rem 1.5rem 1rem;
+  }
+  .nb-mob-item--logout { color: var(--text-muted); }
+  .nb-mob-divider { height: 1px; background: var(--border); margin: 0; }
+
   .nb-mob-list { list-style: none; margin: 0; padding: 0; }
 
   .nb-mob-item {
@@ -561,10 +614,10 @@ const css = `
     justify-content: space-between;
     width: 100%;
     background: none; border: none;
-    padding: 1.25rem 1.5rem;
+    padding: .9rem 1.5rem;
     cursor: pointer; text-align: left;
     font-family: var(--ff-h);
-    font-size: 2rem;
+    font-size: 1.25rem;
     letter-spacing: .04em;
     color: var(--text-muted);
     transition: color .15s;
@@ -588,10 +641,10 @@ const css = `
   .nb-mob-sub-item {
     display: block; width: 100%;
     background: none; border: none;
-    padding: .75rem 1.25rem;
+    padding: .6rem 1.25rem;
     text-align: left; cursor: pointer;
     font-family: var(--ff-h);
-    font-size: 1.6rem;
+    font-size: 1rem;
     letter-spacing: .04em;
     color: var(--text-muted);
     transition: color .15s;

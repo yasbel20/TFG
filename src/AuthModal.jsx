@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import OnboardingModal from "./OnboardingModal";
@@ -46,7 +47,7 @@ export default function AuthModal({ onClose }) {
     setError("");
   };
 
-  return (
+  return createPortal(
     <div className="am-overlay" role="dialog" aria-modal="true"
       aria-label={mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
@@ -128,7 +129,8 @@ export default function AuthModal({ onClose }) {
       </div>
 
       <style>{css}</style>
-    </div>
+    </div>,
+    document.body
   );
 }
 

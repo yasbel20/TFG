@@ -2,14 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import AccessibilityBadge from "./AccessibilityBadge";
-import AccessibilityOverlay from "./AccessibilityOverlay";
 import { useAuth } from "./AuthContext";
 
 // ─── Colores y hero images ────────────────────────────────────────────────────
 const CAT_COLORS = {
   "Música":     "#1A1A1A", "Teatro":     "#141414",
   "Exposición": "#181818", "Cine":       "#1A1A1A",
-  "Danza":      "#141414", "Cultura":    "#111111", "Deporte": "#1A1A1A",
+  "Danza":      "#141414", "Cultura":    "#111111",
 };
 const CAT_ACCENT = {
   "Música":     "#3D47C8",
@@ -18,17 +17,21 @@ const CAT_ACCENT = {
   "Cine":       "#92400E",
   "Danza":      "#DB2777",
   "Cultura":    "#1A237E",
-  "Deporte":    "#1A1A1A",
 };
 const CAT_HERO = {
-  "Música":     "/img/musica1.jpg",
-  "Teatro":     "/img/teatro1.jpg",
-  "Exposición": "/img/exposicion1.jpg",
-  "Cine":       "/img/cine1.jpg",
-  "Danza":      "/img/danza1.jpg",
-  "Cultura":    "/img/cultura1.jpg",
-  "Deporte":    "/img/hero.jpg",
-  "Todos":      "/img/portada.jpg",
+  "Música":     "/img/heroes/heromusica.jpg",
+  "Teatro":     "/img/heroes/heroteatro.jpg",
+  "Exposición": "/img/heroes/heroexposicion.jpg",
+  "Cine":       "/img/heroes/herocine.jpg",
+  "Danza":      "/img/heroes/herodanza.jpg",
+  "Cultura":    "/img/heroes/herocultura.jpg",
+  "Todos":      "/img/heroes/herotodoseventos.jpg",
+};
+
+const CAT_HERO_POS = {
+  "Cine":       "center top",
+  "Todos":      "center 30%",
+  "Exposición": "center 70%",
 };
 
 // ─── Iconos ───────────────────────────────────────────────────────────────────
@@ -79,7 +82,6 @@ function parseEvent(item, i) {
   else if (/exposici|muestra|exhibit|galería/.test(t + desc))   cat = "Exposición";
   else if (/cine|film|pelícu/.test(t + desc))                   cat = "Cine";
   else if (/danza|baile/.test(t + desc))                        cat = "Danza";
-  else if (/deporte|sport|carrera|maratón/.test(t + desc))      cat = "Deporte";
 
   const accRaw = item.organization?.["accesibility"] || "";
   const codes  = accRaw.toString().split(",").map(c => c.trim()).filter(Boolean);
@@ -245,7 +247,7 @@ function FeaturedCard({ ev, onOpenDetail }) {
           </button>
         )}
         <div className="ep-feat-info">
-          <h3 className="ep-feat-title" style={{ color: CAT_ACCENT["Cultura"] }}>{ev.title}</h3>
+          <h3 className="ep-feat-title">{ev.title}</h3>
           <div className="ep-feat-meta">
             <CalendarIcon/>{ev.dateShort}
             {ev.venue && <><span className="ep-feat-dot">·</span><PinIcon/>{ev.venue}</>}
@@ -267,7 +269,7 @@ function GridCard({ ev, onOpenDetail }) {
   const isFav = favIds.has(String(ev.id));
 
   return (
-    <div className="ep-card" onClick={() => onOpenDetail(ev)}
+    <div className="ep-card reveal" onClick={() => onOpenDetail(ev)}
       role="button" tabIndex={0} aria-label={`Ver ${ev.title}`}
       onKeyDown={e => e.key === "Enter" && onOpenDetail(ev)}>
       <div className="ep-img-wrap">
@@ -285,7 +287,7 @@ function GridCard({ ev, onOpenDetail }) {
       </div>
       <div className="ep-info">
         <span className="ep-cat">{ev.cat}</span>
-        <h3 className="ep-title" style={{ color: CAT_ACCENT["Cultura"] }}>{ev.title}</h3>
+        <h3 className="ep-title">{ev.title}</h3>
         <AccessibilityBadge types={ev.access} className="ep-access-chip"
           style={{color:"#6b7280"}}/>
         <div className="ep-meta-block">
@@ -425,12 +427,11 @@ export default function EventsPage() {
   return (
     <>
       <style>{css}</style>
-      <AccessibilityOverlay/>
       <div className="ep-page">
         <Navbar/>
 
         {/* ── Hero ── */}
-        <section className="ep-hero" style={{backgroundImage:`url(${CAT_HERO[activeCategory]||CAT_HERO["Todos"]})`}}>
+        <section className="ep-hero" style={{backgroundImage:`url(${CAT_HERO[activeCategory]||CAT_HERO["Todos"]})`, backgroundPosition: CAT_HERO_POS[activeCategory] || "center"}}>
           <div className="ep-hero-overlay"/>
           <div className="ep-hero-inner">
 
@@ -529,14 +530,6 @@ export default function EventsPage() {
 
         {/* ── Eventos próximos ── */}
         <section className="ep-section ep-main-section">
-          <div className="ep-section-head">
-            <div>
-              <h2 className="ep-section-title">EVENTOS <span style={{color:'var(--brand)'}}>PRÓXIMOS</span></h2>
-              <p className="ep-section-sub">
-                {loading ? "Cargando eventos…" : `${filtered.length} eventos encontrados`}
-              </p>
-            </div>
-          </div>
           <div className="ep-grid">
             {loading
               ? Array.from({length:12}).map((_,i) => <SkeletonCard key={i}/>)
@@ -564,7 +557,8 @@ const css = `
   .ep-page { min-height:100vh; background:#ffffff; font-family:'Inter',var(--ff-b),system-ui,sans-serif; }
   .hi-contrast .ep-page { background:var(--bg-surface); }
   .ep-load-more { background:none; border:1.5px solid var(--brand,#3d47c8); color:var(--brand,#3d47c8); font-family:'Inter',var(--ff-b),sans-serif; font-size:.88rem; font-weight:700; padding:.7rem 2rem; cursor:pointer; border-radius:0; transition:background .15s,color .15s; }
-  .ep-load-more:hover { background:var(--brand,#3d47c8); color:#fff; }
+  .ep-load-more:hover,
+  .ep-load-more:focus-visible { background:var(--brand,#3d47c8); color:#fff; }
 
   /* ── Hero ── */
   .ep-hero {
@@ -573,7 +567,7 @@ const css = `
   }
   .ep-hero-overlay {
     position:absolute; inset:0;
-    background:linear-gradient(135deg,rgba(8,10,35,.80) 0%,rgba(15,20,60,.68) 55%,rgba(8,10,35,.75) 100%);
+    background:linear-gradient(135deg,rgba(8,10,35,.55) 0%,rgba(15,20,60,.45) 55%,rgba(8,10,35,.52) 100%);
   }
   .ep-hero-inner {
     position:absolute; inset:0;
@@ -620,7 +614,8 @@ const css = `
     font-size:.75rem; font-weight:600; cursor:pointer;
     transition:all .15s; text-align:center;
   }
-  .ep-acc-opt:hover { background:rgba(255,255,255,.14); border-color:rgba(255,255,255,.45); color:#fff; }
+  .ep-acc-opt:hover,
+  .ep-acc-opt:focus-visible { background:rgba(255,255,255,.14); border-color:rgba(255,255,255,.45); color:#fff; }
   .ep-acc-opt--on { background:rgba(255,255,255,.2); border-color:#fff; color:#fff; }
   .ep-acc-opt-icon {
     width:32px; height:32px; border-radius:8px;
@@ -656,7 +651,8 @@ const css = `
     font-size:.78rem; font-weight:600; cursor:pointer; text-transform:uppercase; letter-spacing:.1em;
     transition:all .15s; white-space:nowrap;
   }
-  .ep-filter-btn:hover { border-color:var(--brand); color:var(--brand); }
+  .ep-filter-btn:hover,
+  .ep-filter-btn:focus-visible { border-color:var(--brand); color:var(--brand); }
 
   /* ── Sections ── */
   .ep-section { max-width:1280px; margin:0 auto; padding:2.5rem clamp(1.25rem,5vw,6rem); }
@@ -672,7 +668,8 @@ const css = `
     background:none; border:none; cursor:pointer; white-space:nowrap;
     transition:gap .15s;
   }
-  .ep-see-all:hover { gap:.55rem; }
+  .ep-see-all:hover,
+  .ep-see-all:focus-visible { gap:.55rem; }
 
   /* ── Featured track ── */
   .ep-feat-track {
@@ -687,10 +684,12 @@ const css = `
     overflow:hidden; cursor:pointer;
     transition:transform .2s, box-shadow .2s;
   }
-  .ep-feat-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,.2); }
+  .ep-feat-card:hover,
+  .ep-feat-card:focus-visible { transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,.2); }
   .ep-feat-img-wrap { position:relative; width:100%; height:295px; }
   .ep-feat-img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .35s; }
-  .ep-feat-card:hover .ep-feat-img { transform:scale(1.04); }
+  .ep-feat-card:hover .ep-feat-img,
+  .ep-feat-card:focus-visible .ep-feat-img { transform:scale(1.04); }
   .ep-feat-fallback { width:100%; height:100%; }
   .ep-feat-gradient {
     position:absolute; inset:0;
@@ -736,7 +735,8 @@ const css = `
     font-family:'Inter',var(--ff-b),sans-serif; font-size:.9rem; font-weight:600;
     padding:.75rem 1.5rem; border-radius:8px; border:none; cursor:pointer; transition:background .15s;
   }
-  .ep-cta-btn:hover { background:#222; }
+  .ep-cta-btn:hover,
+  .ep-cta-btn:focus-visible { background:#222; }
   .ep-trust-grid { display:flex; flex-direction:column; gap:1rem; flex-shrink:0; }
   .ep-trust-item { display:flex; align-items:flex-start; gap:.75rem; }
   .ep-trust-icon {
@@ -755,7 +755,8 @@ const css = `
     padding:1.25rem 1rem; border:1.5px solid var(--border); border-radius:12px;
     background:#fff; cursor:pointer; transition:all .15s; font-family:'Inter',var(--ff-b),sans-serif;
   }
-  .ep-explore-card:hover {
+  .ep-explore-card:hover,
+  .ep-explore-card:focus-visible {
     border-color:var(--brand); background:var(--brand-subtle);
     transform:translateY(-2px); box-shadow:0 4px 16px rgba(61,71,200,.1);
   }
@@ -776,7 +777,8 @@ const css = `
 
   /* ── Grid card ── */
   .ep-card { display:flex; flex-direction:column; cursor:pointer; transition:transform .2s; border:none; background:transparent; overflow:visible; padding:0; text-align:left; }
-  .ep-card:hover { transform:translateY(-4px); }
+  .ep-card:hover,
+  .ep-card:focus-visible { transform:translateY(-4px); }
   .ep-fav-btn {
     position:absolute; top:8px; right:8px;
     width:32px; height:32px; border-radius:50%;
@@ -784,11 +786,13 @@ const css = `
     display:flex; align-items:center; justify-content:center;
     transition:background .15s, transform .15s; backdrop-filter:blur(4px);
   }
-  .ep-fav-btn:hover { background:rgba(0,0,0,.7); transform:scale(1.1); }
+  .ep-fav-btn:hover,
+  .ep-fav-btn:focus-visible { background:rgba(0,0,0,.7); transform:scale(1.1); }
   .ep-fav-on { background:rgba(220,38,38,.2)!important; }
   .ep-img-wrap { position:relative; width:100%; height:290px; overflow:hidden; flex-shrink:0; }
   .ep-img { width:100%; height:100%; object-fit:cover; transition:transform .35s; display:block; }
-  .ep-card:hover .ep-img { transform:scale(1.04); }
+  .ep-card:hover .ep-img,
+  .ep-card:focus-visible .ep-img { transform:scale(1.04); }
   .ep-img-fallback { width:100%; height:100%; }
   .ep-img-noimg {
     background: #f0eefb;
@@ -811,7 +815,7 @@ const css = `
     opacity: .7;
   }
   .ep-info { padding:.75rem 0 .5rem; display:flex; flex-direction:column; gap:0; flex:1; }
-  .ep-cat { font-family:'Inter',var(--ff-b),sans-serif; font-size:.73rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--brand); margin-bottom:.3rem; }
+  .ep-cat { font-family:'Inter',var(--ff-b),sans-serif; font-size:.73rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#111827; margin-bottom:.3rem; }
   .ep-title {
     font-family:'Bebas Neue',var(--ff-h),sans-serif; font-weight:400; font-size:1.45rem; letter-spacing:.04em;
     color:var(--text-primary); line-height:1.15; margin:0 0 .5rem;
@@ -861,7 +865,8 @@ const css = `
     font-family:var(--ff-b); font-size:.78rem; font-weight:600; letter-spacing:.1em; color:var(--text-secondary);
     text-align:left; transition:background .1s, color .1s;
   }
-  .ep-dd-opt:hover { background:var(--brand-subtle); color:var(--brand); }
+  .ep-dd-opt:hover,
+  .ep-dd-opt:focus-visible { background:var(--brand-subtle); color:var(--brand); }
   .ep-dd-opt--on { background:var(--brand-subtle); color:var(--brand); font-weight:600; }
   .ep-dd-empty { font-size:.82rem; color:var(--text-muted); padding:.25rem .9rem; margin:0; }
   .ep-dd-clear {
@@ -870,7 +875,8 @@ const css = `
     color:var(--error); background:none; border-radius:0; cursor:pointer; transition:background .1s;
     border-left:none; border-right:none; border-bottom:none;
   }
-  .ep-dd-clear:hover { background:var(--error-light); }
+  .ep-dd-clear:hover,
+  .ep-dd-clear:focus-visible { background:var(--error-light); }
 
   /* ── Responsive ── */
   @media (max-width:1024px) {
@@ -892,3 +898,4 @@ const css = `
     .ep-hero-title { font-size:2.4rem; }
   }
 `;
+

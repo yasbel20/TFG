@@ -83,17 +83,19 @@ body {
 }
 
 /* ── Alto contraste ── */
-body.hi-contrast {
+/* El filtro va en #hc-wrap (no en body) para que position:fixed funcione correctamente */
+#hc-wrap.hi-contrast {
   filter: invert(1) hue-rotate(180deg);
 }
-body.hi-contrast img,
-body.hi-contrast video,
-body.hi-contrast [style*="background-image"] {
+#hc-wrap.hi-contrast img,
+#hc-wrap.hi-contrast video,
+#hc-wrap.hi-contrast [style*="background-image"] {
   filter: invert(1) hue-rotate(180deg);
 }
 
-/* La imagen del hero se contra-invierte para que no se vea afectada */
-body.hi-contrast .hero::after {
+/* Las secciones con background-image CSS se contra-invierten para verse igual que en modo claro */
+#hc-wrap.hi-contrast .hero::after,
+#hc-wrap.hi-contrast .cta-sec {
   filter: invert(1) hue-rotate(180deg);
 }
 
@@ -138,3 +140,13 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; }
 img { max-width: 100%; height: auto; display: block; }
+
+/* ── REVEAL ON SCROLL ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; }
+}
+
