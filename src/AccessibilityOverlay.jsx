@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAccessibility } from "./AccessibilityContext";
+import "./AccessibilityOverlay.css";
 
 const Ico = ({ d, size = 16, fill = "none", stroke = "currentColor", sw = 2 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={stroke}
@@ -45,7 +46,6 @@ export default function AccessibilityOverlay() {
 
   return (
     <>
-      <style>{css}</style>
 
       <button
         className={`ao-fab${open ? " ao-fab--open" : ""}`}
@@ -97,117 +97,3 @@ function PageMask() {
   );
 }
 
-const css = `
-  .ao-fab {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    z-index: 9100;
-    width: 62px; height: 62px;
-    border-radius: 50%;
-    background: var(--brand, #3d47c8);
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 16px rgba(61,71,200,.35);
-    transition: background .15s, transform .15s;
-  }
-  .ao-fab:hover { background: var(--brand-hover, #2f39a8); transform: scale(1.07); }
-  .ao-fab--open { background: var(--text-primary, #111); }
-
-  .ao-panel {
-    position: fixed;
-    bottom: 5.5rem;
-    right: 1.5rem;
-    z-index: 9100;
-    width: 280px;
-    background: var(--bg, #fff);
-    border: 1px solid var(--border, #e5e7eb);
-    border-radius: 0;
-    box-shadow: 0 12px 40px rgba(0,0,0,.13);
-    overflow: hidden;
-    animation: ao-in .15s ease;
-  }
-  @keyframes ao-in {
-    from { opacity:0; transform:translateY(8px); }
-    to   { opacity:1; transform:translateY(0); }
-  }
-  .ao-panel-head {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: .75rem 1rem;
-    border-bottom: 1px solid var(--border, #e5e7eb);
-  }
-  .ao-panel-title {
-    font-family: var(--ff-h, sans-serif);
-    font-size: 1rem; font-weight: 700; letter-spacing: .04em;
-    color: var(--text-primary, #111);
-  }
-  .ao-panel-close {
-    background: none; border: none; cursor: pointer;
-    color: var(--text-muted, #6b7280); padding: .25rem;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 4px;
-  }
-  .ao-panel-close:hover { color: var(--text-primary, #111); }
-
-  .ao-panel-body {
-    display: flex; flex-direction: column; gap: .1rem;
-    padding: .5rem 0;
-  }
-
-  .ao-toggle {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: .55rem 1rem;
-    cursor: pointer;
-    transition: background .12s;
-  }
-  .ao-toggle:hover { background: var(--bg-surface, #f9fafb); }
-  .ao-item-label {
-    display: flex; align-items: center; gap: .5rem;
-    font-family: var(--ff-b, sans-serif);
-    font-size: .87rem; color: var(--text-secondary, #374151);
-  }
-  .ao-toggle-track {
-    position: relative; width: 38px; height: 22px;
-    background: var(--border, #d1d5db); border-radius: 11px;
-    flex-shrink: 0; transition: background .2s;
-  }
-  .ao-toggle-input {
-    position: absolute; opacity: 0; width: 0; height: 0;
-  }
-  .ao-toggle-input:checked + .ao-toggle-thumb { left: 18px; }
-  .ao-toggle-input:checked ~ * { --checked: 1; }
-  .ao-toggle:has(.ao-toggle-input:checked) .ao-toggle-track { background: var(--brand, #3d47c8); }
-  .ao-toggle-thumb {
-    position: absolute; top: 3px; left: 3px;
-    width: 16px; height: 16px; border-radius: 50%;
-    background: #fff; transition: left .2s;
-    box-shadow: 0 1px 4px rgba(0,0,0,.2);
-  }
-
-  /* Máscara de página */
-  .ao-mask {
-    position: fixed; inset: 0; z-index: 9050; pointer-events: none;
-    background: linear-gradient(
-      to bottom,
-      rgba(0,0,0,.7) 0,
-      rgba(0,0,0,.7) calc(var(--mask-y) - 28px),
-      transparent    calc(var(--mask-y) - 28px),
-      transparent    calc(var(--mask-y) + 28px),
-      rgba(0,0,0,.7) calc(var(--mask-y) + 28px)
-    );
-  }
-
-  /* Visibilidad de texto global */
-  body.a11y-text-vis * {
-    letter-spacing: .04em !important;
-    line-height: 1.75 !important;
-    word-spacing: .08em !important;
-  }
-
-  /* Escala de grises global */
-  html.a11y-grayscale {
-    filter: grayscale(1);
-  }
-`;

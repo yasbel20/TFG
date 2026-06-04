@@ -1,0 +1,158 @@
+  .am-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10, 12, 40, 0.65);
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; padding: 1rem;
+  }
+
+  .am-box {
+    display: flex;
+    width: 100%; max-width: 820px;
+    min-height: 520px;
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,.35);
+    background: #fff;
+  }
+
+  /* ── Panel izquierdo ── */
+  .am-left {
+    flex: 0 0 320px;
+    background: url('/img/loginsilla.png') center/cover no-repeat;
+    padding: 2.5rem;
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden;
+  }
+  .am-left::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(10,14,60,.55) 0%,
+      rgba(10,14,60,.25) 40%,
+      rgba(10,14,60,.75) 100%
+    );
+  }
+  .am-left::after { display: none; }
+  .am-left-logo {
+    position: relative; z-index: 1;
+  }
+  .am-logo-img {
+    height: 36px; width: auto; display: block;
+  }
+  .am-left-bottom { position: relative; z-index: 1; margin-top: auto; }
+  .am-left-eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: .75rem; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; color: rgba(255,255,255,.65);
+    margin: 0 0 .6rem;
+  }
+  .am-left-tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.35rem; font-weight: 700; line-height: 1.35;
+    color: #fff; margin: 0;
+  }
+
+  /* ── Panel derecho ── */
+  .am-right {
+    flex: 1; padding: 2.5rem 2.75rem;
+    display: flex; flex-direction: column;
+    position: relative; background: #fff;
+    overflow-y: auto;
+  }
+  .am-close {
+    position: absolute; top: 1.25rem; right: 1.25rem;
+    background: none; border: none; cursor: pointer;
+    color: #9ca3af; width: 36px; height: 36px; border-radius: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s, color .15s;
+  }
+  .am-close:hover { background: #f3f4f6; color: #374151; }
+
+  .am-right-logo {
+    margin-bottom: 1.5rem;
+  }
+
+  .am-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.75rem; font-weight: 800;
+    color: #111827; margin: 0 0 .5rem; line-height: 1.2;
+  }
+  .am-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: .9rem; color: #6b7280;
+    margin: 0 0 1.75rem; line-height: 1.6; max-width: 340px;
+  }
+
+  /* ── Form ── */
+  .am-form { display: flex; flex-direction: column; gap: 1.1rem; }
+
+  .am-field { display: flex; flex-direction: column; gap: .45rem; }
+  .am-field label {
+    font-family: 'Inter', sans-serif;
+    font-size: .85rem; font-weight: 600; color: #374151;
+  }
+  .am-field input {
+    border: 1.5px solid #e5e7eb;
+    border-radius: 0;
+    padding: .7rem 1rem;
+    font-family: 'Inter', sans-serif; font-size: .9rem;
+    color: #111827; background: #fff;
+    outline: none; transition: border-color .15s, box-shadow .15s;
+    min-height: 46px; width: 100%; box-sizing: border-box;
+  }
+  .am-field input:focus {
+    border-color: #111827;
+    box-shadow: 0 0 0 3px rgba(17,24,39,.12);
+  }
+  .am-field input::placeholder { color: #9ca3af; }
+
+  .am-pass-wrap { position: relative; }
+  .am-pass-wrap input { padding-right: 2.75rem; }
+  .am-pass-toggle {
+    position: absolute; right: .75rem; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    color: #9ca3af; display: flex; align-items: center; justify-content: center;
+    padding: .25rem; transition: color .15s;
+  }
+  .am-pass-toggle:hover { color: #374151; }
+
+  .am-error {
+    font-family: 'Inter', sans-serif; font-size: .82rem;
+    color: #ef4444; margin: 0; padding: .5rem .75rem;
+    background: #fef2f2; border-radius: 0;
+    border: 1px solid #fecaca;
+  }
+
+  .am-submit {
+    background: var(--brand, #3d47c8); color: #fff;
+    border: none; border-radius: 0; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-size: .95rem; font-weight: 700;
+    padding: .85rem; min-height: 48px;
+    transition: background .15s;
+    margin-top: .25rem;
+  }
+  .am-submit:hover:not(:disabled) { background: #2d3ab8; }
+  .am-submit:disabled { opacity: .6; cursor: default; }
+
+  /* ── Switch ── */
+  .am-switch {
+    font-family: 'Inter', sans-serif; font-size: .875rem;
+    color: #6b7280; text-align: center;
+    margin: 1.25rem 0 0;
+  }
+  .am-switch button {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-size: .875rem;
+    font-weight: 700; color: var(--brand, #3d47c8);
+    transition: color .15s; padding: 0;
+  }
+  .am-switch button:hover { color: #2d3ab8; text-decoration: underline; }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .am-left { display: none; }
+    .am-right { padding: 2rem 1.5rem; }
+    .am-box { border-radius: 0; }
+  }

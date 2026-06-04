@@ -2,16 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import { WheelIcon, HandsIcon as SignosIcon, BucleIcon, PodoIcon } from "./AccessibilityIcons";
-
-
-const CAT_ACCENT = {
-  "Música":     "#3D47C8",
-  "Teatro":     "#7C3AED",
-  "Exposición": "#0369A1",
-  "Cine":       "#92400E",
-  "Danza":      "#DB2777",
-  "Cultura":    "#1A237E",
-};
+import { CAT_ACCENT, CATEGORY_LIST } from "./constants/categories";
+import { MADRID_EVENTS_URL } from "./constants/api";
+import { parseEvent } from "./utils/parsing";
+import "./AgendaPage.css";
 
 // ─── Iconos ───────────────────────────────────────────────────────────────────
 const ArrowLeft = () => (
@@ -44,77 +38,6 @@ const ArrowSm = () => (
     <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
   </svg>
 );
-
-// ─── Parser ───────────────────────────────────────────────────────────────────
-function parseEvent(item, i) {
-  const desc = ((item.description || "") + " " + (item.organization?.["organization-name"] || "")).toLowerCase();
-  const t = (item.title || "").toLowerCase();
-
-  let cat = "Cultura";
-  if (/concierto|música|jazz|flamenco|rock|pop/.test(t + desc))  cat = "Música";
-  else if (/teatro|obra|ballet|ópera/.test(t + desc))            cat = "Teatro";
-  else if (/exposici|muestra|exhibit|galería/.test(t + desc))    cat = "Exposición";
-  else if (/cine|film|pelícu/.test(t + desc))                    cat = "Cine";
-  else if (/danza|baile/.test(t + desc))                         cat = "Danza";
-
-  const accRaw = item.organization?.["accesibility"] || "";
-  const codes  = accRaw.toString().split(",").map(c => c.trim()).filter(Boolean);
-  const access = [];
-  if (codes.includes("1") || codes.includes("2")) access.push("silla");
-  if (codes.includes("4"))                         access.push("signos");
-  if (codes.includes("5"))                         access.push("braille");
-  if (codes.includes("6"))                         access.push("bucle");
-
-  let price = "Gratis";
-  const fee = item["event-free"] ?? item.free;
-  if (fee === false || fee === "false" || fee === 0 || fee === "0") {
-    const raw = String(item["event-fee"] || item.price || "").trim();
-    price = /^\d+([.,]\d+)?$/.test(raw) ? `${raw.replace(",", ".")} €` : "Ver precio";
-  }
-
-  let dateKey = "sin-fecha"; // YYYY-MM-DD para agrupar
-  let dateShort = "Consultar";
-  let date = "Consultar fecha";
-  let timeStr = "";
-  let sortTs = Infinity;
-
-  if (item.dtstart) {
-    const s = new Date(item.dtstart);
-    sortTs = s.getTime();
-    const yyyy = s.getFullYear();
-    const mm   = String(s.getMonth() + 1).padStart(2, "0");
-    const dd   = String(s.getDate()).padStart(2, "0");
-    dateKey = `${yyyy}-${mm}-${dd}`;
-    dateShort = s.toLocaleDateString("es-ES", { day: "numeric", month: "short" }).toUpperCase();
-    date = s.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
-
-    const e = item.dtend ? new Date(item.dtend) : null;
-    if (e && e.toDateString() !== s.toDateString()) {
-      dateShort = `${dateShort} – ${e.toLocaleDateString("es-ES", { day: "numeric", month: "short" }).toUpperCase()}`;
-      date = `${date} – ${e.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}`;
-    }
-    const h = s.getHours(), m = s.getMinutes();
-    if (h !== 0 || m !== 0)
-      timeStr = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")} h`;
-  }
-
-  const venue = item.location?.["street-address"]
-    || item.organization?.["organization-name"]
-    || "Madrid";
-
-  return {
-    id:       item.id || `ev-${i}`,
-    title:    item.title || "Evento sin título",
-    cat, date, dateShort, dateKey, timeStr, sortTs, price, access,
-    venue:    venue.length > 38 ? venue.slice(0, 36) + "…" : venue,
-    venueRaw: venue,
-    district: item.address?.["locality"] || "Madrid",
-    image:    item.media?.["@id"] || item.image || item.media?.url || null,
-    url:      item.link || "#",
-    descFull: (item.description || "").replace(/<[^>]+>/g, "").trim(),
-    org:      item.organization?.["organization-name"] || "",
-  };
-}
 
 // ─── Datos de muestra ─────────────────────────────────────────────────────────
 function makeSample() {
@@ -151,8 +74,7 @@ function useEvents() {
   const [fromApi, setFromApi] = useState(false);
 
   useEffect(() => {
-    const API = "/api-madrid/egob/catalogo/206974-0-agenda-eventos-culturales-100.json";
-    fetch(API)
+    fetch(MADRID_EVENTS_URL)
       .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then(data => {
         const all    = (data["@graph"] || []).map(parseEvent);
@@ -334,7 +256,7 @@ export default function AgendaPage() {
 
   const openDetail = (ev) => navigate(`/evento/${ev.id}`, { state: { ev } });
 
-  const CATS = ["Todos","Música","Teatro","Exposición","Cine","Danza","Cultura"];
+  const CATS = CATEGORY_LIST;
 
   // Filtrar por categoría y semana
   const filtered = events.filter(ev => {
@@ -354,7 +276,6 @@ export default function AgendaPage() {
 
   return (
     <>
-      <style>{css}</style>
       <div className="ag-page">
 
         {/* ── NAV compartido ── */}
@@ -452,240 +373,3 @@ export default function AgendaPage() {
 }
 
 // ─── Estilos ──────────────────────────────────────────────────────────────────
-const css = `
-  /* ── Base ── */
-  .ag-page {
-    min-height: 100vh;
-    background: #ffffff;
-    font-family: 'Inter', var(--ff-b), system-ui, sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-  }
-
-  /* ── Barra de controles ── */
-  .ag-controls {
-    background: #fff;
-    border-bottom: 1px solid #eae6f6;
-    position: sticky; top: 60px; z-index: 40;
-    box-shadow: 0 2px 12px rgba(79,62,200,.06);
-  }
-  .ag-controls-inner {
-    max-width: 960px; margin: 0 auto;
-    padding: 1rem clamp(1rem, 5vw, 3rem);
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: .85rem;
-  }
-
-  /* Navegación semana */
-  .ag-week-nav { display: flex; align-items: center; gap: .5rem; }
-  .ag-week-btn {
-    width: 36px; height: 36px;
-    border: 1.5px solid var(--border); border-radius: 0;
-    background: transparent; color: var(--text-primary);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all .12s; padding: 0; flex-shrink: 0;
-  }
-  .ag-week-btn:hover,
-  .ag-week-btn:focus-visible { background: var(--brand); color: #fff; border-color: var(--brand); }
-
-  .ag-week-label {
-    font-family: var(--ff-b);
-    font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--text-primary); min-width: 210px; text-align: center;
-  }
-  .ag-week-today {
-    background: var(--brand); color: #fff; border: none;
-    font-family: var(--ff-b);
-    font-size: .78rem; font-weight: 600;
-    padding: .3rem .75rem; border-radius: 0; cursor: pointer;
-    letter-spacing: .1em; text-transform: uppercase;
-    transition: opacity .15s; margin-left: .25rem;
-  }
-  .ag-week-today:hover,
-  .ag-week-today:focus-visible { opacity: .82; }
-
-  /* Filtros */
-  .ag-cat-filters {
-    display: flex; gap: .4rem;
-    overflow-x: auto; -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .ag-cat-filters::-webkit-scrollbar { display: none; }
-  .ag-cat-btn {
-    padding: .38rem 1rem; flex-shrink: 0;
-    border: 1.5px solid var(--border); border-radius: 0;
-    background: transparent; color: var(--text-muted);
-    font-family: var(--ff-b);
-    font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
-    cursor: pointer; transition: all .12s; white-space: nowrap;
-  }
-  .ag-cat-btn:hover,
-  .ag-cat-btn:focus-visible { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
-  .ag-cat-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); font-weight: 700; }
-
-  /* ── Área principal ── */
-  .ag-main { padding: 2.5rem clamp(1rem, 5vw, 3rem) 7rem; }
-  .ag-main-inner {
-    max-width: 960px; margin: 0 auto;
-    display: flex; flex-direction: column; gap: 3rem;
-  }
-
-  /* ── Bloque de día ── */
-  .ag-day { display: flex; flex-direction: column; gap: 1.1rem; }
-
-  /* Cabecera del día */
-  .ag-day-head { display: flex; align-items: center; gap: 1.1rem; }
-  .ag-day-label { display: flex; align-items: baseline; gap: .6rem; flex-shrink: 0; }
-  .ag-day-weekday {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .78rem; font-weight: 700;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted);
-  }
-  .ag-day-num {
-    font-family: 'Bebas Neue', var(--ff-h), sans-serif;
-    font-size: 3rem; line-height: 1;
-    color: var(--text-muted); letter-spacing: .02em;
-  }
-  .ag-day--today .ag-day-num { color: var(--text-primary); }
-  .ag-day-month {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .78rem; font-weight: 700;
-    letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted);
-  }
-  .ag-today-pill {
-    background: var(--brand); color: #fff;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .65rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
-    padding: .22rem .55rem; border-radius: 4px; margin-left: .3rem;
-    vertical-align: middle; position: relative; top: -2px;
-  }
-  .ag-day-rule { flex: 1; height: 1px; background: #e4dff5; }
-  .ag-day-count {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .75rem; font-weight: 500;
-    color: var(--text-tertiary); white-space: nowrap; flex-shrink: 0;
-  }
-
-  /* ── Lista de tarjetas ── */
-  .ag-day-cards { display: flex; flex-direction: column; gap: .75rem; }
-
-  /* ── Tarjeta de evento ── */
-  .ag-card {
-    background: #ffffff;
-    border: none;
-    border-left: 5px solid;
-    box-shadow: inset 0 0 0 1px #eae6f5;
-    border-radius: 0;
-    padding: 1.2rem 1.4rem 1.1rem 1.2rem;
-    cursor: default;
-    display: flex; flex-direction: column; gap: .65rem;
-    transition: background .15s, box-shadow .18s, transform .18s;
-    text-align: left;
-  }
-  .ag-card:hover {
-    background: var(--brand-subtle);
-    box-shadow: 0 6px 28px rgba(79,62,200,.11);
-    transform: translateX(4px);
-  }
-
-  /* Fila superior */
-  .ag-card-top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
-  .ag-card-cat {
-    display: flex; align-items: center; gap: .45rem;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .72rem; font-weight: 800;
-    letter-spacing: .1em; text-transform: uppercase;
-  }
-  .ag-cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .ag-card-price-free {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .82rem; font-weight: 700;
-    color: var(--text-primary); white-space: nowrap;
-  }
-  .ag-card-price-paid {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .82rem; font-weight: 700;
-    color: var(--text-primary); white-space: nowrap;
-  }
-
-  /* Título */
-  .ag-card-title {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: 1.15rem; font-weight: 700; line-height: 1.3;
-    color: var(--text-primary); margin: 0;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    transition: color .15s;
-  }
-
-  /* Fila inferior */
-  .ag-card-bottom {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: .75rem; flex-wrap: wrap;
-  }
-  .ag-card-meta {
-    display: flex; align-items: center; flex-wrap: wrap;
-    gap: .25rem .4rem;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .82rem; color: var(--text-muted); line-height: 1.4;
-  }
-  .ag-meta-venue { display: inline-flex; align-items: center; gap: 4px; }
-  .ag-meta-time  { display: inline-flex; align-items: center; gap: 4px; }
-  .ag-meta-dist  { color: var(--text-tertiary); }
-  .ag-dot { color: #ccc; }
-
-  /* Badges + botón */
-  .ag-card-right { display: flex; align-items: center; gap: .65rem; flex-shrink: 0; }
-  .ag-badges { display: flex; gap: 4px; }
-  .ag-badge {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 26px; height: 26px; border-radius: 0;
-    background: #ede9ff; color: var(--brand); border: 1px solid #d4cefc;
-    transition: background .12s;
-  }
-  .ag-card-btn {
-    display: inline-flex; align-items: center; gap: .35rem;
-    border: 1.5px solid #ddd8f2; color: var(--text-muted);
-    background: #fff;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .75rem; font-weight: 600;
-    padding: .45rem 1rem; border-radius: 0;
-    cursor: pointer;
-    transition: all .15s; white-space: nowrap;
-  }
-  .ag-card-btn:hover,
-  .ag-card-btn:focus-visible { border-color: var(--brand); color: var(--brand); background: #f5f3ff; }
-
-  /* ── Empty state ── */
-  .ag-empty {
-    text-align: center; padding: 6rem 2rem;
-    display: flex; flex-direction: column; align-items: center; gap: .9rem;
-  }
-  .ag-empty-icon { font-size: 3.5rem; line-height: 1; }
-  .ag-empty-title {
-    font-family: 'Bebas Neue', var(--ff-h), sans-serif;
-    font-size: 2rem; letter-spacing: .06em;
-    color: var(--text-primary); margin: .5rem 0 0;
-  }
-  .ag-empty-sub {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .9rem; color: var(--text-tertiary);
-    max-width: 360px; line-height: 1.7;
-  }
-
-  /* ── Skeleton ── */
-  .ag-skel {
-    background: linear-gradient(90deg, #eae6f6 25%, #f5f3fc 50%, #eae6f6 75%);
-    background-size: 200%; animation: ag-skel 1.5s infinite;
-  }
-  @keyframes ag-skel { from{background-position:200% 0} to{background-position:-200% 0} }
-
-  /* ── Responsivo ── */
-  @media (max-width: 640px) {
-    .ag-controls-inner { flex-direction: column; align-items: flex-start; }
-    .ag-week-label { min-width: 150px; font-size: 1.1rem; }
-    .ag-day-num { font-size: 2.4rem; }
-    .ag-card { padding: 1rem 1rem .95rem 1rem; }
-    .ag-card-title { font-size: 1rem; white-space: normal; }
-    .ag-card-btn { display: none; }
-  }
-`;

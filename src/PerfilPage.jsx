@@ -5,29 +5,16 @@ import Navbar from "./Navbar";
 import AccessibilityBadge from "./AccessibilityBadge";
 import OnboardingModal from "./OnboardingModal";
 import { WheelIcon, HandsIcon, BucleIcon, PodoIcon } from "./AccessibilityIcons";
+import { CAT_ACCENT } from "./constants/categories";
+import { ACCESS_INFO } from "./constants/accessibility";
+import "./PerfilPage.css";
 
 /* ── Constantes ── */
-const ACCESIBILIDAD_LABELS = {
-  silla:  "Silla de ruedas",
-  signos: "Lengua de signos",
-  podo:   "Podotáctil",
-  bucle:  "Bucle magnético",
-};
-
 const ACCESIBILIDAD_ICONS = {
   silla:  WheelIcon,
   signos: HandsIcon,
   podo:   PodoIcon,
   bucle:  BucleIcon,
-};
-
-const CAT_COLORS = {
-  "Música":     "#3D47C8",
-  "Teatro":     "#7C3AED",
-  "Exposición": "#0369A1",
-  "Cine":       "#92400E",
-  "Danza":      "#DB2777",
-  "Cultura":    "#1A237E",
 };
 
 const CAT_IMAGES = {
@@ -401,7 +388,7 @@ export default function PerfilPage() {
                       >
                         <div className="pf-card-img-wrap">
                           <img className="pf-card-img" src={ev.image || CAT_IMAGES[ev.cat] || CAT_IMAGES["Cultura"]} alt={ev.title} loading="lazy" onError={e => { e.currentTarget.src = CAT_IMAGES[ev.cat] ?? CAT_IMAGES["Cultura"]; }} />
-                          <span className="pf-card-cat" style={{ background: CAT_COLORS[ev.cat] ?? "#111" }}>{ev.cat}</span>
+                          <span className="pf-card-cat" style={{ background: CAT_ACCENT[ev.cat] ?? "#111" }}>{ev.cat}</span>
                         </div>
                         <div className="pf-card-body">
                           <h3 className="pf-card-title">{ev.title}</h3>
@@ -444,7 +431,7 @@ export default function PerfilPage() {
                     >
                       <div className="pf-card-img-wrap">
                         <img className="pf-card-img" src={ev.image || CAT_IMAGES[ev.cat] || CAT_IMAGES["Cultura"]} alt={ev.title} loading="lazy" onError={e => { e.currentTarget.src = CAT_IMAGES[ev.cat] ?? CAT_IMAGES["Cultura"]; }} />
-                        <span className="pf-card-cat" style={{ background: CAT_COLORS[ev.cat] ?? "#111" }}>{ev.cat}</span>
+                        <span className="pf-card-cat" style={{ background: CAT_ACCENT[ev.cat] ?? "#111" }}>{ev.cat}</span>
                       </div>
                       <div className="pf-card-body">
                         <h3 className="pf-card-title">{ev.title}</h3>
@@ -490,7 +477,7 @@ export default function PerfilPage() {
                 <div className="pf-edit-group">
                   <p className="pf-edit-label">Accesibilidad</p>
                   <div className="pf-chips">
-                    {Object.entries(ACCESIBILIDAD_LABELS).map(([key, label]) => {
+                    {Object.entries(ACCESS_INFO).filter(([key]) => ACCESIBILIDAD_ICONS[key]).map(([key, { label }]) => {
                       const active = accesib.includes(key);
                       return (
                         <button key={key} className={`pf-chip${active ? " pf-chip--on" : ""}`} onClick={() => toggleAcc(key)}>
@@ -510,331 +497,8 @@ export default function PerfilPage() {
 
         </main>
       </div>
-      <style>{css}</style>
     </>
   );
 }
 
 /* ── Estilos ── */
-const css = `
-  .pf-layout {
-    display: flex;
-    min-height: calc(100vh - 60px);
-    font-family: 'Inter', var(--ff-b), system-ui, sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    background: #fff;
-  }
-
-  /* ── SIDEBAR ── */
-  .pf-sidebar {
-    width: 290px; min-width: 290px;
-    background: transparent;
-    border-right: 1px solid #e8e4f0;
-    display: flex; flex-direction: column;
-    padding: 2.25rem 1.5rem 1.75rem;
-    position: sticky; top: 0;
-    height: calc(100vh - 60px);
-    overflow-y: auto;
-  }
-
-  .pf-sidebar-profile {
-    display: flex; flex-direction: column; align-items: center; text-align: center;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid #ede9f8;
-    margin-bottom: 1.75rem;
-  }
-
-  .pf-avatar-wrap { position: relative; margin-bottom: 1.1rem; }
-  .pf-avatar, .pf-avatar-img {
-    width: 96px; height: 96px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    border: 3px solid var(--brand);
-  }
-  .pf-avatar {
-    background: var(--brand); color: var(--on-brand);
-    font-family: 'Bebas Neue', var(--ff-h), sans-serif; font-size: 2.6rem;
-  }
-  .pf-avatar-img { object-fit: cover; }
-  .pf-avatar-edit {
-    position: absolute; bottom: 3px; right: 3px;
-    width: 30px; height: 30px; border-radius: 50%;
-    background: #fff; border: 1.5px solid #e8e4f0;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; color: var(--text-muted);
-    transition: background .15s, color .15s, border-color .15s;
-    box-shadow: 0 1px 6px rgba(0,0,0,.12);
-  }
-  .pf-avatar-edit:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
-
-  .pf-inline-edit { display: flex; align-items: center; gap: .4rem; flex-wrap: nowrap; }
-  .pf-inline-input {
-    border: 1.5px solid var(--brand); background: #fff;
-    padding: .4rem .7rem;
-    font-family: 'Inter', var(--ff-b), sans-serif; font-size: 1rem;
-    outline: none; min-width: 0; flex: 1; color: var(--text-primary); border-radius: 0;
-  }
-  .pf-inline-save {
-    background: var(--brand); color: var(--on-brand); border: none; cursor: pointer;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .88rem; font-weight: 700; padding: .38rem .65rem; border-radius: 0;
-    transition: background .15s;
-  }
-  .pf-inline-save:hover { background: var(--brand-hover); }
-  .pf-inline-save:disabled { opacity: .5; }
-  .pf-inline-cancel {
-    background: none; border: 1.5px solid #e8e4f0; cursor: pointer;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .88rem; color: var(--text-muted); padding: .38rem .6rem; border-radius: 0;
-  }
-  .pf-inline-btn { background: none; border: none; cursor: pointer; color: #ccc; padding: .25rem; display: inline-flex; align-items: center; transition: color .15s; }
-  .pf-inline-btn:hover { color: var(--brand); }
-
-  .pf-name-row { display: flex; align-items: center; justify-content: center; gap: .6rem; flex-wrap: wrap; margin-bottom: .4rem; }
-  .pf-sidebar-name {
-    font-family: 'Bebas Neue', var(--ff-h), sans-serif;
-    font-size: 1.4rem; color: var(--text-primary); margin: 0; letter-spacing: .04em;
-  }
-  .pf-sidebar-desc {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .88rem; color: var(--text-muted); margin: .5rem 0 1.25rem; line-height: 1.55;
-  }
-  .pf-sidebar-edit-btn {
-    display: inline-flex; align-items: center; gap: .45rem;
-    background: transparent; border: 1.5px solid var(--brand);
-    color: var(--brand);
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .82rem; font-weight: 700; letter-spacing: .04em;
-    padding: .5rem 1.1rem; cursor: pointer; border-radius: 0;
-    transition: background .15s, color .15s;
-  }
-  .pf-sidebar-edit-btn:hover { background: var(--brand); color: #fff; }
-
-  .pf-sidebar-nav { display: flex; flex-direction: column; gap: .2rem; flex: 1; }
-  .pf-nav-item {
-    display: flex; align-items: center; gap: .7rem;
-    background: none; border: none; cursor: pointer;
-    color: var(--text-muted);
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .95rem; font-weight: 500;
-    padding: .85rem 1rem; border-radius: 0;
-    text-align: left; transition: background .15s, color .15s;
-  }
-  .pf-nav-item:hover { background: var(--brand-subtle,#eef0fe); color: var(--brand); }
-  .pf-nav-item--active { background: var(--brand-subtle,#eef0fe); color: var(--brand); font-weight: 700; }
-  .pf-nav-badge {
-    margin-left: auto; background: var(--brand); color: var(--on-brand);
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .72rem; font-weight: 800;
-    padding: .14rem .5rem; border-radius: 0; min-width: 22px; text-align: center;
-  }
-
-  .pf-sidebar-logout {
-    display: flex; align-items: center; gap: .55rem;
-    background: none; border: none; cursor: pointer; color: #bbb;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .9rem; padding: .75rem 1rem;
-    margin-top: 1rem; border-radius: 0;
-    transition: color .15s, background .15s; text-align: left;
-  }
-  .pf-sidebar-logout:hover { color: var(--text-muted); background: var(--bg-surface); }
-
-  /* ── CONTENIDO ── */
-  .pf-content { flex: 1; padding: 2.5rem clamp(1.25rem, 5vw, 3rem) 5rem; min-width: 0; overflow-y: auto; }
-
-  /* Stats */
-  .pf-stats {
-    display: flex; align-items: center;
-    background: var(--brand-subtle,#eef0fe); border: 1px solid var(--border);
-    margin-bottom: 2.25rem; overflow: hidden; border-radius: 0;
-  }
-  .pf-stat {
-    flex: 1; display: flex; flex-direction: column; align-items: center;
-    justify-content: center; padding: 1.5rem 1rem; gap: .3rem; text-align: center;
-  }
-  .pf-stat-num {
-    font-family: 'Bebas Neue', var(--ff-h), sans-serif;
-    font-size: 2.6rem; line-height: 1; color: var(--brand); letter-spacing: .04em;
-  }
-  .pf-stat-label {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .78rem; font-weight: 700; letter-spacing: .06em;
-    text-transform: uppercase; color: var(--text-muted);
-  }
-  .pf-stat-divider { width: 1px; height: 56px; background: #ede9f8; flex-shrink: 0; }
-
-  /* Callout accesibilidad */
-  .pf-acc-callout {
-    background: var(--brand-subtle,#eef0fe); border: 1px solid var(--border);
-    padding: 1.75rem; margin-bottom: 2.25rem;
-    display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
-    border-radius: 0;
-  }
-  .pf-acc-callout-text { flex: 1; min-width: 0; }
-  .pf-acc-callout-title {
-    font-family: 'Bebas Neue', var(--ff-h), sans-serif;
-    font-size: 1.5rem; color: var(--text-primary); margin: 0 0 .5rem; letter-spacing: .04em;
-  }
-  .pf-acc-callout-desc {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .92rem; color: var(--text-muted); margin: 0 0 1.25rem; line-height: 1.6;
-  }
-  .pf-acc-callout-btn {
-    display: inline-flex; align-items: center; gap: .45rem;
-    background: var(--brand); color: var(--on-brand); border: none; cursor: pointer;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .85rem; font-weight: 700; letter-spacing: .04em;
-    padding: .65rem 1.35rem; border-radius: 0; transition: background .15s;
-  }
-  .pf-acc-callout-btn:hover { background: var(--brand-hover); }
-  .pf-acc-callout-icons { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; flex-shrink: 0; }
-  .pf-acc-icon-item {
-    display: flex; flex-direction: column; align-items: center; gap: .45rem;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .78rem; color: var(--text-muted); font-weight: 600; text-align: center;
-  }
-  .pf-acc-icon-circle {
-    width: 52px; height: 52px; border-radius: 0;
-    background: #fff; display: flex; align-items: center; justify-content: center; color: var(--brand);
-  }
-
-  /* Secciones */
-  .pf-recs { margin-bottom: 3rem; }
-  .pf-section-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.5rem; }
-  .pf-section-title {
-    font-family: 'Bebas Neue', var(--ff-h), sans-serif;
-    font-size: 1.75rem; letter-spacing: .04em; color: var(--text-primary); margin: 0 0 1.5rem;
-  }
-  .pf-section-header .pf-section-title { margin: 0; }
-  .pf-view-all {
-    display: inline-flex; align-items: center; gap: .35rem;
-    background: none; border: none; cursor: pointer; color: var(--brand);
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .85rem; font-weight: 700; letter-spacing: .03em;
-    padding: 0; transition: opacity .15s;
-  }
-  .pf-view-all:hover { opacity: .7; }
-  .pf-recs-hint {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .92rem; color: var(--text-muted); margin: -.5rem 0 1.75rem; line-height: 1.5;
-  }
-  .pf-recs-link { background: none; border: none; cursor: pointer; color: var(--brand); font-weight: 700; text-decoration: underline; font-size: inherit; padding: 0; }
-  .pf-loading {
-    display: flex; align-items: center; gap: .8rem;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .92rem; color: var(--text-tertiary); padding: 2.5rem 0;
-  }
-  .pf-spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #ede9f8; border-top-color: var(--brand); border-radius: 50%; animation: pf-spin .8s linear infinite; flex-shrink: 0; }
-  @keyframes pf-spin { to { transform: rotate(360deg); } }
-  .pf-error {
-    display: flex; align-items: center; gap: 1rem;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .92rem; color: var(--error); padding: 1.5rem 0;
-  }
-  .pf-retry {
-    background: none; border: 1.5px solid var(--error); color: var(--error); cursor: pointer;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .82rem; font-weight: 700; letter-spacing: .04em;
-    padding: .4rem .9rem; border-radius: 0; transition: all .15s;
-  }
-  .pf-retry:hover { background: var(--error); color: #fff; }
-  .pf-empty {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .92rem; color: var(--text-tertiary); padding: 2.5rem 0; line-height: 1.6;
-  }
-
-  /* Grid */
-  .pf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.1rem; }
-
-  /* Tarjeta */
-  .pf-card {
-    border: 1px solid #e8e4f0; cursor: pointer;
-    transition: border-color .15s, box-shadow .15s, transform .15s;
-    overflow: hidden; background: var(--brand-subtle,#eef0fe); display: flex; flex-direction: column; border-radius: 0;
-  }
-  .pf-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.09); }
-  .pf-card--fav:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.09); }
-  .pf-card-img-wrap { width: 100%; height: 160px; overflow: hidden; position: relative; background: #f0eeff; flex-shrink: 0; }
-  .pf-card-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
-  .pf-card:hover .pf-card-img { transform: scale(1.05); }
-  .pf-card-cat {
-    position: absolute; top: .7rem; left: .7rem;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .7rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
-    color: #fff; padding: .35rem .7rem; border-radius: 0;
-  }
-  .pf-card-body { padding: 1.1rem; display: flex; flex-direction: column; flex: 1; }
-  .pf-card-title {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: 1rem; font-weight: 700; color: var(--text-primary);
-    margin: 0 0 .6rem; line-height: 1.4;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .pf-card-meta {
-    display: flex; align-items: center; gap: .35rem;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .82rem; color: var(--text-muted); margin: .25rem 0;
-  }
-  .pf-card-price {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .85rem; font-weight: 700; color: var(--brand); margin: .6rem 0 .7rem;
-  }
-  .pf-card-link {
-    display: inline-flex; align-items: center; gap: .35rem;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .82rem; font-weight: 700; color: var(--brand); margin-top: auto;
-  }
-  .pf-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
-  .pf-card-remove {
-    background: none; border: 1px solid #e8e4f0; cursor: pointer; color: #bbb;
-    padding: .4rem; display: flex; align-items: center; border-radius: 0; transition: all .15s;
-  }
-  .pf-card-remove:hover { border-color: var(--error); color: var(--error); background: #fff5f5; }
-
-  /* Favoritos */
-  .pf-favs-section .pf-section-title { display: flex; align-items: center; gap: .5rem; }
-  .pf-favs-section .pf-section-title svg { color: var(--error); }
-
-  /* Tab Accesibilidad */
-  .pf-edit {
-    background: var(--brand-subtle,#eef0fe); border: 1px solid var(--border);
-    padding: 2rem; margin-bottom: 2rem; border-radius: 0;
-  }
-  .pf-edit-row { display: flex; gap: 2.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-  .pf-edit-group { flex: 1; min-width: 230px; }
-  .pf-edit-label {
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .82rem; font-weight: 700; letter-spacing: .06em;
-    text-transform: uppercase; color: var(--text-muted); margin: 0 0 .8rem;
-  }
-  .pf-chips { display: flex; flex-direction: column; gap: .55rem; }
-  .pf-chip {
-    display: inline-flex; align-items: center; gap: .4rem;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .85rem; font-weight: 600; letter-spacing: .03em;
-    border: 1.5px solid #ddd8f0; background: transparent; color: var(--text-muted);
-    padding: .5rem 1rem; cursor: pointer; transition: all .15s; min-height: 38px; border-radius: 0;
-  }
-  .pf-chip:hover { border-color: var(--brand); color: var(--brand); background: #f7f5ff; }
-  .pf-chip--on { border-color: var(--brand); background: var(--brand); color: var(--on-brand); }
-  .pf-chip-check { font-size: .78rem; }
-  .pf-chip-remove { font-size: .72rem; opacity: .7; margin-left: .1rem; }
-  .pf-btn-save {
-    background: var(--brand); color: var(--on-brand); border: none; cursor: pointer;
-    font-family: 'Inter', var(--ff-b), sans-serif;
-    font-size: .9rem; font-weight: 700; letter-spacing: .04em;
-    padding: .8rem 1.75rem; min-height: 46px; border-radius: 0; transition: background .15s;
-  }
-  .pf-btn-save:hover:not(:disabled) { background: var(--brand-hover); }
-  .pf-btn-save:disabled { opacity: .5; cursor: default; }
-
-  @media (max-width: 640px) {
-    .pf-layout { flex-direction: column; background: #fff; }
-    .pf-sidebar { width: 100%; min-width: 0; height: auto; position: static; background: #fff; border-right: none; border-bottom: 1px solid #e8e4f0; }
-    .pf-acc-callout { flex-direction: column; }
-    .pf-acc-callout-icons { grid-template-columns: repeat(4, 1fr); }
-    .pf-stat-divider { display: none; }
-    .pf-stat { flex: 1 1 33%; min-width: 100px; }
-    .pf-grid { grid-template-columns: 1fr; }
-  }
-`;

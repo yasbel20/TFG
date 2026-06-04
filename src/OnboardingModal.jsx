@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "./AuthContext";
 import { WheelIcon, HandsIcon, BucleIcon, PodoIcon } from "./AccessibilityIcons";
+import "./OnboardingModal.css";
 
 const IcoMusica    = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>;
 const IcoTeatro    = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 10s3-3 3-8c0 0 5 3 9 3s9-3 9-3c0 5 3 8 3 8"/><path d="M2 10s2 6 9 6c4 0 7-2 9-6"/><path d="M9 17c0 2 1.5 3 3 3s3-1 3-3"/></svg>;
@@ -130,99 +131,6 @@ export default function OnboardingModal({ onClose }) {
         )}
 
       </div>
-      <style>{css}</style>
     </div>
   );
 }
-
-const css = `
-  .ob-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.5);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 1100; padding: 1rem;
-  }
-
-  .ob-box {
-    background: var(--bg);
-    width: 100%; max-width: 440px;
-    min-height: 580px;
-    border-radius: 0;
-    padding: 2.4rem 2.2rem 2rem;
-    display: flex; flex-direction: column;
-    gap: 1.1rem; position: relative;
-    box-shadow: 0 24px 64px rgba(0,0,0,.22);
-  }
-
-  .ob-back {
-    position: absolute; top: 14px; right: 14px;
-    width: 34px; height: 34px; border-radius: 0;
-    background: var(--bg); border: 1.5px solid var(--border);
-    cursor: pointer; font-size: 1rem;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-primary); transition: background .15s;
-  }
-  .ob-back:hover { background: var(--bg-surface); }
-
-  .ob-title {
-    font-family: var(--ff-h);
-    font-size: 2.6rem; line-height: 1.05;
-    letter-spacing: .02em; color: var(--text-primary); margin: 0;
-  }
-
-  .ob-sub {
-    font-family: var(--ff-b);
-    font-size: .78rem; color: var(--text-muted); margin: 0; line-height: 1.5;
-  }
-
-  .ob-chips {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-  .ob-chips--col { grid-template-columns: 1fr; }
-
-  .ob-chip {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--bg); border: 1.5px solid var(--border);
-    border-radius: 0; padding: 11px 13px;
-    font-family: var(--ff-b);
-    font-size: .8rem; font-weight: 600;
-    cursor: pointer; text-align: left;
-    transition: all .15s; min-height: 46px;
-    color: var(--text-muted);
-  }
-  .ob-chip-ico { display: flex; align-items: center; flex-shrink: 0; }
-  .ob-chip-txt { transition: color .15s; }
-  .ob-chip:hover {
-    background: var(--brand-subtle,#eef0fe); border-color: var(--brand); color: var(--brand);
-  }
-  .ob-chip--on {
-    background: var(--brand); border-color: var(--brand); color: var(--on-brand);
-  }
-
-  .ob-cta {
-    width: 100%; background: var(--brand); color: var(--on-brand);
-    border: none; border-radius: 0; cursor: pointer;
-    font-family: var(--ff-b);
-    font-size: .76rem; font-weight: 700;
-    letter-spacing: .08em; text-transform: uppercase;
-    padding: 15px; min-height: 50px;
-    transition: background .15s; margin-top: .25rem;
-  }
-  .ob-cta:hover:not(:disabled) { background: var(--brand-hover); }
-  .ob-cta:disabled { opacity: .35; cursor: default; }
-
-  .ob-skip {
-    background: none; border: none; cursor: pointer;
-    font-family: var(--ff-b);
-    font-size: .73rem; color: var(--text-muted);
-    text-align: center; text-decoration: underline; padding: 0;
-  }
-  .ob-skip:hover { color: var(--text-primary); }
-
-  .ob-error {
-    font-family: var(--ff-b);
-    font-size: .78rem; color: var(--error);
-  }
-`;

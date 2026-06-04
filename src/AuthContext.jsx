@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, useMemo } from "react";
+import { BACKEND_API_URL } from "./constants/api";
 
-const API = "http://127.0.0.1:8000/api";
+const API = BACKEND_API_URL;
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
