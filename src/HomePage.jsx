@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import EventsGrid from "./eventsgrid";
+import EventsGrid from "./EventsGrid";
 import Navbar from "./Navbar";
 import { WheelIcon, HandsIcon, BucleIcon, PodoIcon } from "./AccessibilityIcons";
 import { toSlug } from "./utils/formatting";
@@ -10,7 +10,7 @@ import AgendaDestacada from "./components/home/AgendaDestacada";
 import ToolsShowcase from "./components/home/ToolsShowcase";
 import GhostHelper from "./components/home/GhostHelper";
 import FaqSection from "./components/home/FaqSection";
-import "./home.css";
+import "./HomePage.css";
 
 
 const AudioIcon = ({ size = 20 }) => (

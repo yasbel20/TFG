@@ -5,7 +5,7 @@ import { useAuth } from "./AuthContext";
 import { WheelIcon as WheelIconShared, HandsIcon, BucleIcon as BucleIconShared, PodoIcon as PodoIconShared } from "./AccessibilityIcons";
 import { JUNE_EVENTS } from "./juneEvents";
 import { CAT_COLORS, CAT_ACCENT, CAT_SLUG, CATEGORIES } from "./constants/categories";
-import "./eventsgrid.css";
+import "./EventsGrid.css";
 
 // ─── Iconos ───────────────────────────────────────────────────────────────────
 const CalIcon = () => (

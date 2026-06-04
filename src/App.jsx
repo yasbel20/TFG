@@ -4,7 +4,7 @@ import { AuthProvider } from "./AuthContext";
 import { AccessibilityProvider } from "./AccessibilityContext";
 import AccessibilityOverlay from "./AccessibilityOverlay";
 import CookieBanner from "./CookieBanner";
-import INCLUGOHome from "./home";
+import INCLUGOHome from "./HomePage";
 import EventsPage from "./EventsPage";
 import AgendaPage from "./AgendaPage";
 import EventDetailPage from "./EventDetailPage";
