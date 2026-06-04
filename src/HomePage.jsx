@@ -8,7 +8,7 @@ import { ACCESS_INFO as ACCESS_INFO_BASE } from "./constants/accessibility";
 import { useStatsCountUp } from "./hooks/useStatsCountUp";
 import AgendaDestacada from "./components/home/AgendaDestacada";
 import ToolsShowcase from "./components/home/ToolsShowcase";
-import GhostHelper from "./components/home/GhostHelper";
+import FloatingHelper from "./components/home/FloatingHelper";
 import FaqSection from "./components/home/FaqSection";
 import "./HomePage.css";
 
@@ -386,7 +386,7 @@ export default function INCLUGOHome() {
 
       </main>
 
-      <GhostHelper/>
+      <FloatingHelper/>
 
     </div>
   );

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useAccessibility } from "../../AccessibilityContext";
 
-export default function GhostHelper() {
+export default function FloatingHelper() {
   const { setOverlayOpen } = useAccessibility();
   const [visible, setVisible] = useState(false);
   const timerRef = useRef(null);
