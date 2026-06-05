@@ -125,14 +125,14 @@ export default function Navbar({ onMenuOpen }) {
                   className={`nb-link nb-link--arrow${evOpen || isEvents ? " nb-active" : ""}`}
                   onClick={() => setEvOpen(o => !o)}
                   aria-expanded={evOpen}
-                  aria-haspopup="listbox"
+                  aria-haspopup="menu"
                 >
                   Eventos <ChevronDown/>
                 </button>
                 {evOpen && (
-                  <div className="nb-dropdown" role="listbox">
+                  <div className="nb-dropdown" role="menu">
                     {CATEGORY_LIST.map(cat => (
-                      <button key={cat} role="option" className="nb-dropdown-item"
+                      <button key={cat} role="menuitem" className="nb-dropdown-item"
                         onClick={() => goEvents(cat)}>
                         {cat === "Todos" ? "TODOS LOS EVENTOS" : cat.toUpperCase()}
                       </button>

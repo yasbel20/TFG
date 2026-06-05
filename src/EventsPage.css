@@ -39,7 +39,7 @@
   .ep-hero-stats { display:flex; align-items:center; gap:1.25rem; }
   .ep-stat-item { display:flex; flex-direction:column; line-height:1.2; }
   .ep-stat-item strong { font-size:1.5rem; font-weight:800; color:#fff; }
-  .ep-stat-item span { font-size:.75rem; font-weight:500; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; }
+  .ep-stat-item span { font-size:.75rem; font-weight:500; color:rgba(255,255,255,.85); text-transform:uppercase; letter-spacing:.08em; }
   .ep-stat-sep { width:1px; height:30px; background:rgba(255,255,255,.18); flex-shrink:0; }
 
   /* Accessibility panel */

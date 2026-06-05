@@ -27,6 +27,7 @@ export default function WelcomeSplash() {
         autoPlay
         muted
         playsInline
+        aria-hidden="true"
         onTimeUpdate={e => {
           if (e.target.currentTime >= 4) e.target.pause();
         }}

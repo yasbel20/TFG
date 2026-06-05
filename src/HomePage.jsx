@@ -162,13 +162,13 @@ function EventsDropdown({ onSelect }) {
   return (
     <div className="nav-dropdown-wrap" ref={ref}>
       <button className={`nav-link nav-link--arrow${open ? " active" : ""}`}
-        onClick={() => setOpen(o => !o)} aria-expanded={open} aria-haspopup="listbox">
+        onClick={() => setOpen(o => !o)} aria-expanded={open} aria-haspopup="menu">
         Eventos <ChevronDownIcon/>
       </button>
       {open && (
-        <div className="nav-dropdown" role="listbox">
+        <div className="nav-dropdown" role="menu">
           {EVENT_CATS_ALL.map(cat => (
-            <button key={cat} className="nav-dropdown-item" role="option"
+            <button key={cat} className="nav-dropdown-item" role="menuitem"
               onClick={() => { setOpen(false); onSelect(cat === "Todos los eventos" ? "Todos" : cat); }}>
               {cat.toUpperCase()}
             </button>
@@ -190,13 +190,13 @@ function AccessibilityDropdown() {
   return (
     <div className="nav-dropdown-wrap" ref={ref}>
       <button className={`nav-link nav-link--arrow${open ? " active" : ""}`}
-        onClick={() => setOpen(o => !o)} aria-expanded={open} aria-haspopup="listbox">
+        onClick={() => setOpen(o => !o)} aria-expanded={open} aria-haspopup="menu">
         Accesibilidad <ChevronDownIcon/>
       </button>
       {open && (
-        <div className="nav-dropdown" role="listbox">
+        <div className="nav-dropdown" role="menu">
           {ACCESS_CATS.map(cat => (
-            <button key={cat} className="nav-dropdown-item" role="option" onClick={() => setOpen(false)}>
+            <button key={cat} className="nav-dropdown-item" role="menuitem" onClick={() => setOpen(false)}>
               {cat}
             </button>
           ))}
@@ -211,6 +211,7 @@ function AccessibilityDropdown() {
    COMPONENTE PRINCIPAL
 ══════════════════════════════════════════════════ */
 export default function INCLUGOHome() {
+  useEffect(() => { document.title = "INCLUGO — Cultura accesible en Madrid"; }, []);
   const navigate = useNavigate();
   const [inputVal,  setInputVal]  = useState("");
   const evRef = useRef(null);
@@ -252,15 +253,15 @@ export default function INCLUGOHome() {
         {/* ── STATS ── */}
         <section className="stats reveal" aria-label="Cifras clave de INCLUGO" ref={statsRef}>
           <div className="stats-grid">
-            <div className="stat" tabIndex={0}>
+            <div className="stat" role="article" tabIndex={0}>
               <span className="stat-num" aria-label="500.000">{count500}<sup aria-hidden="true">K</sup></span>
               <span className="stat-label">Madrileños que buscan una ciudad más inclusiva</span>
             </div>
-            <div className="stat" tabIndex={0}>
+            <div className="stat" role="article" tabIndex={0}>
               <span className="stat-num" aria-label="Más de 800">{count800}<sup aria-hidden="true">+</sup></span>
               <span className="stat-label">Planes culturales esperándote hoy mismo</span>
             </div>
-            <div className="stat" tabIndex={0}>
+            <div className="stat" role="article" tabIndex={0}>
               <span className="stat-num">{count4}</span>
               <span className="stat-label">Tipos de accesibilidad cubiertos</span>
             </div>
@@ -276,19 +277,19 @@ export default function INCLUGOHome() {
               <span className="hl">SIN BARRERAS</span>
             </h2>
             <ol className="steps" aria-label="Pasos para usar INCLUGO">
-              <li className="step" tabIndex={0}>
+              <li className="step">
                 <span className="step-num-bg" aria-hidden="true">01</span>
                 <span className="step-num-label" aria-hidden="true">— 01</span>
                 <h3 className="step-title">Elige tus filtros</h3>
                 <p className="step-desc">Marca tus necesidades: silla de ruedas, lengua de signos, pavimento podotáctil, bucle magnético y más.</p>
               </li>
-              <li className="step" tabIndex={0}>
+              <li className="step">
                 <span className="step-num-bg" aria-hidden="true">02</span>
                 <span className="step-num-label" aria-hidden="true">— 02</span>
                 <h3 className="step-title">Explora eventos</h3>
                 <p className="step-desc">Ve solo los planes de Madrid que encajan contigo, con información oficial y actualizada cada día.</p>
               </li>
-              <li className="step" tabIndex={0}>
+              <li className="step">
                 <span className="step-num-bg" aria-hidden="true">03</span>
                 <span className="step-num-label" aria-hidden="true">— 03</span>
                 <h3 className="step-title">Ve y disfruta</h3>
@@ -317,7 +318,7 @@ export default function INCLUGOHome() {
               {ACCESS_CARDS.map(item => {
                 const info = ACCESS_INFO[item.key];
                 return (
-                  <li key={item.key} className="ac-card" tabIndex={0}>
+                  <li key={item.key} className="ac-card">
                     <div className="ac-icon" aria-hidden="true">{info && <info.Icon size={22}/>}</div>
                     <h3 className="ac-title">{info?.label || item.key}</h3>
                     <p className="ac-desc">{item.desc}</p>

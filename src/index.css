@@ -23,8 +23,8 @@
   /* Text */
   --text-primary:   #111827;
   --text-secondary: #374151;
-  --text-muted:     #6b7280;
-  --text-tertiary:  #9ca3af;
+  --text-muted:     #5c6370;
+  --text-tertiary:  #5c6370;
 
   /* Border */
   --border: #d8d8ee;
@@ -45,6 +45,24 @@
   --radius-pill: 999px;
   --focus-ring:  0 0 0 3px rgba(61,71,200,0.25);
 }
+
+/* ── Skip link (accesibilidad) ── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 99999;
+  background: var(--brand);
+  color: #fff;
+  padding: .5rem 1rem;
+  font-family: var(--ff-b);
+  font-size: .9rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 4px 4px;
+  transition: top .15s;
+}
+.skip-link:focus { top: 0; }
 
 /* ── RESET GLOBAL — sin estilos que interfieran con home.css ── */
 *, *::before, *::after {

@@ -57,7 +57,7 @@ export default function AccessibilityOverlay() {
       </button>
 
       {open && (
-        <div className="ao-panel" role="dialog" aria-modal="false" aria-label="Preferencias de accesibilidad">
+        <div className="ao-panel" role="region" aria-label="Preferencias de accesibilidad">
           <div className="ao-panel-head">
             <span className="ao-panel-title">Accesibilidad</span>
             <button className="ao-panel-close" onClick={() => setOpen(false)} aria-label="Cerrar">

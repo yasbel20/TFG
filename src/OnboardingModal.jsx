@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useAuth } from "./AuthContext";
 import { WheelIcon, HandsIcon, BucleIcon, PodoIcon } from "./AccessibilityIcons";
 import "./OnboardingModal.css";
@@ -37,6 +38,29 @@ export default function OnboardingModal({ onClose }) {
   const [accesib,    setAccesib]    = useState([]);
   const [loading,    setLoading]    = useState(false);
   const [error,      setError]      = useState("");
+  const boxRef = useRef(null);
+
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const focusable = el.querySelectorAll(
+      'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    first?.focus();
+    const trap = e => {
+      if (e.key === "Escape") { onClose(); return; }
+      if (e.key !== "Tab") return;
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last?.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first?.focus(); }
+      }
+    };
+    el.addEventListener("keydown", trap);
+    return () => el.removeEventListener("keydown", trap);
+  }, [step]);
 
   const toggleCat = cat =>
     setCategorias(prev =>
@@ -70,17 +94,17 @@ export default function OnboardingModal({ onClose }) {
     }
   };
 
-  return (
+  return createPortal(
     <div className="ob-overlay" role="dialog" aria-modal="true" aria-label="Configurar perfil">
-      <div className="ob-box">
+      <div className="ob-box" ref={boxRef}>
 
         {/* Arrow top-right */}
         <button
           className="ob-back"
           onClick={step === 1 ? onClose : () => setStep(1)}
-          aria-label="Volver"
+          aria-label={step === 1 ? "Cerrar" : "Volver al paso anterior"}
         >
-          →
+          <span aria-hidden="true">→</span>
         </button>
 
         {step === 1 && (
@@ -131,6 +155,7 @@ export default function OnboardingModal({ onClose }) {
         )}
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -68,7 +68,7 @@
     color: #374151;
     border: 1px solid #d1d5db;
   }
-  .ck-btn--outline:hover { background: #f9fafb; border-color: #9ca3af; }
+  .ck-btn--outline:hover { background: #f9fafb; border-color: var(--text-muted); }
   .ck-btn--ghost {
     background: #f3f4f6;
     color: #111;
@@ -125,7 +125,7 @@
   }
   .ck-modal-close {
     background: none; border: none; cursor: pointer;
-    color: #9ca3af; padding: .25rem;
+    color: var(--text-muted); padding: .25rem;
     display: flex; align-items: center;
     border-radius: 4px;
     transition: color .12s;

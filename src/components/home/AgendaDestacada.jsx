@@ -111,7 +111,7 @@ export default function AgendaDestacada() {
               <article
                 key={ev.id} className="ad-row" role="listitem"
                 onClick={() => navigate(`/evento/${ev.id}`, {state:{ev}})}
-                tabIndex={0} onKeyDown={e => e.key==="Enter" && navigate(`/evento/${ev.id}`, {state:{ev}})}
+                tabIndex={0} onKeyDown={e => (e.key==="Enter" || e.key===" ") && navigate(`/evento/${ev.id}`, {state:{ev}})}
                 aria-label={ev.title}
               >
                 <div className="ad-info">

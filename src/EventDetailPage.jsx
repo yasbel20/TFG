@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import EventDetail from "./EventDetail";
 import Navbar from "./Navbar";
@@ -9,6 +10,9 @@ export default function EventDetailPage() {
   const navigate  = useNavigate();
 
   const ev = state?.ev || JUNE_EVENTS.find(e => String(e.id) === String(id));
+  useEffect(() => {
+    document.title = ev ? `${ev.title} — INCLUGO` : "Evento — INCLUGO";
+  }, [ev?.title]);
 
   if (!ev) {
     return (

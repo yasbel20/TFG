@@ -64,8 +64,8 @@ export default function Footer() {
 
         <div className="ft-brand">
           <button className="ft-logo-btn" onClick={() => navigate("/")} aria-label="INCLUGO — ir al inicio">
-            <img src="/img/InclugoLogo/LogoClaro.png" className="ft-logo ft-logo--light" alt="INCLUGO" />
-            <img src="/img/InclugoLogo/LogoOscuro.png" className="ft-logo ft-logo--dark"  alt="INCLUGO" />
+            <img src="/img/InclugoLogo/LogoClaro.png" className="ft-logo ft-logo--light" alt="" />
+            <img src="/img/InclugoLogo/LogoOscuro.png" className="ft-logo ft-logo--dark"  alt="" />
           </button>
         </div>
       </div>

@@ -78,13 +78,14 @@ function FilterDropdown({ label, active, onClear, children }) {
         className={`ep-filter-btn${active ? " ep-filter-btn--on" : ""}`}
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
+        aria-haspopup="menu"
       >
         {label}
         {active && <span className="ep-filter-dot" aria-hidden="true"/>}
         <ChevronDown/>
       </button>
       {open && (
-        <div className="ep-dd-panel" role="dialog" aria-label={`Filtro: ${label}`}>
+        <div className="ep-dd-panel" role="menu" aria-label={`Filtro: ${label}`}>
           {children({ close: () => setOpen(false) })}
         </div>
       )}
@@ -101,7 +102,7 @@ function FeaturedCard({ ev, onOpenDetail }) {
   return (
     <div className="ep-feat-card" onClick={() => onOpenDetail(ev)}
       role="button" tabIndex={0} aria-label={`Ver ${ev.title}`}
-      onKeyDown={e => e.key === "Enter" && onOpenDetail(ev)}>
+      onKeyDown={e => (e.key === "Enter" || e.key === " ") && onOpenDetail(ev)}>
       <div className="ep-feat-img-wrap">
         {ev.image && imgOk
           ? <img src={ev.image} alt={ev.title} className="ep-feat-img" onError={() => setImgOk(false)} loading="lazy"/>
@@ -141,7 +142,7 @@ function GridCard({ ev, onOpenDetail }) {
   return (
     <div className="ep-card reveal" onClick={() => onOpenDetail(ev)}
       role="button" tabIndex={0} aria-label={`Ver ${ev.title}`}
-      onKeyDown={e => e.key === "Enter" && onOpenDetail(ev)}>
+      onKeyDown={e => (e.key === "Enter" || e.key === " ") && onOpenDetail(ev)}>
       <div className="ep-img-wrap">
         {ev.image && imgOk
           ? <img src={ev.image} alt={ev.title} className="ep-img" onError={() => setImgOk(false)} loading="lazy"/>
@@ -199,9 +200,13 @@ export default function EventsPage() {
   const { cat: catSlug } = useParams();
   const navigate          = useNavigate();
   const resolvedCat       = catSlug ? (SLUG_TO_CAT[catSlug] || "Todos") : "Todos";
+  useEffect(() => {
+    const label = resolvedCat === "Todos" ? "Todos los eventos" : resolvedCat;
+    document.title = `${label} — INCLUGO`;
+  }, [resolvedCat]);
   const [activeCategory, setActiveCategory] = useState(resolvedCat);
   const [searchQ,        setSearchQ]        = useState("");
-  const [activeAccess,   setActiveAccess]   = useState(null);
+  const [activeAccess,   setActiveAccess]   = useState(new Set());
   const [dateFilter,     setDateFilter]     = useState(null);  // null | "hoy" | "semana" | "finde" | "mes"
   const [priceFilter,    setPriceFilter]    = useState(null);  // null | "gratis" | "pago"
   const [page,           setPage]           = useState(1);
@@ -210,7 +215,7 @@ export default function EventsPage() {
   useEffect(() => {
     setActiveCategory(resolvedCat);
     setSearchQ("");
-    setActiveAccess(null);
+    setActiveAccess(new Set());
     setDateFilter(null);
     setPriceFilter(null);
     setPage(1);
@@ -233,8 +238,8 @@ export default function EventsPage() {
     );
   }
 
-  if (activeAccess) {
-    filtered = filtered.filter(ev => ev.access.includes(activeAccess));
+  if (activeAccess.size > 0) {
+    filtered = filtered.filter(ev => [...activeAccess].some(a => ev.access.includes(a)));
   }
 
 
@@ -339,7 +344,7 @@ export default function EventsPage() {
               {({ close }) => (
                 <>
                   {DATE_OPTS.map(o => (
-                    <button key={o.key}
+                    <button key={o.key} role="menuitem"
                       className={`ep-dd-opt${dateFilter === o.key ? " ep-dd-opt--on" : ""}`}
                       onClick={() => { setDateFilter(dateFilter === o.key ? null : o.key); close(); }}>
                       {o.label.toUpperCase()}
@@ -351,16 +356,26 @@ export default function EventsPage() {
 
             {/* Accesibilidad */}
             <FilterDropdown
-              label={activeAccess ? ACC_FILTER_OPTS.find(o => o.key === activeAccess)?.label ?? "Accesibilidad" : "Accesibilidad"}
-              active={!!activeAccess}
-              onClear={() => setActiveAccess(null)}
+              label={activeAccess.size === 0
+                ? "Accesibilidad"
+                : activeAccess.size === 1
+                  ? ACC_FILTER_OPTS.find(o => activeAccess.has(o.key))?.label ?? "Accesibilidad"
+                  : `${activeAccess.size} filtros`}
+              active={activeAccess.size > 0}
+              onClear={() => setActiveAccess(new Set())}
             >
-              {({ close }) => (
+              {() => (
                 <>
                   {ACC_FILTER_OPTS.map(o => (
-                    <button key={o.key}
-                      className={`ep-dd-opt${activeAccess === o.key ? " ep-dd-opt--on" : ""}`}
-                      onClick={() => { setActiveAccess(activeAccess === o.key ? null : o.key); close(); }}>
+                    <button key={o.key} role="menuitem"
+                      className={`ep-dd-opt${activeAccess.has(o.key) ? " ep-dd-opt--on" : ""}`}
+                      onClick={() => {
+                        setActiveAccess(prev => {
+                          const next = new Set(prev);
+                          next.has(o.key) ? next.delete(o.key) : next.add(o.key);
+                          return next;
+                        });
+                      }}>
                       {o.label.toUpperCase()}
                     </button>
                   ))}
@@ -377,7 +392,7 @@ export default function EventsPage() {
               {({ close }) => (
                 <>
                   {[["gratis","GRATIS"],["pago","DE PAGO"]].map(([k,l]) => (
-                    <button key={k}
+                    <button key={k} role="menuitem"
                       className={`ep-dd-opt${priceFilter === k ? " ep-dd-opt--on" : ""}`}
                       onClick={() => { setPriceFilter(priceFilter === k ? null : k); close(); }}>
                       {l}
@@ -394,12 +409,12 @@ export default function EventsPage() {
 
 
         {/* ── Eventos próximos ── */}
-        <section className="ep-section ep-main-section">
+        <section id="main-content" className="ep-section ep-main-section">
           <div className="ep-grid">
             {loading
               ? Array.from({length:12}).map((_,i) => <SkeletonCard key={i}/>)
               : filtered.length === 0
-                ? <p className="ep-empty">No hay eventos para esta selección.</p>
+                ? <p className="ep-empty" role="status">No hay eventos para esta selección.</p>
                 : filtered.slice(0, page * PAGE_SIZE).map(ev => <GridCard key={ev.id} ev={ev} onOpenDetail={openDetail}/>)
             }
           </div>

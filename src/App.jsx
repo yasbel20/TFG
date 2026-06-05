@@ -31,6 +31,7 @@ function App() {
         <BrowserRouter>
           <ScrollToTop />
           {/* hc-wrap recibe el filtro de alto contraste — los elementos fixed fuera de él mantienen position:fixed correcto */}
+          <a href="#main-content" className="skip-link">Saltar al contenido principal</a>
           <div id="hc-wrap">
             <Routes>
               <Route path="/"             element={<INCLUGOHome />} />

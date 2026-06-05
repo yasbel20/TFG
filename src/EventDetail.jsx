@@ -251,7 +251,7 @@ export default function EventDetail({ ev, onBack }) {
             {/* Título y categoría — fila completa encima del grid */}
             <div className="ed-title-block reveal">
               <span className="ed-cat-label">{ev.cat}</span>
-              <h1 className="ed-title" tabIndex="0" aria-label={`${ev.cat}: ${ev.title}`}>{ev.title}</h1>
+              <h1 className="ed-title" aria-label={`${ev.cat}: ${ev.title}`}>{ev.title}</h1>
             </div>
 
             {/* Columna principal */}
@@ -260,7 +260,7 @@ export default function EventDetail({ ev, onBack }) {
               {/* Metadatos en fila */}
               <div className="ed-meta-row reveal">
                 {ev.date && (
-                  <div className="ed-meta-item" tabIndex="0"
+                  <div className="ed-meta-item"
                     aria-label={`Fecha: ${ev.date}${ev.timeStr ? `, ${ev.timeStr}` : ""}`}>
                     <CalIcon/>
                     <div>
@@ -270,7 +270,7 @@ export default function EventDetail({ ev, onBack }) {
                   </div>
                 )}
                 {ev.duration && (
-                  <div className="ed-meta-item" tabIndex="0" aria-label={`Duración: ${ev.duration}`}>
+                  <div className="ed-meta-item" aria-label={`Duración: ${ev.duration}`}>
                     <Ico d={<><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>}/>
                     <div>
                       <span className="ed-meta-label">Duración</span>
@@ -279,7 +279,7 @@ export default function EventDetail({ ev, onBack }) {
                   </div>
                 )}
                 {ev.ageMin && (
-                  <div className="ed-meta-item" tabIndex="0" aria-label={`Edad recomendada: a partir de ${ev.ageMin}`}>
+                  <div className="ed-meta-item" aria-label={`Edad recomendada: a partir de ${ev.ageMin}`}>
                     <Ico d={<><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></>}/>
                     <div>
                       <span className="ed-meta-label">Edad recomendada</span>
@@ -288,7 +288,7 @@ export default function EventDetail({ ev, onBack }) {
                   </div>
                 )}
                 {ev.price && (
-                  <div className="ed-meta-item" tabIndex="0" aria-label={`Entrada general: ${ev.price}`}>
+                  <div className="ed-meta-item" aria-label={`Entrada general: ${ev.price}`}>
                     <EuroIcon/>
                     <div>
                       <span className="ed-meta-label">Entrada general</span>
@@ -307,8 +307,7 @@ export default function EventDetail({ ev, onBack }) {
                     </div>
                   )}
                   <div className="ed-show-info">
-                    <div className="ed-show-info-header" tabIndex="0"
-                      aria-label={`Sobre el espectáculo: ${ev.descFull ? ev.descFull.slice(0, 200) : "Sin descripción disponible"}`}>
+                    <div className="ed-show-info-header">
                       <Ico d={<><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>} size={16}/>
                       <span className="ed-show-info-title">SOBRE EL ESPECTÁCULO</span>
                       {supported && (
@@ -348,7 +347,7 @@ export default function EventDetail({ ev, onBack }) {
                   <h2 className="ed-section-title" id="hi-h">¿QUÉ ENCONTRARÁS?</h2>
                   <ul className="ed-highlights-list">
                     {highlights.map((h, i) => (
-                      <li key={i} className="ed-highlight-item" tabIndex="0">
+                      <li key={i} className="ed-highlight-item">
                         <span className="ed-highlight-icon" aria-hidden="true">
                           <Ico d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" size={14}/>
                         </span>
@@ -370,7 +369,7 @@ export default function EventDetail({ ev, onBack }) {
                       const Icon = { silla: WheelIcon, signos: SignosIcon, bucle: BucleIcon, podo: PodoIcon }[a];
                       return (
                         <div key={a} className="ed-access-card"
-                          tabIndex="0" aria-label={`${info.label}: ${info.desc}`}>
+                          aria-label={`${info.label}: ${info.desc}`}>
                           <span className="ed-access-icon" aria-hidden="true">{Icon && <Icon/>}</span>
                           <div className="ed-access-body">
                             <strong className="ed-access-name">{info.label}</strong>

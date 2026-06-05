@@ -134,3 +134,6 @@
   font-size: .78rem;
   color: var(--error);
 }
+
+/* ── Alto contraste ── */
+body.hi-contrast .ob-box { filter: invert(1) hue-rotate(180deg); }

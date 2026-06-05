@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthContext";
+import { updateReveal } from "./reveal";
 import Navbar from "./Navbar";
 import AccessibilityBadge from "./AccessibilityBadge";
 import OnboardingModal from "./OnboardingModal";
@@ -93,6 +94,11 @@ export default function PerfilPage() {
   const location = useLocation();
 
   const [showOnboarding, setShowOnboarding] = useState(location.state?.onboarding === true);
+  useEffect(() => { document.title = "Mi perfil — INCLUGO"; }, []);
+  // Limpia el state de la URL para que el onboarding no reaparezca al recargar
+  useEffect(() => {
+    if (location.state?.onboarding) navigate(location.pathname, { replace: true, state: {} });
+  }, []);
   const [activeTab,      setActiveTab]      = useState("perfil");
   const [recomendaciones, setRecomendaciones] = useState([]);
   const [loadingRec,      setLoadingRec]      = useState(true);
@@ -110,6 +116,15 @@ export default function PerfilPage() {
     if (!user) { navigate("/"); return; }
     cargarRecomendaciones();
   }, [user?.email]);
+
+  // Sincroniza estado local cuando el usuario se actualiza (p.ej. tras guardar onboarding)
+  useEffect(() => {
+    setCategorias(user?.categorias_favoritas ?? []);
+    setAccesib(user?.accesibilidad_preferida ?? []);
+  }, [user?.categorias_favoritas, user?.accesibilidad_preferida]);
+
+  // Dispara reveal al cambiar de tab (el contenido aparece con opacity:0 sin esto)
+  useEffect(() => { setTimeout(updateReveal, 30); }, [activeTab]);
 
   const guardarInfo = async (campos) => {
     setSavingInfo(true);
@@ -180,7 +195,6 @@ export default function PerfilPage() {
   };
 
   if (!user) return null;
-  if (showOnboarding) return <OnboardingModal onClose={() => setShowOnboarding(false)} />;
 
   const inicial = user.name.charAt(0).toUpperCase();
   const tienePreferencias =
@@ -364,7 +378,7 @@ export default function PerfilPage() {
                 )}
 
                 {loadingRec ? (
-                  <div className="pf-loading">
+                  <div className="pf-loading" role="status">
                     <span className="pf-spinner" aria-hidden="true" />
                     <span>Cargando eventos recomendados…</span>
                   </div>
@@ -384,7 +398,7 @@ export default function PerfilPage() {
                         onClick={() => navigate(`/evento/${ev.id}`, { state: { ev } })}
                         role="button"
                         tabIndex={0}
-                        onKeyDown={e => e.key === "Enter" && navigate(`/evento/${ev.id}`, { state: { ev } })}
+                        onKeyDown={e => (e.key === "Enter" || e.key === " ") && navigate(`/evento/${ev.id}`, { state: { ev } })}
                       >
                         <div className="pf-card-img-wrap">
                           <img className="pf-card-img" src={ev.image || CAT_IMAGES[ev.cat] || CAT_IMAGES["Cultura"]} alt={ev.title} loading="lazy" onError={e => { e.currentTarget.src = CAT_IMAGES[ev.cat] ?? CAT_IMAGES["Cultura"]; }} />
@@ -427,7 +441,7 @@ export default function PerfilPage() {
                       onClick={() => navigate(`/evento/${ev.id}`, { state: { ev } })}
                       role="button"
                       tabIndex={0}
-                      onKeyDown={e => e.key === "Enter" && navigate(`/evento/${ev.id}`, { state: { ev } })}
+                      onKeyDown={e => (e.key === "Enter" || e.key === " ") && navigate(`/evento/${ev.id}`, { state: { ev } })}
                     >
                       <div className="pf-card-img-wrap">
                         <img className="pf-card-img" src={ev.image || CAT_IMAGES[ev.cat] || CAT_IMAGES["Cultura"]} alt={ev.title} loading="lazy" onError={e => { e.currentTarget.src = CAT_IMAGES[ev.cat] ?? CAT_IMAGES["Cultura"]; }} />
@@ -497,6 +511,7 @@ export default function PerfilPage() {
 
         </main>
       </div>
+      {showOnboarding && <OnboardingModal onClose={() => setShowOnboarding(false)} />}
     </>
   );
 }

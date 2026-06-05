@@ -64,7 +64,7 @@
   .am-close {
     position: absolute; top: 1.25rem; right: 1.25rem;
     background: none; border: none; cursor: pointer;
-    color: #9ca3af; width: 36px; height: 36px; border-radius: 0;
+    color: var(--text-muted); width: 36px; height: 36px; border-radius: 0;
     display: flex; align-items: center; justify-content: center;
     transition: background .15s, color .15s;
   }
@@ -81,7 +81,7 @@
   }
   .am-subtitle {
     font-family: 'Inter', sans-serif;
-    font-size: .9rem; color: #6b7280;
+    font-size: .9rem; color: var(--text-muted);
     margin: 0 0 1.75rem; line-height: 1.6; max-width: 340px;
   }
 
@@ -106,14 +106,14 @@
     border-color: #111827;
     box-shadow: 0 0 0 3px rgba(17,24,39,.12);
   }
-  .am-field input::placeholder { color: #9ca3af; }
+  .am-field input::placeholder { color: var(--text-muted); }
 
   .am-pass-wrap { position: relative; }
   .am-pass-wrap input { padding-right: 2.75rem; }
   .am-pass-toggle {
     position: absolute; right: .75rem; top: 50%; transform: translateY(-50%);
     background: none; border: none; cursor: pointer;
-    color: #9ca3af; display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); display: flex; align-items: center; justify-content: center;
     padding: .25rem; transition: color .15s;
   }
   .am-pass-toggle:hover { color: #374151; }
@@ -139,7 +139,7 @@
   /* ── Switch ── */
   .am-switch {
     font-family: 'Inter', sans-serif; font-size: .875rem;
-    color: #6b7280; text-align: center;
+    color: var(--text-muted); text-align: center;
     margin: 1.25rem 0 0;
   }
   .am-switch button {
@@ -149,6 +149,12 @@
     transition: color .15s; padding: 0;
   }
   .am-switch button:hover { color: #2d3ab8; text-decoration: underline; }
+
+  /* ── Alto contraste ── */
+  /* Solo invertir el contenido del modal, no el backdrop/overlay */
+  body.hi-contrast .am-box { filter: invert(1) hue-rotate(180deg); }
+  /* Contra-invertir solo el panel izquierdo (foto con background-image CSS) */
+  body.hi-contrast .am-left { filter: invert(1) hue-rotate(180deg); }
 
   /* ── Responsive ── */
   @media (max-width: 640px) {

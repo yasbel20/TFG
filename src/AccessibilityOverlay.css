@@ -86,6 +86,10 @@
     box-shadow: 0 1px 4px rgba(0,0,0,.2);
   }
 
+  /* Alto contraste — el panel y el FAB están fuera de #hc-wrap, se invierten por separado */
+  body.hi-contrast .ao-panel,
+  body.hi-contrast .ao-fab { filter: invert(1) hue-rotate(180deg); }
+
   /* Máscara de página */
   .ao-mask {
     position: fixed; inset: 0; z-index: 9050; pointer-events: none;

@@ -37,7 +37,13 @@ export default function FaqSection() {
         </div>
         <div className="faq-grid">
           {FAQ_ITEMS.map((item, i) => (
-            <div key={i} className="faq-item" tabIndex={0}>
+            <div
+              key={i}
+              className="faq-item"
+              role="article"
+              tabIndex={0}
+              aria-label={item.q}
+            >
               <p className="faq-q-static">{item.q}</p>
               <p className="faq-a">{item.a}</p>
             </div>

@@ -68,7 +68,7 @@
   .ed-icon-btn--play:hover { background:#2f39a8; }
   .ed-icon-btn--play.ed-active { background:#2f39a8; }
   .ed-icon-btn--text { width:auto; padding:0 .5rem; font-family:'Inter',sans-serif; }
-  .ed-icon-btn--close { color:#9ca3af; border-color:transparent; }
+  .ed-icon-btn--close { color:var(--text-muted); border-color:transparent; }
   .ed-icon-btn--close:hover { background:#fee2e2; color:#dc2626; border-color:#fca5a5; }
   .ed-topbar-sep { width:1px; height:20px; background:#e5e7eb; flex-shrink:0; }
   .ed-font-label { font-size:.78rem; font-weight:700; font-family:'Inter',sans-serif; }
@@ -112,7 +112,7 @@
     font-family:'Inter',sans-serif; font-size:.95rem; font-weight:700; color:#111;
   }
   .rs-panel-close {
-    background:transparent; border:none; color:#999; cursor:pointer;
+    background:transparent; border:none; color:var(--text-muted); cursor:pointer;
     padding:.25rem; border-radius:0; display:flex; align-items:center;
   }
   .rs-panel-close:hover { color:#111; }
@@ -165,7 +165,7 @@
 
   .rs-panel-foot {
     padding:.6rem 1rem; border-top:1px solid #eee;
-    font-size:.78rem; color:#aaa; text-align:right;
+    font-size:.78rem; color:var(--text-muted); text-align:right;
     background:#fafafa;
   }
 
@@ -255,7 +255,7 @@
     .ed-meta-item:nth-last-child(-n+2) { border-bottom:none; }
   }
   .ed-meta-item svg { color:#3D47C8; flex-shrink:0; }
-  .ed-meta-label { display:block; font-size:.75rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#9ca3af; margin-bottom:.15rem; }
+  .ed-meta-label { display:block; font-size:.75rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:.15rem; }
   .ed-meta-sub { display:block; font-size:.9rem; font-weight:600; color:var(--ed-text); line-height:1.3; }
 
   /* ── Show block (imagen + sobre el espectáculo) ── */
@@ -406,7 +406,7 @@
     color:#3D47C8;
     display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:.1rem;
   }
-  .ed-sidebar-label { display:block; font-size:.75rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#9ca3af; margin-bottom:.2rem; }
+  .ed-sidebar-label { display:block; font-size:.75rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:.2rem; }
   .ed-sidebar-value { display:block; font-size:.95rem; font-weight:600; color:var(--ed-text); line-height:1.35; }
   .ed-val-free { color:#16a34a; }
   .ed-sidebar-sub { display:block; font-size:.85rem; color:var(--ed-subtext); margin-top:.1rem; }
@@ -431,7 +431,7 @@
     text-align:center; margin-top:.5rem;
   }
   .ed-cta:hover { background:#2f39a8; }
-  .ed-cta-disabled { display:block; text-align:center; font-size:.87rem; color:#9ca3af; padding:.8rem; border:1px dashed #e5e7eb; border-radius:0; margin-top:.5rem; }
+  .ed-cta-disabled { display:block; text-align:center; font-size:.87rem; color:var(--text-muted); padding:.8rem; border:1px dashed #e5e7eb; border-radius:0; margin-top:.5rem; }
 
   .ed-share-btn {
     display:flex; align-items:center; justify-content:center; gap:.5rem;
@@ -445,7 +445,7 @@
   /* Información adicional */
   .ed-addinfo-title {
     font-size:.75rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
-    color:#9ca3af; margin:1rem 0 .5rem;
+    color:var(--text-muted); margin:1rem 0 .5rem;
   }
   .ed-addinfo-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.5rem; }
   .ed-addinfo-item {
@@ -456,10 +456,10 @@
 
   /* Organismo */
   .ed-org-row { display:flex; flex-direction:column; gap:.2rem; }
-  .ed-org-label { font-size:.75rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#9ca3af; }
+  .ed-org-label { font-size:.75rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); }
   .ed-org-name { font-size:.9rem; font-weight:600; color:var(--ed-text); }
 
-  .ed-source-note { font-size:.78rem; color:#9ca3af; text-align:center; margin-top:.875rem; line-height:1.5; }
+  .ed-source-note { font-size:.78rem; color:var(--text-muted); text-align:center; margin-top:.875rem; line-height:1.5; }
   .ed-source-link { color:#3D47C8; text-decoration:none; }
   .ed-source-link:hover { text-decoration:underline; }
 
@@ -516,7 +516,7 @@
   }
   .ed-map-header-label {
     font-family:'Inter',sans-serif; font-size:.68rem; font-weight:800;
-    letter-spacing:.16em; color:#9ca3af; white-space:nowrap; flex-shrink:0;
+    letter-spacing:.16em; color:var(--text-muted); white-space:nowrap; flex-shrink:0;
   }
   .ed-map-header-line { flex:1; height:1px; background:#e5e7eb; }
 

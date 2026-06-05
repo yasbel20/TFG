@@ -23,6 +23,7 @@ export function HighlightedText({ text, wordIndex }) {
               key={i}
               data-wi={tok.wi}
               className={wordIndex === tok.wi ? "ed-word-hi" : ""}
+              role={wordIndex === tok.wi ? "mark" : undefined}
             >
               {tok.val}
             </span>
@@ -62,6 +63,7 @@ export function HighlightedDesc({ text, wordIndex }) {
                 key={ti}
                 data-wi={tok.wi}
                 className={wordIndex === tok.wi ? "ed-word-hi" : ""}
+                role={wordIndex === tok.wi ? "mark" : undefined}
               >
                 {tok.val}
               </span>

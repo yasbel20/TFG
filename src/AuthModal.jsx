@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
@@ -16,6 +16,30 @@ export default function AuthModal({ onClose }) {
   const [error,      setError]      = useState("");
   const [loading,    setLoading]    = useState(false);
   const [onboarding, setOnboarding] = useState(false);
+
+  const boxRef = useRef(null);
+
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const focusable = el.querySelectorAll(
+      'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    first?.focus();
+    const trap = e => {
+      if (e.key === "Escape") { onClose(); return; }
+      if (e.key !== "Tab") return;
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last?.focus(); }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first?.focus(); }
+      }
+    };
+    el.addEventListener("keydown", trap);
+    return () => el.removeEventListener("keydown", trap);
+  }, [mode]);
 
   if (onboarding) return <OnboardingModal onClose={onClose} />;
 
@@ -53,16 +77,10 @@ export default function AuthModal({ onClose }) {
       aria-label={mode === "login" ? "Iniciar sesión" : "Crear cuenta"}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
 
-      <div className="am-box">
+      <div className="am-box" ref={boxRef}>
 
         {/* ── Panel izquierdo ── */}
-        <div className="am-left">
-          <div className="am-left-bottom">
-            <p className="am-left-tagline">
-              Descubre eventos culturales accesibles para todas las personas en Madrid
-            </p>
-          </div>
-        </div>
+        <div className="am-left" />
 
         {/* ── Panel derecho ── */}
         <div className="am-right">
@@ -84,7 +102,7 @@ export default function AuthModal({ onClose }) {
           </p>
 
           <form onSubmit={submit} className="am-form" noValidate>
-            <div className="am-field" style={{ visibility: mode === "register" ? "visible" : "hidden" }}>
+            <div className="am-field" style={{ display: mode === "register" ? "flex" : "none" }} aria-hidden={mode !== "register"}>
               <label htmlFor="am-name">Tu nombre</label>
               <input id="am-name" type="text" value={name}
                 onChange={e => setName(e.target.value)}

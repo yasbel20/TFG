@@ -8,6 +8,7 @@ export default function HighContrastToggle() {
   useEffect(() => {
     const wrap = document.getElementById("hc-wrap");
     if (wrap) wrap.classList.toggle(CLASS, active);
+    document.body.classList.toggle(CLASS, active);
     localStorage.setItem(CLASS, active ? "1" : "0");
   }, [active]);
 

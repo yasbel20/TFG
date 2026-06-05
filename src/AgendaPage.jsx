@@ -5,6 +5,7 @@ import { WheelIcon, HandsIcon as SignosIcon, BucleIcon, PodoIcon } from "./Acces
 import { CAT_ACCENT, CATEGORY_LIST } from "./constants/categories";
 import { MADRID_EVENTS_URL } from "./constants/api";
 import { parseEvent } from "./utils/parsing";
+import { updateReveal } from "./reveal";
 import "./AgendaPage.css";
 
 // ─── Iconos ───────────────────────────────────────────────────────────────────
@@ -250,9 +251,12 @@ function inWeek(dateKey, monday, sunday) {
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function AgendaPage() {
   const navigate = useNavigate();
+  useEffect(() => { document.title = "Agenda — INCLUGO"; }, []);
   const { events, loading, fromApi } = useEvents();
   const [weekOffset, setWeekOffset] = useState(0);
   const [filterCat, setFilterCat]   = useState("Todos");
+
+  useEffect(() => { if (!loading) setTimeout(updateReveal, 50); }, [loading]);
 
   const openDetail = (ev) => navigate(`/evento/${ev.id}`, { state: { ev } });
 
@@ -333,14 +337,14 @@ export default function AgendaPage() {
         </div>
 
         {/* ── Contenido principal ── */}
-        <main id="ag-main" className="ag-main">
+        <main id="main-content" className="ag-main">
           <div className="ag-main-inner">
 
             {loading ? (
               <><SkeletonDay/><SkeletonDay/><SkeletonDay/></>
             ) : grouped.length === 0 ? (
               <div className="ag-empty" role="status">
-                <span className="ag-empty-icon">📅</span>
+                <span className="ag-empty-icon" aria-hidden="true">📅</span>
                 <p className="ag-empty-title">Sin eventos esta semana</p>
                 <p className="ag-empty-sub">
                   {filterCat !== "Todos"
