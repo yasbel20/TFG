@@ -469,7 +469,6 @@
   }
 
   /* ── Botón tuerca en topbar ── */
-  .ed-icon-btn--settings { }
   .ed-icon-btn--settings.ed-active { background:#eef0fe; color:#3D47C8; border-color:#3D47C8; }
 
   /* ── Panel flotante accesibilidad (igual que ao-panel del overlay global) ── */

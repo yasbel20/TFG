@@ -1,0 +1,51 @@
+@startuml flujo_carmen
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Inter
+skinparam defaultFontSize 12
+skinparam ArrowColor #3d47c8
+skinparam ArrowThickness 1.5
+skinparam ActivityBackgroundColor #EEF0FF
+skinparam ActivityBorderColor #3d47c8
+skinparam ActivityBorderThickness 1.5
+skinparam ActivityFontSize 12
+skinparam ActivityDiamondBackgroundColor #FFF8E1
+skinparam ActivityDiamondBorderColor #f9a825
+skinparam ActivityStartColor #3d47c8
+skinparam ActivityEndColor #3d47c8
+skinparam NoteBackgroundColor #f0f4ff
+skinparam NoteBorderColor #3d47c8
+
+title Flujo de uso: búsqueda de eventos accesibles (Carmen)
+
+start
+
+:Accede a INCLUGO\n(página de inicio);
+note right: Propuesta de valor orientada\na la accesibilidad cultural
+
+:Navega a su perfil\npersonalizado;
+note right: Preferencias guardadas:\ncategoría Música + PMR
+
+:Ve eventos recomendados\nautomáticamente;
+note right: El sistema filtra por\nsus preferencias de accesibilidad
+
+:Navega a la sección\nde Agenda;
+note right: Vista semanal con tarjetas\ny badges de accesibilidad visibles
+
+:Aplica filtro\n"Silla de ruedas" + "Música";
+note right: Filtrado combinado\nen tiempo real
+
+:Lista actualizada\ncon eventos PMR + Música;
+
+:Selecciona un evento\nde interés;
+
+:Ve la vista de detalle;
+note right: Descripción · Fecha · Mapa\nEnlace de llegada · Accesibilidad
+
+:Consulta sección\nde accesibilidad del recinto;
+note right: Información estructurada\ndirectamente del Ayuntamiento de Madrid
+
+:Decide asistir al evento\ny accede al enlace oficial;
+
+stop
+
+@enduml
