@@ -321,7 +321,7 @@ h1.hero-h1 .hl { color: var(--brand); }
 }
 .stat-num sup { font-size: 40%; vertical-align: super; letter-spacing: 0; }
 .stat-label {
-  font-size: .65rem; color: var(--muted);
+  font-size: .75rem; color: #4b5563;
   margin-top: .75rem; letter-spacing: .06em;
   text-transform: uppercase; line-height: 1.5;
   white-space: nowrap;

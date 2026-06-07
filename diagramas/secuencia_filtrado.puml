@@ -1,0 +1,36 @@
+@startuml secuencia_filtrado
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontName Inter
+skinparam defaultFontSize 12
+skinparam SequenceArrowColor #3d47c8
+skinparam SequenceLifeLineBorderColor #3d47c8
+skinparam SequenceParticipantBackgroundColor #EEF0FF
+skinparam SequenceParticipantBorderColor #3d47c8
+skinparam SequenceActorBackgroundColor #EEF0FF
+skinparam SequenceActorBorderColor #3d47c8
+
+title Secuencia: búsqueda de eventos accesibles
+
+actor "Usuario" as U
+participant "AgendaPage\n(React)" as AP
+participant "useEvents()\nhook" as UE
+participant "parsing.js\nparseEvent()" as PE
+participant "API Ayuntamiento\nde Madrid" as API
+
+U -> AP : Accede a /agenda
+AP -> UE : inicializa hook
+UE -> API : GET /egob/catalogo/206974-0-agenda-eventos-culturales-100.json
+API --> UE : JSON-LD { @graph: [...] }
+UE -> PE : map(parseEvent) sobre cada evento
+PE --> UE : { title, cat, access[], date, venue, ... }
+UE -> UE : filter(e => e.access.length > 0\n&& e.dateKey !== "sin-fecha")
+UE --> AP : eventos saneados
+
+U -> AP : Selecciona filtro "PMR"\ny categoría "Música"
+AP -> AP : filter(ev => catOk && accessOk)
+AP --> U : Muestra solo eventos\ncon silla + Música
+
+U -> AP : Pulsa tarjeta de evento
+AP --> U : Navega a /evento/:id\ncon detalle completo
+
+@enduml

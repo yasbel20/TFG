@@ -140,7 +140,7 @@
   .pf-stat-label {
     font-family: 'Inter', var(--ff-b), sans-serif;
     font-size: .78rem; font-weight: 700; letter-spacing: .06em;
-    text-transform: uppercase; color: var(--text-muted);
+    text-transform: uppercase; color: #4b5563;
   }
   .pf-stat-divider { width: 1px; height: 56px; background: #ede9f8; flex-shrink: 0; }
 

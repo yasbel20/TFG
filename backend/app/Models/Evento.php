@@ -27,4 +27,9 @@ class Evento extends Model
     {
         return $this->hasMany(CaracteristicaAccesibilidad::class);
     }
+
+    public function usuariosFavoritos()
+    {
+        return $this->belongsToMany(User::class, 'favoritos');
+    }
 }

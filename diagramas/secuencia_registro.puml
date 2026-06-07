@@ -1,0 +1,42 @@
+@startuml secuencia_registro
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontName Inter
+skinparam defaultFontSize 12
+skinparam SequenceArrowColor #3d47c8
+skinparam SequenceLifeLineBorderColor #3d47c8
+skinparam SequenceParticipantBackgroundColor #EEF0FF
+skinparam SequenceParticipantBorderColor #3d47c8
+skinparam SequenceActorBackgroundColor #EEF0FF
+skinparam SequenceActorBorderColor #3d47c8
+
+title Secuencia: registro, onboarding y recomendaciones
+
+actor "Usuario" as U
+participant "AuthModal\n(React)" as AM
+participant "OnboardingModal\n(React)" as OM
+participant "PerfilPage\n(React)" as PP
+participant "AuthController\n(Laravel)" as AC
+participant "MySQL" as DB
+
+U -> AM : Rellena nombre, email\ny contraseña
+AM -> AC : POST /api/register\n{ name, email, password }
+AC -> AC : Valida campos
+AC -> DB : INSERT INTO users
+DB --> AC : usuario creado
+AC --> AM : { user, token } 201
+
+AM --> OM : Abre onboarding
+U -> OM : Selecciona categorías\ny tipos de accesibilidad
+OM -> AC : PUT /api/perfil/preferencias\n{ categorias_favoritas, accesibilidad_preferida }
+AC -> DB : UPDATE users SET\ncategorias_favoritas, accesibilidad_preferida,\nonboarding_completado = true
+DB --> AC : OK
+AC --> OM : { user actualizado }
+
+OM --> PP : Redirige a /perfil
+PP -> AC : GET /api/recomendaciones\nAuthorization: Bearer {token}
+AC -> DB : SELECT eventos WHERE\ncategoria IN (...)\nAND accesibilidad IN (...)
+DB --> AC : eventos filtrados (máx. 20)
+AC --> PP : [ { id, title, cat, date, access, ... } ]
+PP --> U : Muestra eventos\nrecomendados
+
+@enduml

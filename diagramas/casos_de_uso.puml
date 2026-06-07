@@ -1,0 +1,62 @@
+@startuml casos_de_uso
+left to right direction
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Inter
+skinparam defaultFontSize 12
+skinparam ActorBackgroundColor #FFFFFF
+skinparam ActorBorderColor #3d47c8
+skinparam ActorFontColor #111827
+skinparam UsecaseBackgroundColor #3d47c8
+skinparam UsecaseBorderColor #2d3ab8
+skinparam UsecaseFontColor #FFFFFF
+skinparam UsecaseFontSize 11
+skinparam ArrowColor #555555
+skinparam rectangleBorderColor #AAAAAA
+skinparam rectangleBackgroundColor #F5F5F5
+
+title Diagrama de casos de uso — INCLUGO
+
+actor "Usuario\nno registrado" as ANON
+actor "Usuario\nregistrado" as USER
+actor "API Ayuntamiento\nde Madrid" as API
+
+rectangle "INCLUGO" {
+  usecase "Ver agenda de eventos" as UC1
+  usecase "Filtrar por categoría" as UC2
+  usecase "Filtrar por accesibilidad" as UC3
+  usecase "Ver detalle de evento" as UC4
+  usecase "Acceder al enlace oficial" as UC5
+  usecase "Activar herramientas de accesibilidad" as UC6
+  usecase "Registrarse" as UC7
+  usecase "Iniciar sesión" as UC8
+  usecase "Completar onboarding" as UC9
+  usecase "Ver eventos recomendados" as UC10
+  usecase "Gestionar favoritos" as UC11
+  usecase "Editar perfil y preferencias" as UC12
+  usecase "Obtener eventos en tiempo real" as UC14
+}
+
+ANON --> UC1
+ANON --> UC2
+ANON --> UC3
+ANON --> UC4
+ANON --> UC5
+ANON --> UC6
+ANON --> UC7
+ANON --> UC8
+
+USER --> UC1
+USER --> UC2
+USER --> UC3
+USER --> UC4
+USER --> UC5
+USER --> UC6
+USER --> UC9
+USER --> UC10
+USER --> UC11
+USER --> UC12
+
+UC1 ..> UC14 : <<include>>
+API --> UC14
+
+@enduml

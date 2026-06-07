@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'password', 'ciudad', 'avatar', 'favoritos', 'categorias_favoritas', 'accesibilidad_preferida', 'onboarding_completado'])]
+#[Fillable(['name', 'email', 'password', 'avatar', 'categorias_favoritas', 'accesibilidad_preferida', 'onboarding_completado'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -23,15 +23,19 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+    public function eventosFavoritos()
+    {
+        return $this->belongsToMany(Evento::class, 'favoritos');
+    }
+
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
-            'favoritos'              => 'array',
-            'categorias_favoritas'   => 'array',
-            'accesibilidad_preferida'=> 'array',
-            'onboarding_completado'  => 'boolean',
+            'email_verified_at'       => 'datetime',
+            'password'                => 'hashed',
+            'categorias_favoritas'    => 'array',
+            'accesibilidad_preferida' => 'array',
+            'onboarding_completado'   => 'boolean',
         ];
     }
 }

@@ -66,12 +66,11 @@ class AuthController extends Controller
     {
         $request->validate([
             'name'   => 'sometimes|string|max:255',
-            'ciudad' => 'sometimes|nullable|string|max:255',
             'avatar' => 'sometimes|nullable|string',
         ]);
 
         $user = $request->user();
-        $user->update($request->only(['name', 'ciudad', 'avatar']));
+        $user->update($request->only(['name', 'avatar']));
 
         return response()->json($user->fresh());
     }

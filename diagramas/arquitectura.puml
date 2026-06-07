@@ -1,0 +1,70 @@
+@startuml arquitectura
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Inter
+skinparam defaultFontSize 12
+skinparam ArrowColor #3d47c8
+skinparam ArrowThickness 1.5
+skinparam rectangleBorderColor #3d47c8
+skinparam rectangleBackgroundColor #EEF0FF
+skinparam rectangleBorderThickness 1.5
+skinparam rectangleFontStyle bold
+skinparam databaseBackgroundColor #E8F5E9
+skinparam databaseBorderColor #2e7d32
+skinparam cloudBackgroundColor #FFF8E1
+skinparam cloudBorderColor #f9a825
+skinparam noteBorderColor #999999
+skinparam noteBackgroundColor #FAFAFA
+
+title Arquitectura del sistema INCLUGO
+
+cloud "API Ayuntamiento de Madrid\ndatos.madrid.es" as API
+
+rectangle "Capa de Presentación (Navegador)" as PRESENTATION {
+  rectangle "React 19 + Vite 8" as REACT {
+    rectangle "App\n(enrutamiento)" as APP
+    rectangle "AgendaPage\n+ useEvents()" as AGENDA
+    rectangle "AuthModal\n(login / registro)" as AUTH
+    rectangle "PerfilPage\n(perfil y favoritos)" as PERFIL
+  }
+  rectangle "FilterPanel\n(filtros accesibilidad)" as FILTER
+  rectangle "EventsGrid\n(tarjetas de eventos)" as GRID
+  rectangle "EventDetail\n(detalle del evento)" as DETAIL
+}
+
+rectangle "Capa de Lógica de Negocio (Servidor)" as BACKEND {
+  rectangle "Laravel 13 + PHP 8.3" as LARAVEL {
+    rectangle "AuthController\n(registro, login, perfil)" as AUTHC
+    rectangle "FavoritosController\n(favoritos)" as FAVC
+    rectangle "Comando: eventos:importar\n(sincronización diaria)" as CMD
+  }
+}
+
+database "Capa de Datos\nMySQL" as DB {
+  rectangle "users" as TUSERS
+  rectangle "recintos" as TRECINTOS
+  rectangle "favoritos\n(user_id FK)" as TFAVS
+  rectangle "eventos" as TEVENTS
+  rectangle "caracteristicas_accesibilidad" as TACCESO
+}
+
+AGENDA -down-> FILTER
+AGENDA -down-> GRID
+GRID -down-> DETAIL
+
+AGENDA -right-> API : fetch JSON-LD\n(eventos en tiempo real)
+API -down-> CMD : importación periódica
+
+AUTH -right-> AUTHC : POST /api/register\nPOST /api/login
+PERFIL -right-> AUTHC : GET /api/recomendaciones
+PERFIL -right-> FAVC : GET · POST · DELETE\n/api/favoritos
+
+AUTHC -down-> DB : Eloquent ORM
+FAVC -down-> DB : Eloquent ORM
+CMD -down-> DB : updateOrCreate
+
+TUSERS -right-> TFAVS : user_id (FK)
+TFAVS -right-> TEVENTS : evento_id (FK)
+TRECINTOS -down-> TEVENTS : recinto_id (FK)
+TEVENTS -down-> TACCESO : evento_id (FK)
+
+@enduml
