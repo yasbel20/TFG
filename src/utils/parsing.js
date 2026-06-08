@@ -6,6 +6,7 @@ function resolveImage(item) {
   return raw.startsWith("http") ? raw : BASE_IMG + raw;
 }
 
+// Infiere la categoría por palabras clave en título + descripción
 function detectCategory(title, description) {
   const text = (title + " " + description).toLowerCase();
   if (/concierto|música|jazz|flamenco|rock|pop/.test(text))    return "Música";
@@ -16,6 +17,9 @@ function detectCategory(title, description) {
   return "Cultura";
 }
 
+// Mapea los códigos numéricos de la API del Ayuntamiento a etiquetas internas.
+// Nota: el campo se llama "accesility" (typo en la API original, no nuestro)
+// Códigos: 1/2 → silla de ruedas, 4 → lengua de signos, 5 → podotáctil, 6 → bucle magnético
 function parseAccessibility(item) {
   const raw   = item.organization?.["accesibility"] || "";
   const codes = raw.toString().split(",").map(c => c.trim()).filter(Boolean);
@@ -65,6 +69,8 @@ function parseDates(item) {
   return { dateKey, dateShort, date, timeStr, sortTs: s.getTime(), startDate: s, endDate: e || s };
 }
 
+// Transforma un objeto crudo de la API del Ayuntamiento al formato interno de la app.
+// Es la función más importante del frontend — todos los componentes consumen su resultado.
 export function parseEvent(item, i) {
   const title = item.title || "Evento sin título";
   const desc  = (item.description || "").toLowerCase();

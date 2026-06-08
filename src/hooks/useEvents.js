@@ -18,8 +18,11 @@ export function useEvents() {
   const [loading, setLoading]     = useState(true);
 
   useEffect(() => {
+    // Lanza dos peticiones en paralelo para no bloquear una con la otra
     const madridFetch = fetch(MADRID_EVENTS_URL)
       .then(r => { if (!r.ok) throw new Error(); return r.json(); });
+
+    // El backend devuelve un mapa { api_id: url_imagen } con imágenes locales
     const imgFetch = fetch("/api/imagenes-eventos")
       .then(r => r.ok ? r.json() : {})
       .catch(() => ({}));
@@ -28,19 +31,20 @@ export function useEvents() {
       .then(([data, imgMap]) => {
         const today = new Date(); today.setHours(0, 0, 0, 0);
         const parsed = (data["@graph"] || []).map(parseEvent)
-          .filter(e => e.access.length > 0)
-          .filter(e => !e.endDate || e.endDate >= today);
+          .filter(e => e.access.length > 0)      // solo eventos con accesibilidad definida
+          .filter(e => !e.endDate || e.endDate >= today); // solo eventos no caducados
         const withImgs = parsed.map(ev => ({
           ...ev,
-          image: imgMap[ev.id] || ev.image,
+          image: imgMap[ev.id] || ev.image, // imagen local tiene prioridad sobre la de la API
         }));
         setAllEvents(withImgs);
         setLoading(false);
       })
-      .catch(() => { setAllEvents(SAMPLE); setLoading(false); });
+      .catch(() => { setAllEvents(SAMPLE); setLoading(false); }); // fallback si la API falla
   }, []);
 
   return {
+    // Filtra por categoría en memoria, sin nueva petición al servidor
     byCategory: (cat) => cat === "Todos" ? allEvents : allEvents.filter(e => e.cat === cat),
     loading,
     total: allEvents.length,

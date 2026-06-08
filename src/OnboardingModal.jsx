@@ -40,6 +40,8 @@ export default function OnboardingModal({ onClose }) {
   const [error,      setError]      = useState("");
   const boxRef = useRef(null);
 
+  // Focus trap: el foco cicla dentro del modal (WCAG 2.1.2).
+  // Se recalcula en cada cambio de step porque los botones focusables cambian.
   useEffect(() => {
     const el = boxRef.current;
     if (!el) return;
@@ -62,6 +64,7 @@ export default function OnboardingModal({ onClose }) {
     return () => el.removeEventListener("keydown", trap);
   }, [step]);
 
+  // Toggle: si ya está seleccionado lo quita, si no lo añade
   const toggleCat = cat =>
     setCategorias(prev =>
       prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
@@ -72,6 +75,7 @@ export default function OnboardingModal({ onClose }) {
       prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
     );
 
+  // Guarda preferencias en el backend y actualiza el usuario en el contexto global
   const guardar = async () => {
     setLoading(true);
     setError("");

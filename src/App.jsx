@@ -13,6 +13,7 @@ import WelcomeSplash from "./WelcomeSplash";
 import Footer from "./Footer";
 import { setupReveal, updateReveal } from "./reveal";
 
+// Vuelve al top y reactiva las animaciones reveal en cada cambio de ruta
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -26,12 +27,16 @@ function ScrollToTop() {
 function App() {
   useEffect(() => setupReveal(), []);
   return (
+    // AccessibilityProvider fuera de AuthProvider: las herramientas de accesibilidad
+    // funcionan aunque no haya sesión iniciada
     <AccessibilityProvider>
       <AuthProvider>
         <BrowserRouter>
           <ScrollToTop />
-          {/* hc-wrap recibe el filtro de alto contraste — los elementos fixed fuera de él mantienen position:fixed correcto */}
+          {/* Skip link WCAG 2.4.1: permite saltar la nav con teclado */}
           <a href="#main-content" className="skip-link">Saltar al contenido principal</a>
+          {/* hc-wrap recibe el filtro CSS de alto contraste — los elementos
+              position:fixed (panel accesibilidad) quedan fuera y se ven correctamente */}
           <div id="hc-wrap">
             <Routes>
               <Route path="/"             element={<INCLUGOHome />} />
