@@ -271,6 +271,8 @@
   .ep-bottom-row { display:flex; align-items:center; padding-top:.4rem; border-top:1px solid var(--border); margin-top:auto; }
   .ep-price-free { font-size:.75rem; font-weight:700; letter-spacing:.06em; color:var(--text-primary); }
   .ep-price-paid { font-size:.75rem; font-weight:700; color:var(--text-primary); }
+  .ep-price-link { font-size:.75rem; font-weight:700; color:var(--brand); text-decoration:underline; text-underline-offset:2px; }
+  .ep-price-link:hover { color:var(--brand-hover,#2f39a8); }
   .ep-access-chip { margin-bottom:.45rem; }
 
   /* ── Skeleton ── */
