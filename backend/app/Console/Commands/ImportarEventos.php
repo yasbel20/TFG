@@ -8,6 +8,9 @@ use App\Models\Recinto;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 
+// Comando: php artisan eventos:importar
+// Sincroniza el catálogo de eventos culturales desde la API del Ayuntamiento de Madrid.
+// Puede programarse con el scheduler de Laravel para ejecutarse diariamente.
 class ImportarEventos extends Command
 {
     protected $signature   = 'eventos:importar';
@@ -22,6 +25,7 @@ class ImportarEventos extends Command
         $importados = 0;
         $errores    = 0;
 
+        // Elimina eventos caducados antes de importar para no acumular datos obsoletos
         $eliminados = Evento::where(function ($q) {
             $q->where('fecha_fin', '<', now())
               ->orWhere(function ($q2) {
@@ -47,6 +51,7 @@ class ImportarEventos extends Command
                 return Command::FAILURE;
             }
 
+            // La API devuelve JSON-LD con los eventos en el campo @graph
             $items = $response->json('@graph') ?? [];
             $this->line("  " . count($items) . " eventos encontrados");
 
@@ -68,6 +73,7 @@ class ImportarEventos extends Command
         return Command::SUCCESS;
     }
 
+    // Extrae la URL de imagen del evento (relativa o absoluta)
     private function extraerImagen(array $item): ?string
     {
         $BASE = 'https://www.madrid.es';
@@ -81,14 +87,14 @@ class ImportarEventos extends Command
         $apiId = $item['id'] ?? null;
         if (!$apiId) return;
 
-        // Recinto
+        // Crea o reutiliza el recinto por nombre — evita duplicados
         $nombreRecinto = $item['organization']['organization-name']
             ?? $item['event-location']
             ?? 'Madrid';
 
         $direccion = $item['address']['area']['street-address'] ?? null;
 
-        // Distrito: extraer del @id (ej: ".../PuenteDeVallecas" → "Puente De Vallecas")
+        // Extrae el distrito del @id de la API (ej: ".../PuenteDeVallecas" → "Puente De Vallecas")
         $distritoBruto = $item['address']['district']['@id'] ?? '';
         $distrito = 'Madrid';
         if (preg_match('/\/([^\/]+)$/', $distritoBruto, $m)) {
@@ -101,7 +107,7 @@ class ImportarEventos extends Command
             ['direccion' => $direccion, 'distrito' => $distrito, 'municipio' => 'Madrid']
         );
 
-        // Categoría
+        // Infiere la categoría por palabras clave (misma lógica que parseEvent() en el frontend)
         $titulo = strtolower($item['title'] ?? '');
         $desc   = strtolower($item['description'] ?? '');
         $texto  = $titulo . ' ' . $desc;
@@ -113,7 +119,6 @@ class ImportarEventos extends Command
         elseif (preg_match('/cine|film|pel[ií]cu/', $texto))                     $categoria = 'Cine';
         elseif (preg_match('/danza|baile/', $texto))                             $categoria = 'Danza';
 
-        // Precio: free=0 con price vacío → gratis; free=0 con price → de pago
         $rawPrecio = trim((string)($item['price'] ?? ''));
         $gratuito  = ($item['free'] ?? 1) != 0 || $rawPrecio === '';
         $precio    = 'Gratis';
@@ -123,6 +128,7 @@ class ImportarEventos extends Command
                 : mb_substr($rawPrecio, 0, 255);
         }
 
+        // updateOrCreate por api_id: actualiza si ya existe, crea si no — evita duplicados
         $evento = Evento::updateOrCreate(
             ['api_id' => (string) $apiId],
             [
@@ -139,11 +145,13 @@ class ImportarEventos extends Command
             ]
         );
 
-        // Accesibilidad
+        // Recrea las características de accesibilidad (borra las viejas y reinserta)
+        // para reflejar cambios en la API sin acumular duplicados
         $evento->accesibilidad()->delete();
         $accRaw = (string)($item['organization']['accesibility'] ?? '');
         $codes  = array_filter(array_map('trim', explode(',', $accRaw)));
 
+        // Mismos códigos que parseEvent() en el frontend: 1/2→silla, 4→signos, 5→podo, 6→bucle
         $tiposMap  = ['1' => 'silla', '2' => 'silla', '4' => 'signos', '5' => 'podo', '6' => 'bucle'];
         $insertados = [];
         foreach ($codes as $code) {

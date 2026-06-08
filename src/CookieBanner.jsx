@@ -26,7 +26,6 @@ export default function CookieBanner() {
   return (
     <>
 
-      {/* ── Barra inferior ── */}
       {!modal && (
         <div className="ck-bar" role="region" aria-label="Aviso de cookies">
           <div className="ck-bar-inner">
@@ -48,7 +47,6 @@ export default function CookieBanner() {
         </div>
       )}
 
-      {/* ── Modal de personalización ── */}
       {modal && (
         <>
           <div className="ck-overlay" aria-hidden="true" onClick={() => setModal(false)}/>
@@ -65,7 +63,6 @@ export default function CookieBanner() {
                 INCLUGO es una plataforma de cultura accesible para Madrid. Al usarla, guardamos información mínima en tu navegador para que todo funcione bien. Aquí puedes ver exactamente para qué sirve cada tipo y decidir qué aceptas.
               </p>
 
-              {/* Técnicas */}
               <div className="ck-row">
                 <div className="ck-row-info">
                   <span className="ck-row-name">Cookies técnicas y de sesión</span>
@@ -80,7 +77,6 @@ export default function CookieBanner() {
 
               <div className="ck-divider"/>
 
-              {/* Preferencias */}
               <div className="ck-row">
                 <div className="ck-row-info">
                   <span className="ck-row-name">Preferencias de accesibilidad</span>

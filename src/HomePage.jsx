@@ -74,7 +74,6 @@ const ACCESS_CARDS = [
 const EVENT_CATS_ALL = ["Todos los eventos","Música","Teatro","Exposición","Cine","Danza","Cultura"];
 const ACCESS_CATS    = ["Toda la accesibilidad","Silla de ruedas","Lengua de signos","Podotáctil","Bucle magnético"];
 
-// Secciones informativas tipo WAH
 const INFO_FEATURES = [
   {
     icon: "🗺️",
@@ -225,12 +224,10 @@ export default function INCLUGOHome() {
   return (
     <div className="ir">
 
-      {/* ── NAV compartido ── */}
       <Navbar />
 
       <main id="main-content">
 
-        {/* ── HERO ── */}
         <section className="hero" aria-labelledby="hero-heading">
           <div className="hero-left">
             <h1 id="hero-heading" className="hero-h1">
@@ -250,7 +247,6 @@ export default function INCLUGOHome() {
           </div>
         </section>
 
-        {/* ── STATS ── */}
         <section className="stats reveal" aria-label="Cifras clave de INCLUGO" ref={statsRef}>
           <div className="stats-grid">
             <div className="stat" role="article" tabIndex={0}>
@@ -268,7 +264,6 @@ export default function INCLUGOHome() {
           </div>
         </section>
 
-        {/* ── HOW IT WORKS ── */}
         <section className="how-sec reveal" aria-labelledby="how-heading">
           <div className="how-inner">
             <p className="sec-eyebrow">Así de fácil</p>
@@ -299,12 +294,10 @@ export default function INCLUGOHome() {
           </div>
         </section>
 
-        {/* ── HERRAMIENTAS DE ACCESIBILIDAD ── */}
         <section className="tools-sec reveal" aria-labelledby="tools-heading">
           <ToolsShowcase />
         </section>
 
-        {/* ── ACCESIBILIDAD ── */}
         <section className="access-sec reveal" aria-labelledby="access-heading">
           <div className="access-inner">
             <div className="access-head">
@@ -329,7 +322,6 @@ export default function INCLUGOHome() {
           </div>
         </section>
 
-        {/* ── TYPES ── */}
         <section className="types-sec reveal" aria-labelledby="types-heading">
           <div className="types-inner">
             <div className="types-head">
@@ -362,18 +354,14 @@ export default function INCLUGOHome() {
           </div>
         </section>
 
-        {/* ── AGENDA DESTACADA ── */}
         <AgendaDestacada/>
 
-        {/* ── EVENTS GRID ── */}
         <div ref={evRef} tabIndex={-1}>
           <EventsGrid onOpenDetail={(ev) => navigate(`/evento/${ev.id}`, { state: { ev } })}/>
         </div>
 
-        {/* ── FAQ ── */}
         <FaqSection/>
 
-        {/* ── CTA ── */}
         <section className="cta-sec reveal" aria-labelledby="cta-heading">
           <div className="cta-inner">
             <h2 id="cta-heading" className="cta-h2">MADRID TE ESPERA, SIEMPRE ACCESIBLE</h2>

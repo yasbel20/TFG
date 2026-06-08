@@ -18,16 +18,19 @@ class Evento extends Model
         'gratuito'     => 'boolean',
     ];
 
+    // El recinto donde se celebra el evento (N:1) — si se borra el recinto, recinto_id queda NULL
     public function recinto()
     {
         return $this->belongsTo(Recinto::class);
     }
 
+    // Características de accesibilidad del evento (1:N) — se eliminan en cascada con el evento
     public function accesibilidad()
     {
         return $this->hasMany(CaracteristicaAccesibilidad::class);
     }
 
+    // Usuarios que han guardado este evento en favoritos (N:M inversa)
     public function usuariosFavoritos()
     {
         return $this->belongsToMany(User::class, 'favoritos');

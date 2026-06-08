@@ -15,14 +15,10 @@ use Laravel\Sanctum\HasApiTokens;
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
+    // HasApiTokens → habilita la autenticación por token de Laravel Sanctum
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    // Relación N:M con Evento a través de la tabla pivote 'favoritos'
     public function eventosFavoritos()
     {
         return $this->belongsToMany(Evento::class, 'favoritos');
@@ -32,9 +28,9 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at'       => 'datetime',
-            'password'                => 'hashed',
-            'categorias_favoritas'    => 'array',
-            'accesibilidad_preferida' => 'array',
+            'password'                => 'hashed',           // bcrypt automático al asignar
+            'categorias_favoritas'    => 'array',            // JSON en BD ↔ array en PHP
+            'accesibilidad_preferida' => 'array',            // JSON en BD ↔ array en PHP
             'onboarding_completado'   => 'boolean',
         ];
     }

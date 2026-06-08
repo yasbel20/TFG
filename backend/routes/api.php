@@ -43,9 +43,12 @@ Route::get('/imagenes-eventos', function () {
     return response()->json($map);
 });
 
+// Rutas públicas — no requieren token
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
 
+// Rutas protegidas — requieren header: Authorization: Bearer {token}
+// Sanctum verifica el token contra la tabla personal_access_tokens
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout',              [AuthController::class, 'logout']);
     Route::get('/perfil',               [AuthController::class, 'perfil']);

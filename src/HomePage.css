@@ -1626,11 +1626,36 @@ h1.hero-h1 .hl { color: var(--brand); }
   display: flex;
   align-items: center;
 }
+.ts-video-wrap {
+  position: relative;
+  width: 100%;
+}
 .ts-video {
   width: 100%;
   height: auto;
   display: block;
 }
+.ts-unmute-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  border: none;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: .75rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+  transition: background .15s;
+}
+.ts-unmute-btn:hover { background: rgba(0,0,0,.75); }
+.ts-unmute-btn--on { background: rgba(61,71,200,.8); }
+.ts-unmute-btn--on:hover { background: rgba(61,71,200,1); }
 @media (max-width: 860px) {
   .ts-wrap { grid-template-columns: 1fr; }
   .ts-right { order: -1; }

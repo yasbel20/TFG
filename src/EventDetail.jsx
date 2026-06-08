@@ -20,7 +20,6 @@ const P = {
   cream:       "#F2F0E6",
 };
 
-// ─── Iconos ───────────────────────────────────────────────────────────────────
 const Ico = ({ d, size = 16, fill = "none", stroke = "currentColor", sw = 2 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={stroke}
     strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -65,7 +64,6 @@ const GrayscaleIcon = ()=><Ico d={<><circle cx="12" cy="12" r="10"/><path d="M12
 const EyeIcon    = ()=><Ico d={<><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>}/>;
 const FormIcon   = ()=><Ico d={<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></>}/>;
 
-// ─── Toggle switch accesible ──────────────────────────────────────────────────
 function Toggle({ id, checked, onChange, label }) {
   return (
     <label className="rs-toggle" htmlFor={id}>
@@ -86,9 +84,9 @@ function Toggle({ id, checked, onChange, label }) {
   );
 }
 
-// ─── Componente principal ─────────────────────────────────────────────────────
 export default function EventDetail({ ev, onBack }) {
   const { user, favIds, addFav, removeFav } = useAuth();
+  // Si la imagen de la API falla, intenta el fallback local; si también falla, oculta la imagen
   const local = getFallbackImage(ev.cat, ev.id);
   const [imgSrc, setImgSrc] = useState(ev.image || local);
   const [imgOk, setImgOk]   = useState(true);
@@ -105,10 +103,12 @@ export default function EventDetail({ ev, onBack }) {
   const [speechRate, setSpeechRate] = useState(0.95);
   const { prefs: globalPrefs, updatePref: updateGlobalPref } = useAccessibility();
   const [localPrefs, setLocalPrefs] = useState({ textMode: false });
+  // Fusiona preferencias globales (AccessibilityContext) con las locales de esta página
   const prefs = { ...globalPrefs, ...localPrefs };
   const setPrefs = (fn) => {
     const next = typeof fn === "function" ? fn(prefs) : fn;
     const { textMode, ...globals } = next;
+    // Propaga cambios globales al contexto; textMode solo existe localmente en esta página
     Object.entries(globals).forEach(([k, v]) => { if (globalPrefs[k] !== v) updateGlobalPref(k, v); });
     setLocalPrefs(p => ({ ...p, textMode: next.textMode ?? p.textMode }));
   };
@@ -126,6 +126,7 @@ export default function EventDetail({ ev, onBack }) {
   const cycleFontSize = () => setFontSize(f => f === 1 ? 1.15 : f === 1.15 ? 1.3 : 1);
   const fontLabel = fontSize === 1 ? "A" : fontSize === 1.15 ? "A+" : "A++";
 
+  // Usa Web Share API si está disponible (móvil), si no copia al portapapeles
   const handleShare = async () => {
     const url = `${window.location.origin}/evento/${ev.id}`;
     if (navigator.share) {
@@ -137,8 +138,8 @@ export default function EventDetail({ ev, onBack }) {
     }
   };
 
+  // Web Speech API no permite exportar audio — informa al usuario
   const handleDownloadMp3 = () => {
-    // Web Speech no permite exportar audio — informamos al usuario
     setShareMsg("Tu navegador no permite exportar audio. Usa un lector de pantalla externo.");
     setTimeout(() => setShareMsg(""), 4000);
     setShowPrefs(false);
@@ -146,7 +147,6 @@ export default function EventDetail({ ev, onBack }) {
 
   const updatePref = (key, val) => setPrefs(p => ({ ...p, [key]: val }));
 
-  // Clases de página según preferencias
   const pageClasses = [
     "ed-page",
     hiContrast     ? "ed-hi-contrast" : "",
@@ -167,10 +167,8 @@ export default function EventDetail({ ev, onBack }) {
     } : {}),
   };
 
-  // Construir texto del resumen "¿Qué encontrarás?"
   const highlights = ev.highlights || [];
 
-  // Información adicional del sidebar
   const additionalInfo = [
     ev.price && ev.price !== "Ver precio" ? { icon: <EuroIcon/>, text: `Entrada general: ${ev.price}` } : null,
     ev.ageMin ? { icon: <Ico d={<><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></>}/>, text: `A partir de ${ev.ageMin} años` } : null,
@@ -196,7 +194,6 @@ export default function EventDetail({ ev, onBack }) {
 
         <a href="#ed-desc" className="ed-skip">Saltar al contenido</a>
 
-        {/* ── Topbar: navegación + controles accesibilidad ── */}
         <nav className="ed-topbar">
           <div className="ed-topbar-inner">
             <button className="ed-back-btn" onClick={onBack} aria-label="Volver a eventos">
@@ -250,20 +247,16 @@ export default function EventDetail({ ev, onBack }) {
           )}
         </nav>
 
-        {/* ── Contenido ── */}
         <div className="ed-content">
           <div className="ed-content-inner">
 
-            {/* Título y categoría — fila completa encima del grid */}
             <div className="ed-title-block reveal">
               <span className="ed-cat-label">{ev.cat}</span>
               <h1 className="ed-title" aria-label={`${ev.cat}: ${ev.title}`}>{ev.title}</h1>
             </div>
 
-            {/* Columna principal */}
             <div className="ed-main-col">
 
-              {/* Metadatos en fila */}
               <div className="ed-meta-row reveal">
                 {ev.date && (
                   <div className="ed-meta-item"
@@ -309,7 +302,6 @@ export default function EventDetail({ ev, onBack }) {
                 )}
               </div>
 
-              {/* Imagen + descripción lado a lado */}
               {(imgOk || resolvedDesc || ev.trailerUrl) && (
                 <div className="ed-show-block reveal" id="ed-desc">
                   {imgOk && (
@@ -348,7 +340,6 @@ export default function EventDetail({ ev, onBack }) {
                 </div>
               )}
 
-              {/* ¿Qué encontrarás? */}
               {highlights.length > 0 && (
                 <section className="ed-section reveal" aria-labelledby="hi-h">
                   <h2 className="ed-section-title" id="hi-h">¿QUÉ ENCONTRARÁS?</h2>
@@ -365,7 +356,6 @@ export default function EventDetail({ ev, onBack }) {
                 </section>
               )}
 
-              {/* Accesibilidad detallada */}
               {ev.access.length > 0 && (
                 <section className="ed-section reveal" aria-labelledby="acc-h">
                   <h2 className="ed-section-title" id="acc-h">Accesibilidad</h2>
@@ -391,11 +381,9 @@ export default function EventDetail({ ev, onBack }) {
 
             </div>
 
-            {/* Sidebar */}
             <aside className="ed-sidebar" aria-label="Información del evento">
               <div className="ed-sidebar-card reveal">
 
-                {/* ── Mapa ── */}
                 <div className="ed-map-block">
                   <div className="ed-map-header">
                     <span className="ed-map-header-label">UBICACIÓN</span>
@@ -450,4 +438,3 @@ export default function EventDetail({ ev, onBack }) {
   );
 }
 
-// ─── Estilos ──────────────────────────────────────────────────────────────────

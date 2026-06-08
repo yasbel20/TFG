@@ -102,7 +102,6 @@ export default function OnboardingModal({ onClose }) {
     <div className="ob-overlay" role="dialog" aria-modal="true" aria-label="Configurar perfil">
       <div className="ob-box" ref={boxRef}>
 
-        {/* Arrow top-right */}
         <button
           className="ob-back"
           onClick={step === 1 ? onClose : () => setStep(1)}

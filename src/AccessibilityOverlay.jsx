@@ -22,22 +22,25 @@ function Toggle({ id, checked, onChange, label }) {
   return (
     <label className="ao-toggle" htmlFor={id}>
       <span className="ao-toggle-label">{label}</span>
-      <span className="ao-toggle-track" aria-hidden="true">
+      <span className="ao-toggle-track">
         <input id={id} type="checkbox" checked={checked}
           onChange={e => onChange(e.target.checked)}
           className="ao-toggle-input" role="switch" aria-checked={checked}/>
-        <span className="ao-toggle-thumb"/>
+        <span className="ao-toggle-thumb" aria-hidden="true"/>
       </span>
     </label>
   );
 }
 
+// Panel flotante de herramientas de accesibilidad, disponible en todas las páginas.
+// En /evento/:id no se muestra porque EventDetail tiene su propio panel integrado.
 export default function AccessibilityOverlay() {
   const { pathname } = useLocation();
   const { prefs, updatePref, overlayOpen: open, setOverlayOpen: setOpen } = useAccessibility();
 
   if (pathname.startsWith("/evento/")) return null;
 
+  // Helper: cada toggle conecta su key con AccessibilityContext via updatePref
   const item = (Icon, label, key) => (
     <Toggle
       key={key}
@@ -83,6 +86,7 @@ export default function AccessibilityOverlay() {
   );
 }
 
+// Máscara que sigue al cursor — resalta solo la línea donde está el ratón
 function PageMask() {
   const [y, setY] = useState(120);
 

@@ -1,7 +1,3 @@
-// Iconos de accesibilidad — fuente única para toda la app
-// WheelIcon y HandsIcon: basados en home.jsx
-// BucleIcon: símbolo internacional oreja + T (bucle de inducción)
-// PodoIcon: símbolo pavimento táctil (barras + puntos)
 
 export const WheelIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" focusable="false">
@@ -28,11 +24,9 @@ export const BucleIcon = ({ size = 20 }) => (
 
 export const PodoIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-    {/* Barras direccionales (izquierda) */}
     <rect x="2"   y="4" width="1.8" height="16" rx=".6"/>
     <rect x="5.4" y="4" width="1.8" height="16" rx=".6"/>
     <rect x="8.8" y="4" width="1.8" height="16" rx=".6"/>
-    {/* Puntos de advertencia (derecha) */}
     <circle cx="14.5" cy="7"  r="1.4"/>
     <circle cx="19.5" cy="7"  r="1.4"/>
     <circle cx="14.5" cy="12" r="1.4"/>

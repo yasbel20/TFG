@@ -8,7 +8,6 @@ import { parseEvent } from "./utils/parsing";
 import { updateReveal } from "./reveal";
 import "./AgendaPage.css";
 
-// ─── Iconos ───────────────────────────────────────────────────────────────────
 const ArrowLeft = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
     <path d="m15 18-6-6 6-6"/>
@@ -40,7 +39,6 @@ const ArrowSm = () => (
   </svg>
 );
 
-// ─── Datos de muestra ─────────────────────────────────────────────────────────
 function makeSample() {
   const base = new Date();
   base.setHours(0,0,0,0);
@@ -68,7 +66,6 @@ function makeSample() {
   ];
 }
 
-// ─── Hook de datos ────────────────────────────────────────────────────────────
 function useEvents() {
   const [events, setEvents]   = useState([]);
   const [loading, setLoading] = useState(true);
@@ -94,14 +91,13 @@ function useEvents() {
   return { events, loading, fromApi };
 }
 
-// ─── Agrupar por fecha ────────────────────────────────────────────────────────
+// Agrupa el array de eventos por dateKey (YYYY-MM-DD) y ordena por fecha y hora
 function groupByDate(events) {
   const map = {};
   events.forEach(ev => {
     if (!map[ev.dateKey]) map[ev.dateKey] = [];
     map[ev.dateKey].push(ev);
   });
-  // Ordenar días y dentro de cada día por hora
   return Object.entries(map)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([dateKey, evs]) => ({
@@ -110,7 +106,6 @@ function groupByDate(events) {
     }));
 }
 
-// ─── Nombres de días ──────────────────────────────────────────────────────────
 const DIAS = ["DOMINGO","LUNES","MARTES","MIÉRCOLES","JUEVES","VIERNES","SÁBADO"];
 const MESES = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
 
@@ -126,7 +121,6 @@ function parseDateKey(dateKey) {
   };
 }
 
-// ─── Tarjeta de evento ────────────────────────────────────────────────────────
 function AgendaRow({ ev, onOpen }) {
   const accent = CAT_ACCENT[ev.cat] || CAT_ACCENT["Cultura"];
   return (
@@ -134,7 +128,6 @@ function AgendaRow({ ev, onOpen }) {
       className="ag-card"
       style={{ borderLeftColor: accent }}
     >
-      {/* Fila superior: categoría · precio */}
       <div className="ag-card-top">
         <span className="ag-card-cat" style={{ color: accent }}>
           <span className="ag-cat-dot" style={{ background: accent }}/>
@@ -145,10 +138,8 @@ function AgendaRow({ ev, onOpen }) {
           : <span className="ag-card-price-paid">{ev.price}</span>}
       </div>
 
-      {/* Título */}
       <h3 className="ag-card-title">{ev.title}</h3>
 
-      {/* Fila inferior: meta · badges · botón */}
       <div className="ag-card-bottom">
         <div className="ag-card-meta">
           <span className="ag-meta-venue"><PinIcon/>{ev.venue}</span>
@@ -174,12 +165,10 @@ function AgendaRow({ ev, onOpen }) {
   );
 }
 
-// ─── Bloque de un día ─────────────────────────────────────────────────────────
 function DayBlock({ dateKey, events, onOpen }) {
   const { dia, numero, mes, isToday } = parseDateKey(dateKey);
   return (
     <section className={`ag-day${isToday ? " ag-day--today" : ""} reveal`} aria-label={`${dia} ${numero} de ${mes}`}>
-      {/* Cabecera horizontal del día */}
       <div className="ag-day-head">
         <div className="ag-day-label">
           <span className="ag-day-weekday">{dia}</span>
@@ -191,7 +180,6 @@ function DayBlock({ dateKey, events, onOpen }) {
         <span className="ag-day-count">{events.length} evento{events.length !== 1 ? "s" : ""}</span>
       </div>
 
-      {/* Tarjetas de eventos */}
       <div className="ag-day-cards" role="list">
         {events.map(ev => (
           <div key={ev.id} role="listitem">
@@ -203,7 +191,6 @@ function DayBlock({ dateKey, events, onOpen }) {
   );
 }
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
 function SkeletonDay() {
   return (
     <div className="ag-day" aria-hidden="true">
@@ -228,12 +215,10 @@ function SkeletonDay() {
   );
 }
 
-// ─── Navegación por semana ────────────────────────────────────────────────────
 function weekRange(offset) {
   const now = new Date();
   now.setHours(0,0,0,0);
   now.setDate(now.getDate() + offset * 7);
-  // Lunes de esa semana
   const day = now.getDay();
   const monday = new Date(now);
   monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1));
@@ -248,7 +233,6 @@ function inWeek(dateKey, monday, sunday) {
   return dt >= monday && dt <= sunday;
 }
 
-// ─── Componente principal ─────────────────────────────────────────────────────
 export default function AgendaPage() {
   const navigate = useNavigate();
   useEffect(() => { document.title = "Agenda — INCLUGO"; }, []);
@@ -263,7 +247,7 @@ export default function AgendaPage() {
 
   const CATS = CATEGORY_LIST;
 
-  // Filtrar por categoría y semana
+  // Filtrado en memoria: categoría + semana seleccionada, sin petición al servidor
   const filtered = events.filter(ev => {
     const catOk = filterCat === "Todos" || ev.cat === filterCat;
     const { monday, sunday } = weekRange(weekOffset);
@@ -283,14 +267,11 @@ export default function AgendaPage() {
     <>
       <div className="ag-page">
 
-        {/* ── NAV compartido ── */}
         <Navbar />
 
-        {/* ── Controles de semana + filtro ── */}
         <div className="ag-controls">
           <div className="ag-controls-inner">
 
-            {/* Navegación semana */}
             <div className="ag-week-nav" role="group" aria-label="Semana">
               <button
                 className="ag-week-btn"
@@ -320,7 +301,6 @@ export default function AgendaPage() {
               )}
             </div>
 
-            {/* Filtro categoría */}
             <div className="ag-cat-filters" role="group" aria-label="Filtrar por categoría">
               {CATS.map(c => (
                 <button
@@ -337,7 +317,6 @@ export default function AgendaPage() {
           </div>
         </div>
 
-        {/* ── Contenido principal ── */}
         <main id="main-content" className="ag-main">
           <div className="ag-main-inner">
 
@@ -377,4 +356,3 @@ export default function AgendaPage() {
   );
 }
 
-// ─── Estilos ──────────────────────────────────────────────────────────────────

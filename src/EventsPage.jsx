@@ -23,7 +23,6 @@ const CAT_HERO_POS = {
   "Exposición": "center 70%",
 };
 
-// ─── Iconos ───────────────────────────────────────────────────────────────────
 const Ico = ({ d, size = 16, fill = "none", stroke = "currentColor", sw = 2 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={stroke}
     strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -44,7 +43,6 @@ const HeartIcon     = ({ filled }) => (
   </svg>
 );
 
-// accessibility icons
 const WheelSvg  = () => <Ico size={20} fill="currentColor" stroke="none" d={<><circle cx="12" cy="5" r="2"/><path d="M10 8h4v5h3l2 4H7l-1.5-4H10V8z"/><path d="M6 16a6 6 0 1 0 12 0" fill="none" stroke="currentColor" strokeWidth="2"/></>}/>;
 const EarSvg    = () => <Ico size={20} d={<><path d="M6 8.5a6 6 0 1 1 11.6 2c-.5 1.7-1.9 2.9-2.6 4.5-.4.9-.4 1.5-.4 2h-1"/><path d="M9 17a3 3 0 0 0 6 0"/></>}/>;
 const EyeSvg    = () => <Ico size={20} d={<><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>}/>;
@@ -62,7 +60,6 @@ const ACC_OPTIONS = [
 ];
 
 
-// ─── Dropdown de filtro reutilizable ─────────────────────────────────────────
 function FilterDropdown({ label, active, onClear, children }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -94,7 +91,6 @@ function FilterDropdown({ label, active, onClear, children }) {
   );
 }
 
-// ─── Tarjeta destacada ────────────────────────────────────────────────────────
 function FeaturedCard({ ev, onOpenDetail }) {
   const local = getFallbackImage(ev.cat, ev.id);
   const [imgSrc, setImgSrc] = useState(ev.image || local);
@@ -141,7 +137,6 @@ function FeaturedCard({ ev, onOpenDetail }) {
   );
 }
 
-// ─── Tarjeta grid ─────────────────────────────────────────────────────────────
 function GridCard({ ev, onOpenDetail }) {
   const local = getFallbackImage(ev.cat, ev.id);
   const [imgSrc, setImgSrc] = useState(ev.image || local);
@@ -192,7 +187,6 @@ function GridCard({ ev, onOpenDetail }) {
   );
 }
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
 function SkeletonCard({ featured }) {
   if (featured) return (
     <div className="ep-feat-card" style={{pointerEvents:"none"}}>
@@ -211,7 +205,6 @@ function SkeletonCard({ featured }) {
   );
 }
 
-// ─── Página principal ─────────────────────────────────────────────────────────
 
 export default function EventsPage() {
   const { cat: catSlug } = useParams();
@@ -317,7 +310,6 @@ export default function EventsPage() {
       <div className="ep-page">
         <Navbar/>
 
-        {/* ── Hero ── */}
         <section className="ep-hero" style={{backgroundImage:`url(${CAT_HERO[activeCategory]||CAT_HERO["Todos"]})`, backgroundPosition: CAT_HERO_POS[activeCategory] || "center"}}>
           <div className="ep-hero-overlay"/>
           <div className="ep-hero-inner">
@@ -342,7 +334,6 @@ export default function EventsPage() {
           </div>
         </section>
 
-        {/* ── Filter bar ── */}
         <div className="ep-filterbar">
           <div className="ep-filterbar-inner">
             <label className="ep-search-wrap" htmlFor="ep-search">
@@ -352,7 +343,6 @@ export default function EventsPage() {
                 value={searchQ} onChange={e => setSearchQ(e.target.value)}/>
             </label>
 
-            {/* Fechas */}
             <FilterDropdown
               label={dateFilter ? DATE_OPTS.find(o => o.key === dateFilter)?.label : "Fechas"}
               active={!!dateFilter}
@@ -371,7 +361,6 @@ export default function EventsPage() {
               )}
             </FilterDropdown>
 
-            {/* Accesibilidad */}
             <FilterDropdown
               label={activeAccess.size === 0
                 ? "Accesibilidad"
@@ -400,7 +389,6 @@ export default function EventsPage() {
               )}
             </FilterDropdown>
 
-            {/* Más filtros */}
             <FilterDropdown
               label={priceFilter === "gratis" ? "Gratis" : priceFilter === "pago" ? "De pago" : "Más filtros"}
               active={!!priceFilter}
@@ -425,7 +413,6 @@ export default function EventsPage() {
 
 
 
-        {/* ── Eventos próximos ── */}
         <section id="main-content" className="ep-section ep-main-section">
           <div className="ep-grid">
             {loading
@@ -449,5 +436,4 @@ export default function EventsPage() {
   );
 }
 
-// ─── Estilos ──────────────────────────────────────────────────────────────────
 

@@ -7,7 +7,6 @@ import { CAT_COLORS, CAT_ACCENT, CAT_SLUG, CATEGORIES } from "./constants/catego
 import { getFallbackImage } from "./utils/fallbackImages";
 import "./EventsGrid.css";
 
-// ─── Iconos ───────────────────────────────────────────────────────────────────
 const CalIcon = () => (
   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
     <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
@@ -32,7 +31,6 @@ function byCategory(cat) {
   return JUNE_EVENTS.filter(e => e.cat === cat);
 }
 
-// ─── Tarjeta de evento ────────────────────────────────────────────────────────
 function EventCard({ ev, onOpenDetail }) {
   const catColor = CAT_COLORS[ev.cat] || "#111111";
   const local = getFallbackImage(ev.cat, ev.id);
@@ -95,7 +93,6 @@ function EventCard({ ev, onOpenDetail }) {
 }
 
 
-// ─── Sección por categoría ────────────────────────────────────────────────────
 function EventRow({ cat, events, onOpenDetail }) {
   const navigate = useNavigate();
   if (events.length === 0) return null;
@@ -119,9 +116,7 @@ function EventRow({ cat, events, onOpenDetail }) {
   );
 }
 
-// ─── Estilos ──────────────────────────────────────────────────────────────────
 
-// ─── Componente principal ─────────────────────────────────────────────────────
 export default function EventsGrid({ onOpenDetail }) {
 
   return (

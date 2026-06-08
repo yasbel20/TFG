@@ -79,10 +79,8 @@ export default function AuthModal({ onClose }) {
 
       <div className="am-box" ref={boxRef}>
 
-        {/* ── Panel izquierdo ── */}
         <div className="am-left" />
 
-        {/* ── Panel derecho ── */}
         <div className="am-right">
           <button className="am-close" onClick={onClose} aria-label="Cerrar">
             <CloseIcon />

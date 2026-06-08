@@ -8,6 +8,7 @@ use Illuminate\Support\Carbon;
 
 class FavoritosController extends Controller
 {
+    // Devuelve todos los eventos favoritos del usuario autenticado
     public function index(Request $request)
     {
         $eventos = $request->user()
@@ -18,6 +19,9 @@ class FavoritosController extends Controller
         return response()->json($eventos->map(fn($e) => $this->format($e)));
     }
 
+    // Añade un evento a favoritos del usuario.
+    // Busca el evento por id local primero, luego por api_id externo.
+    // syncWithoutDetaching evita duplicados sin eliminar los existentes.
     public function store(Request $request)
     {
         $request->validate(['evento' => 'required|array']);
@@ -40,6 +44,7 @@ class FavoritosController extends Controller
         return response()->json(['favoritos' => $favoritos->map(fn($e) => $this->format($e))]);
     }
 
+    // Elimina un evento de favoritos. Acepta id local o api_id externo.
     public function destroy(Request $request, string $eventoId)
     {
         $evento = Evento::find($eventoId)
@@ -57,6 +62,7 @@ class FavoritosController extends Controller
         return response()->json(['favoritos' => $favoritos->map(fn($e) => $this->format($e))]);
     }
 
+    // Formatea un evento al mismo formato que usa el frontend
     private function format(Evento $e): array
     {
         Carbon::setLocale('es');

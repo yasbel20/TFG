@@ -79,7 +79,6 @@ export default function Navbar({ onMenuOpen }) {
   const isEvents = location.pathname.startsWith("/eventos");
   const isAgenda = location.pathname === "/agenda";
 
-  // Cierra dropdowns al hacer click fuera (ratón)
   useEffect(() => {
     const h = e => {
       if (evRef.current   && !evRef.current.contains(e.target))   setEvOpen(false);
@@ -89,7 +88,6 @@ export default function Navbar({ onMenuOpen }) {
     return () => document.removeEventListener("mousedown", h);
   }, []);
 
-  // Mueve el foco al primer menuitem en cuanto el dropdown abre (solo sin modo teclado)
   useEffect(() => {
     if (evOpen && !prefs.keyboard) {
       setTimeout(() => {
@@ -106,7 +104,6 @@ export default function Navbar({ onMenuOpen }) {
     }
   }, [userOpen]);
 
-  // Navegación con flechas dentro de un dropdown
   const handleDropdownKey = (e, ref, setOpen) => {
     const items = [...(ref.current?.querySelectorAll('[role="menuitem"]') ?? [])];
     const idx   = items.indexOf(document.activeElement);
@@ -135,7 +132,6 @@ export default function Navbar({ onMenuOpen }) {
         <a href="#hero-cta" className="nb-skip">Saltar al contenido principal</a>
         <nav className="nb-nav" aria-label="Navegación principal">
 
-          {/* ── Izquierda: hamburger + logo ── */}
           <div className="nb-left">
             <button className="nb-hamburger" onClick={() => setMobOpen(true)}
               aria-label="Abrir menú" aria-expanded={mobOpen}>
@@ -155,7 +151,6 @@ export default function Navbar({ onMenuOpen }) {
             </button>
           </div>
 
-          {/* ── Derecha: links + contraste + usuario ── */}
           <div className="nb-actions">
             <ul className="nb-links" role="list">
               <li
@@ -280,7 +275,6 @@ export default function Navbar({ onMenuOpen }) {
       </header>
       {authOpen && <AuthModal onClose={() => setAuthOpen(false)} />}
 
-      {/* ── Menú móvil ── */}
       {mobOpen && <div className="nb-mob-overlay" onClick={() => setMobOpen(false)} aria-hidden="true" />}
       <div className={`nb-mob-menu${mobOpen ? " nb-mob-menu--open" : ""}`} role="dialog" aria-modal="true" aria-label="Menú principal" aria-hidden={!mobOpen} inert={!mobOpen}>
         <div className="nb-mob-header">
@@ -289,7 +283,6 @@ export default function Navbar({ onMenuOpen }) {
           <button className="nb-mob-close" onClick={() => setMobOpen(false)} aria-label="Cerrar menú">✕</button>
         </div>
 
-        {/* ── Sección de usuario ── */}
         {user ? (
           <div className="nb-mob-user-section">
             <div className="nb-mob-user-header">

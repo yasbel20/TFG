@@ -87,15 +87,14 @@ const SettingsIcon = () => (
 );
 
 
-/* ── Componente principal ── */
 export default function PerfilPage() {
   const { user, authFetch, logout, setUser, favs, favIds, removeFav } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Si viene de registro con onboarding, abre el modal y limpia el state de la URL
   const [showOnboarding, setShowOnboarding] = useState(location.state?.onboarding === true);
   useEffect(() => { document.title = "Mi perfil — INCLUGO"; }, []);
-  // Limpia el state de la URL para que el onboarding no reaparezca al recargar
   useEffect(() => {
     if (location.state?.onboarding) navigate(location.pathname, { replace: true, state: {} });
   }, []);
@@ -117,13 +116,11 @@ export default function PerfilPage() {
     cargarRecomendaciones();
   }, [user?.email]);
 
-  // Sincroniza estado local cuando el usuario se actualiza (p.ej. tras guardar onboarding)
   useEffect(() => {
     setCategorias(user?.categorias_favoritas ?? []);
     setAccesib(user?.accesibilidad_preferida ?? []);
   }, [user?.categorias_favoritas, user?.accesibilidad_preferida]);
 
-  // Dispara reveal al cambiar de tab (el contenido aparece con opacity:0 sin esto)
   useEffect(() => { setTimeout(updateReveal, 30); }, [activeTab]);
 
   const guardarInfo = async (campos) => {
@@ -135,6 +132,7 @@ export default function PerfilPage() {
     } finally { setSavingInfo(false); }
   };
 
+  // Redimensiona la foto a máx 300px y la convierte a base64 JPEG antes de enviarla al backend
   const handleFoto = (e) => {
     const file = e.target.files?.[0];
     e.target.value = "";
@@ -154,6 +152,7 @@ export default function PerfilPage() {
     img.src = url;
   };
 
+  // Llama a GET /api/recomendaciones — el backend filtra por preferencias del usuario
   const cargarRecomendaciones = async () => {
     setLoadingRec(true);
     setErrorRec(false);
@@ -175,6 +174,7 @@ export default function PerfilPage() {
   const toggleAcc = key =>
     setAccesib(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
 
+  // Guarda preferencias, actualiza el usuario en contexto y recarga recomendaciones
   const guardarPreferencias = async () => {
     setGuardando(true);
     try {
@@ -210,11 +210,9 @@ export default function PerfilPage() {
       <Navbar />
       <div className="pf-layout">
 
-        {/* ── SIDEBAR ── */}
         <aside className="pf-sidebar">
 
           <div className="pf-sidebar-profile">
-            {/* Avatar */}
             <div className="pf-avatar-wrap">
               {user.avatar
                 ? <img src={user.avatar} alt="Foto de perfil" className="pf-avatar-img" />
@@ -237,7 +235,6 @@ export default function PerfilPage() {
               />
             </div>
 
-            {/* Nombre */}
             {editNombre ? (
               <div className="pf-inline-edit">
                 <input
@@ -274,7 +271,6 @@ export default function PerfilPage() {
             </button>
           </div>
 
-          {/* Navegación */}
           <nav className="pf-sidebar-nav" aria-label="Navegación del perfil">
             <button
               className={`pf-nav-item${activeTab === "perfil" ? " pf-nav-item--active" : ""}`}
@@ -302,13 +298,10 @@ export default function PerfilPage() {
           </button>
         </aside>
 
-        {/* ── CONTENIDO PRINCIPAL ── */}
         <main id="main-content" className="pf-content">
 
-          {/* ── TAB: MI PERFIL ── */}
           {activeTab === "perfil" && (
             <>
-              {/* Estadísticas */}
               <section className="pf-stats reveal" aria-label="Estadísticas de perfil">
                 <div className="pf-stat">
                   <span className="pf-stat-num">{favs.length}</span>
@@ -326,7 +319,6 @@ export default function PerfilPage() {
                 </div>
               </section>
 
-              {/* Callout accesibilidad */}
               <div className="pf-acc-callout reveal">
                 <div className="pf-acc-callout-text">
                   <h3 className="pf-acc-callout-title">Haz que tu experiencia sea más cómoda</h3>
@@ -357,7 +349,6 @@ export default function PerfilPage() {
                 </div>
               </div>
 
-              {/* Eventos recomendados */}
               <section className="pf-recs reveal">
                 <div className="pf-section-header">
                   <h2 className="pf-section-title">
@@ -418,7 +409,6 @@ export default function PerfilPage() {
             </>
           )}
 
-          {/* ── TAB: FAVORITOS ── */}
           {activeTab === "favoritos" && (
             <section className="pf-recs pf-favs-section reveal">
               <h2 className="pf-section-title">
@@ -470,7 +460,6 @@ export default function PerfilPage() {
             </section>
           )}
 
-          {/* ── TAB: ACCESIBILIDAD ── */}
           {activeTab === "accesibilidad" && (
             <section className="pf-edit reveal">
               <h2 className="pf-section-title">Editar preferencias</h2>

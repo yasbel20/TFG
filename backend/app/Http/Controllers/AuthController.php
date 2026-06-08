@@ -11,6 +11,7 @@ use Illuminate\Support\Carbon;
 
 class AuthController extends Controller
 {
+    // Crea un nuevo usuario y devuelve su token de acceso (201)
     public function register(Request $request)
     {
         $request->validate([
@@ -30,6 +31,7 @@ class AuthController extends Controller
         return response()->json(['user' => $user, 'token' => $token], 201);
     }
 
+    // Verifica credenciales y devuelve un token Sanctum si son correctas
     public function login(Request $request)
     {
         $request->validate([
@@ -50,6 +52,7 @@ class AuthController extends Controller
         return response()->json(['user' => $user, 'token' => $token]);
     }
 
+    // Elimina el token actual del servidor (el cliente debe borrar el suyo en localStorage)
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
@@ -57,11 +60,13 @@ class AuthController extends Controller
         return response()->json(['message' => 'Sesión cerrada']);
     }
 
+    // Devuelve los datos del usuario autenticado por el token Bearer
     public function perfil(Request $request)
     {
         return response()->json($request->user());
     }
 
+    // Actualiza nombre y/o avatar del usuario
     public function actualizarPerfil(Request $request)
     {
         $request->validate([
@@ -75,15 +80,17 @@ class AuthController extends Controller
         return response()->json($user->fresh());
     }
 
+    // Guarda las preferencias del onboarding y marca el proceso como completado
     public function guardarPreferencias(Request $request)
     {
         $request->validate([
-            'categorias_favoritas'    => 'array',
-            'categorias_favoritas.*'  => 'string',
-            'accesibilidad_preferida' => 'array',
+            'categorias_favoritas'      => 'array',
+            'categorias_favoritas.*'    => 'string',
+            'accesibilidad_preferida'   => 'array',
             'accesibilidad_preferida.*' => 'string|in:silla,signos,podo,bucle',
         ]);
 
+        // Normaliza nombres con tilde por si el cliente envía sin tilde
         $normCats = ['Musica'=>'Música','Exposicion'=>'Exposición','Danza'=>'Danza','Teatro'=>'Teatro','Cine'=>'Cine','Cultura'=>'Cultura','Música'=>'Música','Exposición'=>'Exposición'];
         $categorias = array_map(fn($c) => $normCats[$c] ?? $c, $request->categorias_favoritas ?? []);
 
@@ -97,6 +104,8 @@ class AuthController extends Controller
         return response()->json($user->fresh());
     }
 
+    // Devuelve hasta 20 eventos futuros que coincidan con las preferencias del usuario.
+    // Si el usuario no tiene preferencias, devuelve eventos sin filtrar (nunca vacío).
     public function recomendaciones(Request $request)
     {
         Carbon::setLocale('es');
@@ -105,6 +114,7 @@ class AuthController extends Controller
         $categorias    = $user->categorias_favoritas    ?? [];
         $accesibilidad = $user->accesibilidad_preferida ?? [];
 
+        // Base: solo eventos activos (fecha_fin futura o sin fecha_fin)
         $query = Evento::with(['recinto', 'accesibilidad'])
             ->where(function ($q) {
                 $q->where('fecha_fin', '>=', now())
@@ -115,6 +125,8 @@ class AuthController extends Controller
             $query->whereIn('categoria', $categorias);
         }
 
+        // whereHas comprueba que exista al menos una fila en caracteristicas_accesibilidad
+        // cuyo tipo esté en las preferencias del usuario
         if (!empty($accesibilidad)) {
             $query->whereHas('accesibilidad', function ($q) use ($accesibilidad) {
                 $q->whereIn('tipo', $accesibilidad);

@@ -11,10 +11,8 @@ const DEFAULT_PREFS = {
   grayscale:   false,
 };
 
-// Elementos que el navegador ya puede enfocar de forma nativa
 const NATIVE_FOCUSABLE = new Set(["button", "a", "input", "select", "textarea"]);
 
-// Selector de contenido legible — excluye elementos utilitarios (overlays, banners)
 const CONTENT_SELECTOR = [
   "button:not([tabindex='-1'])",
   "a[href]:not([tabindex='-1'])",
@@ -30,7 +28,6 @@ const CONTENT_SELECTOR = [
   ".faq-item",".showcase-list-item",".agenda-banner-card",
 ].join(",");
 
-// Contenedores de utilidad que NO deben navegarse con Tab
 const SKIP_CONTAINERS = [
   ".ck-bar", ".ck-modal",   // cookie banner
   ".ao-panel",              // accessibility overlay panel
@@ -42,10 +39,8 @@ function isVisible(el) {
   if (SKIP_CONTAINERS.some(sel => { try { return el.closest(sel); } catch { return false; } })) return false;
   const s = window.getComputedStyle(el);
   if (s.display === "none" || s.visibility === "hidden" || el.offsetHeight === 0) return false;
-  // Botones con aria-label/title (solo icono) → siempre incluir
   const explicit = el.getAttribute("aria-label") || el.getAttribute("title");
   if (explicit?.trim().length > 1) return true;
-  // Resto: necesita texto visible
   const clone = el.cloneNode(true);
   clone.querySelectorAll("svg,script,style").forEach(n => n.remove());
   const text = clone.textContent?.replace(/\s+/g, " ").trim();
@@ -65,14 +60,39 @@ function readElement(el) {
   return text && text.length > 1 ? text : null;
 }
 
+// Chrome carga las voces de forma asíncrona — hay que esperar voiceschanged
+let cachedVoices = [];
+if (typeof window !== "undefined" && "speechSynthesis" in window) {
+  const loadVoices = () => { cachedVoices = window.speechSynthesis.getVoices(); };
+  loadVoices();
+  window.speechSynthesis.addEventListener("voiceschanged", loadVoices);
+}
+
+// Chrome bug: speechSynthesis se queda paused tras ~15s de inactividad.
+// El keepalive hace pause+resume periódicamente para mantenerlo activo mientras habla.
+function startSpeechKeepAlive() {
+  return setInterval(() => {
+    if (!window.speechSynthesis.speaking) return;
+    window.speechSynthesis.pause();
+    window.speechSynthesis.resume();
+  }, 10000);
+}
+
 function speak(el) {
   const text = readElement(el);
   if (!text) return;
+  // Resetea el motor por si Chrome lo tiene atascado
   window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.lang = "es-ES";
-  utt.rate = 0.95;
-  window.speechSynthesis.speak(utt);
+  setTimeout(() => {
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.rate = 0.95;
+    const esVoice = cachedVoices.find(v => v.lang.startsWith("es"));
+    if (esVoice) utt.voice = esVoice;
+    const keepAlive = startSpeechKeepAlive();
+    utt.onend   = () => clearInterval(keepAlive);
+    utt.onerror = () => clearInterval(keepAlive);
+    window.speechSynthesis.speak(utt);
+  }, 50);
 }
 
 function ensureFocusable(el) {
@@ -98,6 +118,7 @@ export function AccessibilityProvider({ children }) {
   });
   const [overlayOpen, setOverlayOpen] = useState(false);
 
+  // Persiste el cambio de preferencia en localStorage inmediatamente
   const updatePref = useCallback((key, val) => {
     setPrefs(p => {
       const next = { ...p, [key]: val };
@@ -106,7 +127,7 @@ export function AccessibilityProvider({ children }) {
     });
   }, []);
 
-  // ── MODO TECLADO ──────────────────────────────────────────
+  // MODO TECLADO: intercepta Tab para navegar entre elementos legibles y leerlos con speechSynthesis
   useEffect(() => {
     if (!prefs.keyboard || !("speechSynthesis" in window)) return;
 
@@ -115,19 +136,19 @@ export function AccessibilityProvider({ children }) {
 
     function applyTabindex() {
       document.querySelectorAll(CONTENT_SELECTOR).forEach(ensureFocusable);
-      cachedEls = null; // invalidar caché al cambiar el DOM
+      cachedEls = null; // invalida caché cuando el DOM cambia
     }
     applyTabindex();
 
-    // Observar contenido dinámico (eventos que cargan via fetch)
+    // MutationObserver: re-aplica tabindex cuando React añade/quita nodos (p.ej. eventos que cargan)
     const observer = new MutationObserver(applyTabindex);
     observer.observe(document.body, { childList: true, subtree: true });
 
+    // Devuelve la lista de elementos navegables, excluyendo hijos de elementos ya en la lista
     function getElements() {
       if (!cachedEls) {
         const all = Array.from(document.querySelectorAll(CONTENT_SELECTOR)).filter(isVisible);
         const set = new Set(all);
-        // Excluir elementos cuyo ancestro ya está en la lista (evita leer padre e hijo)
         cachedEls = all.filter(el => {
           let p = el.parentElement;
           while (p) {
@@ -140,16 +161,16 @@ export function AccessibilityProvider({ children }) {
       return cachedEls;
     }
 
-    // ── Reset índice y caché al navegar (React Router usa history.pushState) ──
     const resetIdx = () => { idx = -1; cachedEls = null; };
 
+    // Parchea history.pushState/replaceState porque React Router no emite eventos
+    // que podamos escuchar de otra forma al cambiar de página
     const _origPush    = history.pushState.bind(history);
     const _origReplace = history.replaceState.bind(history);
 
     history.pushState = (...args) => {
       _origPush(...args);
-      // Esperar al siguiente tick para que React actualice el DOM
-      setTimeout(resetIdx, 50);
+      setTimeout(resetIdx, 50); // espera a que React actualice el DOM
     };
     history.replaceState = (...args) => {
       _origReplace(...args);
@@ -158,19 +179,19 @@ export function AccessibilityProvider({ children }) {
 
     window.addEventListener("popstate", resetIdx);
 
-    // ── Manejador de Tab ──
     const tabHandler = (e) => {
       if (e.key !== "Tab") return;
-      e.preventDefault();
+      e.preventDefault(); // evita el comportamiento nativo del navegador
 
       const els = getElements();
       if (!els.length) return;
 
-      // Resincronizar idx con el foco real del DOM (maneja listas dinámicas como dropdowns)
+      // Si el foco real del DOM diverge del índice (p.ej. el usuario clicó), sincroniza
       const liveIdx = els.indexOf(document.activeElement);
       if (liveIdx !== -1) idx = liveIdx;
       else if (idx >= els.length) idx = -1;
 
+      // Shift+Tab → atrás, Tab → adelante, cíclico
       idx = e.shiftKey
         ? (idx <= 0 ? els.length - 1 : idx - 1)
         : (idx >= els.length - 1 ? 0 : idx + 1);
@@ -178,11 +199,12 @@ export function AccessibilityProvider({ children }) {
       const el = els[idx];
       el.focus({ preventScroll: false });
       el.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      speak(el);
+      speak(el); // lee el elemento con Web Speech API
     };
 
     document.addEventListener("keydown", tabHandler);
 
+    // Cleanup: restaura el comportamiento original al desactivar el modo
     return () => {
       document.removeEventListener("keydown", tabHandler);
       window.removeEventListener("popstate", resetIdx);
@@ -194,7 +216,7 @@ export function AccessibilityProvider({ children }) {
     };
   }, [prefs.keyboard]);
 
-  // ── CLIC Y ESCUCHAR ───────────────────────────────────────
+  // MODO CLIC: lee cualquier elemento al hacer clic sobre él
   useEffect(() => {
     if (!prefs.clickListen || !("speechSynthesis" in window)) return;
     const handler = (e) => {
@@ -208,12 +230,12 @@ export function AccessibilityProvider({ children }) {
     return () => document.removeEventListener("click", handler);
   }, [prefs.clickListen]);
 
-  // ── VISIBILIDAD DE TEXTO ──────────────────────────────────
+  // Resaltar texto legible: añade clase CSS al body
   useEffect(() => {
     document.body.classList.toggle("a11y-text-vis", !!prefs.textVis);
   }, [prefs.textVis]);
 
-  // ── ESCALA DE GRISES ──────────────────────────────────────
+  // Escala de grises: añade clase CSS al elemento raíz
   useEffect(() => {
     document.documentElement.classList.toggle("a11y-grayscale", !!prefs.grayscale);
   }, [prefs.grayscale]);
