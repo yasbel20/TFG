@@ -294,11 +294,16 @@ export default function EventDetail({ ev, onBack }) {
                   </div>
                 )}
                 {ev.price && (
-                  <div className="ed-meta-item" aria-label={`Entrada general: ${ev.price}`}>
+                  <div className="ed-meta-item" aria-label={`Precio: ${ev.price === "Ver precio" ? "consultar en web oficial" : ev.price}`}>
                     <EuroIcon/>
                     <div>
                       <span className="ed-meta-label">Entrada general</span>
-                      <span className="ed-meta-sub">{ev.price}</span>
+                      {ev.price === "Ver precio" && ev.url && ev.url !== "#"
+                        ? <a href={ev.url} target="_blank" rel="noreferrer" className="ed-meta-sub ed-price-link">
+                            Ver precio en web oficial <ExternalIcon/>
+                          </a>
+                        : <span className="ed-meta-sub">{ev.price === "Ver precio" ? "Consultar precio" : ev.price}</span>
+                      }
                     </div>
                   </div>
                 )}

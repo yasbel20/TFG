@@ -183,7 +183,9 @@ function GridCard({ ev, onOpenDetail }) {
         <div className="ep-bottom-row">
           {ev.price === "Gratis"
             ? <span className="ep-price-free">Gratis</span>
-            : <span className="ep-price-paid">{ev.price}</span>}
+            : ev.price === "Ver precio" && ev.url && ev.url !== "#"
+              ? <a href={ev.url} target="_blank" rel="noreferrer" className="ep-price-link" onClick={e => e.stopPropagation()}>Ver precio</a>
+              : <span className="ep-price-paid">{ev.price}</span>}
         </div>
       </div>
     </div>
@@ -259,9 +261,9 @@ export default function EventsPage() {
 
 
   if (priceFilter === "gratis") {
-    filtered = filtered.filter(ev => ev.isFree === true);
+    filtered = filtered.filter(ev => ev.price === "Gratis");
   } else if (priceFilter === "pago") {
-    filtered = filtered.filter(ev => ev.isFree === false);
+    filtered = filtered.filter(ev => ev.price !== "Gratis");
   }
 
   if (dateFilter) {
@@ -400,7 +402,7 @@ export default function EventsPage() {
 
             {/* Más filtros */}
             <FilterDropdown
-              label="Más filtros"
+              label={priceFilter === "gratis" ? "Gratis" : priceFilter === "pago" ? "De pago" : "Más filtros"}
               active={!!priceFilter}
               onClear={() => setPriceFilter(null)}
             >

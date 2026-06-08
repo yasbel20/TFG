@@ -257,6 +257,9 @@
   .ed-meta-item svg { color:#3D47C8; flex-shrink:0; }
   .ed-meta-label { display:block; font-size:.75rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); margin-bottom:.15rem; }
   .ed-meta-sub { display:block; font-size:.9rem; font-weight:600; color:var(--ed-text); line-height:1.3; }
+  .ed-price-link { display:inline-flex; align-items:center; gap:.3rem; font-size:.9rem; font-weight:600; color:var(--brand,#3d47c8); text-decoration:underline; text-underline-offset:2px; }
+  .ed-price-link:hover { color:var(--brand-hover,#2f39a8); }
+  .ed-price-link svg { flex-shrink:0; }
 
   /* ── Show block (imagen + sobre el espectáculo) ── */
   .ed-show-block {
