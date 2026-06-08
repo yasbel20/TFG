@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useAccessibility } from "./AccessibilityContext";
 import "./AccessibilityOverlay.css";
 
@@ -32,7 +33,10 @@ function Toggle({ id, checked, onChange, label }) {
 }
 
 export default function AccessibilityOverlay() {
+  const { pathname } = useLocation();
   const { prefs, updatePref, overlayOpen: open, setOverlayOpen: setOpen } = useAccessibility();
+
+  if (pathname.startsWith("/evento/")) return null;
 
   const item = (Icon, label, key) => (
     <Toggle

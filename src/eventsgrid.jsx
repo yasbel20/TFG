@@ -4,6 +4,7 @@ import AccessibilityBadge from "./AccessibilityBadge";
 import { WheelIcon as WheelIconShared, HandsIcon, BucleIcon as BucleIconShared, PodoIcon as PodoIconShared } from "./AccessibilityIcons";
 import { JUNE_EVENTS } from "./juneEvents";
 import { CAT_COLORS, CAT_ACCENT, CAT_SLUG, CATEGORIES } from "./constants/categories";
+import { getFallbackImage } from "./utils/fallbackImages";
 import "./EventsGrid.css";
 
 // ─── Iconos ───────────────────────────────────────────────────────────────────
@@ -34,7 +35,18 @@ function byCategory(cat) {
 // ─── Tarjeta de evento ────────────────────────────────────────────────────────
 function EventCard({ ev, onOpenDetail }) {
   const catColor = CAT_COLORS[ev.cat] || "#111111";
-  const [imgOk, setImgOk] = useState(!!ev.image);
+  const local = getFallbackImage(ev.cat, ev.id);
+  const [imgSrc, setImgSrc] = useState(ev.image || local);
+  const [imgOk, setImgOk] = useState(true);
+
+  const handleError = () => {
+    if (imgSrc !== local) {
+      setImgSrc(local);
+    } else {
+      setImgOk(false);
+    }
+  };
+
   return (
     <div
       className="eg-card reveal"
@@ -45,12 +57,12 @@ function EventCard({ ev, onOpenDetail }) {
       onKeyDown={e => (e.key === "Enter" || e.key === " ") && onOpenDetail(ev)}
     >
       <div className="eg-img-wrap">
-        {ev.image && imgOk ? (
+        {imgOk ? (
           <img
-            src={ev.image}
+            src={imgSrc}
             alt={ev.title}
             className="eg-img"
-            onError={() => setImgOk(false)}
+            onError={handleError}
             loading="lazy"
           />
         ) : (

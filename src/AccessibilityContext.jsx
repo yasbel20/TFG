@@ -22,7 +22,7 @@ const CONTENT_SELECTOR = [
   "select:not([tabindex='-1'])",
   "textarea:not([tabindex='-1'])",
   "h1","h2","h3","h4","h5","h6",
-  "p","li",
+  "p","li:not([data-a11y-nav-item])",
   "[role='button']","[role='listitem']","[role='article']","[role='tab']",
   "img[alt]:not([alt=''])",
   ".eg-card",".ag-card",".ac-card",".type-card",".step",
@@ -166,11 +166,10 @@ export function AccessibilityProvider({ children }) {
       const els = getElements();
       if (!els.length) return;
 
-      // Si el elemento actual ya no existe en el DOM (navegación), resetear
-      const currentEl = idx >= 0 ? els[idx] : null;
-      if (idx >= 0 && (!currentEl || !document.contains(currentEl))) {
-        idx = -1;
-      }
+      // Resincronizar idx con el foco real del DOM (maneja listas dinámicas como dropdowns)
+      const liveIdx = els.indexOf(document.activeElement);
+      if (liveIdx !== -1) idx = liveIdx;
+      else if (idx >= els.length) idx = -1;
 
       idx = e.shiftKey
         ? (idx <= 0 ? els.length - 1 : idx - 1)

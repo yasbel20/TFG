@@ -8,6 +8,8 @@ import { useSpeech } from "./hooks/useSpeech";
 import PrefsPanel from "./components/eventdetail/PrefsPanel";
 import PageMask from "./components/eventdetail/PageMask";
 import { HighlightedText, HighlightedDesc } from "./components/eventdetail/HighlightedText";
+import { getFallbackImage } from "./utils/fallbackImages";
+import { getFallbackDescription } from "./utils/fallbackDescriptions";
 import "./EventDetail.css";
 
 const P = {
@@ -87,9 +89,15 @@ function Toggle({ id, checked, onChange, label }) {
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function EventDetail({ ev, onBack }) {
   const { user, favIds, addFav, removeFav } = useAuth();
-  const imgSrc = ev.image || "/img/eventos/image.png";
-  const [imgOk, setImgOk]       = useState(true);
-  const descShort = ev.descShort || (ev.descFull ? ev.descFull.slice(0, 220).trimEnd() + (ev.descFull.length > 220 ? "…" : "") : "");
+  const local = getFallbackImage(ev.cat, ev.id);
+  const [imgSrc, setImgSrc] = useState(ev.image || local);
+  const [imgOk, setImgOk]   = useState(true);
+  const handleImgError = () => {
+    if (imgSrc !== local) setImgSrc(local);
+    else setImgOk(false);
+  };
+  const resolvedDesc = getFallbackDescription(ev);
+  const descShort = ev.descShort || (resolvedDesc ? resolvedDesc.slice(0, 220).trimEnd() + (resolvedDesc.length > 220 ? "…" : "") : "");
   const [fontSize, setFontSize] = useState(1);
   const [hiContrast, setHiContrast] = useState(false);
   const [shareMsg, setShareMsg] = useState("");
@@ -106,9 +114,7 @@ export default function EventDetail({ ev, onBack }) {
   };
 
   const fallbackBg = CAT_COLORS[ev.cat] || "#111111";
-  // Solo leemos la descripción — así el resaltado palabra a palabra
-  // coincide exactamente con los spans del DOM
-  const speechText = ev.descFull || ev.title || "";
+  const speechText = resolvedDesc || ev.title || "";
   const { supported, status, wordIndex, words, play, pause, stop, skipBack, skipFwd } = useSpeech(speechText, speechRate);
 
   useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, []);
@@ -299,11 +305,11 @@ export default function EventDetail({ ev, onBack }) {
               </div>
 
               {/* Imagen + descripción lado a lado */}
-              {(imgOk || ev.descFull || ev.trailerUrl) && (
+              {(imgOk || resolvedDesc || ev.trailerUrl) && (
                 <div className="ed-show-block reveal" id="ed-desc">
                   {imgOk && (
                     <div className="ed-show-img-wrap">
-                      <img src={imgSrc} alt={ev.title} className="ed-show-img" onError={() => setImgOk(false)}/>
+                      <img src={imgSrc} alt={ev.title} className="ed-show-img" onError={handleImgError}/>
                     </div>
                   )}
                   <div className="ed-show-info">
@@ -322,16 +328,12 @@ export default function EventDetail({ ev, onBack }) {
                         </button>
                       )}
                     </div>
-                    {ev.descFull ? (
-                      <div className="ed-desc">
-                        <HighlightedDesc
-                          text={ev.descFull}
-                          wordIndex={status !== "idle" ? wordIndex : -1}
-                        />
-                      </div>
-                    ) : (
-                      <p className="ed-no-desc">El Ayuntamiento de Madrid no ha facilitado descripción para este evento.</p>
-                    )}
+                    <div className="ed-desc">
+                      <HighlightedDesc
+                        text={resolvedDesc}
+                        wordIndex={status !== "idle" ? wordIndex : -1}
+                      />
+                    </div>
                     {ev.trailerUrl && (
                       <a href={ev.trailerUrl} target="_blank" rel="noreferrer" className="ed-trailer-btn">
                         <PlayIcon/> Ver tráiler

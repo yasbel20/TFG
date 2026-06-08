@@ -28,15 +28,19 @@
 
   .pf-avatar-wrap { position: relative; margin-bottom: 1.1rem; }
   .pf-avatar, .pf-avatar-img {
-    width: 96px; height: 96px; border-radius: 50%;
+    width: 120px; height: 120px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    border: 3px solid var(--brand);
   }
   .pf-avatar {
     background: var(--brand); color: var(--on-brand);
-    font-family: 'Bebas Neue', var(--ff-h), sans-serif; font-size: 2.6rem;
+    font-family: 'Bebas Neue', var(--ff-h), sans-serif; font-size: 3rem;
+    border: 3px solid var(--brand);
   }
-  .pf-avatar-img { object-fit: cover; }
+  .pf-avatar-img {
+    object-fit: cover;
+    border: 2px solid rgba(0,0,0,.08);
+    box-shadow: 0 2px 12px rgba(0,0,0,.12);
+  }
   .pf-avatar-edit {
     position: absolute; bottom: 3px; right: 3px;
     width: 30px; height: 30px; border-radius: 50%;
