@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import HighContrastToggle from "./HighContrastToggle";
 import { useAuth } from "./AuthContext";
+import { useAccessibility } from "./AccessibilityContext";
 import AuthModal from "./AuthModal";
 import { CATEGORY_LIST } from "./constants/categories";
 import { toSlug } from "./utils/formatting";
@@ -67,6 +68,7 @@ export default function Navbar({ onMenuOpen }) {
   const navigate  = useNavigate();
   const location  = useLocation();
   const { user, logout } = useAuth();
+  const { prefs } = useAccessibility();
   const [evOpen,    setEvOpen]    = useState(false);
   const [authOpen,  setAuthOpen]  = useState(false);
   const [userOpen,  setUserOpen]  = useState(false);
@@ -77,6 +79,7 @@ export default function Navbar({ onMenuOpen }) {
   const isEvents = location.pathname.startsWith("/eventos");
   const isAgenda = location.pathname === "/agenda";
 
+  // Cierra dropdowns al hacer click fuera (ratón)
   useEffect(() => {
     const h = e => {
       if (evRef.current   && !evRef.current.contains(e.target))   setEvOpen(false);
@@ -85,6 +88,41 @@ export default function Navbar({ onMenuOpen }) {
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, []);
+
+  // Mueve el foco al primer menuitem en cuanto el dropdown abre (solo sin modo teclado)
+  useEffect(() => {
+    if (evOpen && !prefs.keyboard) {
+      setTimeout(() => {
+        evRef.current?.querySelector('[role="menuitem"]')?.focus();
+      }, 0);
+    }
+  }, [evOpen, prefs.keyboard]);
+
+  useEffect(() => {
+    if (userOpen) {
+      setTimeout(() => {
+        userRef.current?.querySelector('[role="menuitem"]')?.focus();
+      }, 0);
+    }
+  }, [userOpen]);
+
+  // Navegación con flechas dentro de un dropdown
+  const handleDropdownKey = (e, ref, setOpen) => {
+    const items = [...(ref.current?.querySelectorAll('[role="menuitem"]') ?? [])];
+    const idx   = items.indexOf(document.activeElement);
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      items[(idx + 1) % items.length]?.focus();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (idx <= 0) ref.current?.querySelector('[aria-haspopup]')?.focus();
+      else items[idx - 1]?.focus();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setOpen(false);
+      ref.current?.querySelector('[aria-haspopup]')?.focus();
+    }
+  };
 
   const goEvents = (cat) => {
     setEvOpen(false);
@@ -120,17 +158,36 @@ export default function Navbar({ onMenuOpen }) {
           {/* ── Derecha: links + contraste + usuario ── */}
           <div className="nb-actions">
             <ul className="nb-links" role="list">
-              <li ref={evRef} className="nb-drop-wrap">
+              <li
+                ref={evRef}
+                className="nb-drop-wrap"
+                data-a11y-nav-item
+                onBlur={e => {
+                  if (!evRef.current?.contains(e.relatedTarget)) setEvOpen(false);
+                }}
+              >
                 <button
                   className={`nb-link nb-link--arrow${evOpen || isEvents ? " nb-active" : ""}`}
                   onClick={() => setEvOpen(o => !o)}
+                  onFocus={e => { if (e.target.matches(':focus-visible') || prefs.keyboard) setEvOpen(true); }}
+                  onKeyDown={e => {
+                    if (e.key === "ArrowDown") { e.preventDefault(); setEvOpen(true); }
+                    if (e.key === "Escape" && evOpen) { e.preventDefault(); setEvOpen(false); }
+                  }}
                   aria-expanded={evOpen}
                   aria-haspopup="menu"
+                  aria-controls="ev-dropdown"
                 >
                   Eventos <ChevronDown/>
                 </button>
                 {evOpen && (
-                  <div className="nb-dropdown" role="menu">
+                  <div
+                    id="ev-dropdown"
+                    className="nb-dropdown"
+                    role="menu"
+                    aria-label="Categorías de eventos"
+                    onKeyDown={e => handleDropdownKey(e, evRef, setEvOpen)}
+                  >
                     {CATEGORY_LIST.map(cat => (
                       <button key={cat} role="menuitem" className="nb-dropdown-item"
                         onClick={() => goEvents(cat)}>
@@ -140,7 +197,7 @@ export default function Navbar({ onMenuOpen }) {
                   </div>
                 )}
               </li>
-              <li>
+              <li data-a11y-nav-item>
                 <button
                   className={`nb-link${isAgenda ? " nb-active" : ""}`}
                   onClick={() => navigate("/agenda")}
@@ -151,12 +208,27 @@ export default function Navbar({ onMenuOpen }) {
             </ul>
 
             <HighContrastToggle/>
-            <div ref={userRef} className="nb-user-wrap">
+            <div
+              ref={userRef}
+              className="nb-user-wrap"
+              onBlur={e => {
+                if (!userRef.current?.contains(e.relatedTarget)) setUserOpen(false);
+              }}
+            >
               {user ? (
                 <>
-                  <button className="nb-user-btn nb-user-btn--active"
+                  <button
+                    className="nb-user-btn nb-user-btn--active"
                     onClick={() => setUserOpen(o => !o)}
-                    aria-label="Menú de usuario" aria-expanded={userOpen}
+                    onFocus={e => { if (e.target.matches(':focus-visible')) setUserOpen(true); }}
+                    onKeyDown={e => {
+                      if (e.key === "ArrowDown") { e.preventDefault(); setUserOpen(true); }
+                      if (e.key === "Escape" && userOpen) { e.preventDefault(); setUserOpen(false); }
+                    }}
+                    aria-label="Menú de usuario"
+                    aria-expanded={userOpen}
+                    aria-haspopup="menu"
+                    aria-controls="user-dropdown"
                     style={{ padding: 0, overflow: "hidden" }}>
                     {user.avatar
                       ? <img src={user.avatar} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
@@ -164,8 +236,14 @@ export default function Navbar({ onMenuOpen }) {
                     }
                   </button>
                   {userOpen && (
-                    <div className="nb-user-menu">
-                      <div className="nb-user-header">
+                    <div
+                      id="user-dropdown"
+                      className="nb-user-menu"
+                      role="menu"
+                      aria-label="Opciones de usuario"
+                      onKeyDown={e => handleDropdownKey(e, userRef, setUserOpen)}
+                    >
+                      <div className="nb-user-header" aria-hidden="true">
                         <div className="nb-user-avatar">
                           {user.avatar
                             ? <img src={user.avatar} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", borderRadius:"50%" }}/>
@@ -178,12 +256,12 @@ export default function Navbar({ onMenuOpen }) {
                         </div>
                       </div>
                       <div className="nb-user-divider"/>
-                      <button className="nb-user-menu-item" onClick={() => { setUserOpen(false); navigate("/perfil"); }}>
+                      <button role="menuitem" className="nb-user-menu-item" onClick={() => { setUserOpen(false); navigate("/perfil"); }}>
                         <span className="nb-user-item-left"><ProfileIcon/> Mi perfil</span>
                         <ChevronRight/>
                       </button>
                       <div className="nb-user-divider"/>
-                      <button className="nb-user-logout" onClick={() => { setUserOpen(false); logout(); }}>
+                      <button role="menuitem" className="nb-user-logout" onClick={() => { setUserOpen(false); logout(); }}>
                         <LogoutIcon/> Cerrar sesión
                       </button>
                     </div>

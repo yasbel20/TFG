@@ -1,3 +1,5 @@
+import { getFallbackDescription } from "./fallbackDescriptions";
+
 const BASE_IMG = "https://www.madrid.es";
 
 function resolveImage(item) {
@@ -77,7 +79,9 @@ export function parseEvent(item, i) {
   const venueRaw = item.location?.["street-address"] || org || "Madrid";
   const venue    = venueRaw.length > 38 ? venueRaw.slice(0, 36) + "…" : venueRaw;
 
-  return {
+  const descFull = (item.description || "").replace(/<[^>]+>/g, "").trim();
+
+  const ev = {
     id:       item.id || `ev-${i}`,
     title,
     cat,
@@ -88,8 +92,12 @@ export function parseEvent(item, i) {
     district:  item.address?.["locality"] || "Madrid",
     image:     resolveImage(item),
     url:       item.link || "#",
-    descFull:  (item.description || "").replace(/<[^>]+>/g, "").trim(),
+    descFull,
     org,
     ...dates,
   };
+
+  if (!ev.descFull) ev.descFull = getFallbackDescription(ev);
+
+  return ev;
 }

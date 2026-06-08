@@ -257,6 +257,7 @@ export default function AgendaPage() {
   const [filterCat, setFilterCat]   = useState("Todos");
 
   useEffect(() => { if (!loading) setTimeout(updateReveal, 50); }, [loading]);
+  useEffect(() => { setTimeout(updateReveal, 50); }, [weekOffset, filterCat]);
 
   const openDetail = (ev) => navigate(`/evento/${ev.id}`, { state: { ev } });
 

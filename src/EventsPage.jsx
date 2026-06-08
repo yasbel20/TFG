@@ -5,6 +5,7 @@ import AccessibilityBadge from "./AccessibilityBadge";
 import { useAuth } from "./AuthContext";
 import { CAT_COLORS, CAT_ACCENT, SLUG_TO_CAT } from "./constants/categories";
 import { useEvents } from "./hooks/useEvents";
+import { getFallbackImage } from "./utils/fallbackImages";
 import "./EventsPage.css";
 const CAT_HERO = {
   "Música":     "/img/heroes/heromusica.jpg",
@@ -95,17 +96,24 @@ function FilterDropdown({ label, active, onClear, children }) {
 
 // ─── Tarjeta destacada ────────────────────────────────────────────────────────
 function FeaturedCard({ ev, onOpenDetail }) {
-  const [imgOk, setImgOk] = useState(!!ev.image);
+  const local = getFallbackImage(ev.cat, ev.id);
+  const [imgSrc, setImgSrc] = useState(ev.image || local);
+  const [imgOk, setImgOk] = useState(true);
   const { user, favIds, addFav, removeFav } = useAuth();
   const isFav = favIds.has(String(ev.id));
+
+  const handleError = () => {
+    if (imgSrc !== local) setImgSrc(local);
+    else setImgOk(false);
+  };
 
   return (
     <div className="ep-feat-card" onClick={() => onOpenDetail(ev)}
       role="button" tabIndex={0} aria-label={`Ver ${ev.title}`}
       onKeyDown={e => (e.key === "Enter" || e.key === " ") && onOpenDetail(ev)}>
       <div className="ep-feat-img-wrap">
-        {ev.image && imgOk
-          ? <img src={ev.image} alt={ev.title} className="ep-feat-img" onError={() => setImgOk(false)} loading="lazy"/>
+        {imgOk
+          ? <img src={imgSrc} alt={ev.title} className="ep-feat-img" onError={handleError} loading="lazy"/>
           : <div className="ep-feat-fallback" style={{ background: CAT_COLORS[ev.cat] || "#111" }}><div className="ep-fallback-pattern"/></div>
         }
         <div className="ep-feat-gradient"/>
@@ -135,17 +143,24 @@ function FeaturedCard({ ev, onOpenDetail }) {
 
 // ─── Tarjeta grid ─────────────────────────────────────────────────────────────
 function GridCard({ ev, onOpenDetail }) {
-  const [imgOk, setImgOk] = useState(!!ev.image);
+  const local = getFallbackImage(ev.cat, ev.id);
+  const [imgSrc, setImgSrc] = useState(ev.image || local);
+  const [imgOk, setImgOk] = useState(true);
   const { user, favIds, addFav, removeFav } = useAuth();
   const isFav = favIds.has(String(ev.id));
+
+  const handleError = () => {
+    if (imgSrc !== local) setImgSrc(local);
+    else setImgOk(false);
+  };
 
   return (
     <div className="ep-card reveal" onClick={() => onOpenDetail(ev)}
       role="button" tabIndex={0} aria-label={`Ver ${ev.title}`}
       onKeyDown={e => (e.key === "Enter" || e.key === " ") && onOpenDetail(ev)}>
       <div className="ep-img-wrap">
-        {ev.image && imgOk
-          ? <img src={ev.image} alt={ev.title} className="ep-img" onError={() => setImgOk(false)} loading="lazy"/>
+        {imgOk
+          ? <img src={imgSrc} alt={ev.title} className="ep-img" onError={handleError} loading="lazy"/>
           : <div className="ep-img-fallback ep-img-noimg"><span className="ep-noimg-cat">{ev.cat}</span></div>
         }
         {user && (

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { MADRID_EVENTS_URL } from "../constants/api";
 import { parseEvent } from "../utils/parsing";
+import { getFallbackImage } from "../utils/fallbackImages";
 
 const SAMPLE = [
   { id:1, title:"Concierto accesible de primavera", cat:"Música",     dateShort:"15 ABR",       date:"15 de abril de 2026",  timeStr:"19:00 h", venue:"Auditorio Nacional",      district:"Salamanca", price:"15 €",   access:["silla","bucle"],  image:null, url:"#", org:"", descFull:"" },
@@ -30,14 +31,18 @@ export function useEvents() {
         const parsed = (data["@graph"] || []).map(parseEvent)
           .filter(e => e.access.length > 0)
           .filter(e => !e.endDate || e.endDate >= today);
-        const withImgs = parsed.map(ev => ({
-          ...ev,
-          image: imgMap[ev.id] || ev.image,
-        }));
+        const withImgs = parsed.map(ev => {
+          const image = imgMap[ev.id] || ev.image || getFallbackImage(ev.cat, ev.id);
+          return { ...ev, image };
+        });
         setAllEvents(withImgs);
         setLoading(false);
       })
-      .catch(() => { setAllEvents(SAMPLE); setLoading(false); });
+      .catch(() => {
+        const sample = SAMPLE.map(ev => ({ ...ev, image: getFallbackImage(ev.cat, ev.id) }));
+        setAllEvents(sample);
+        setLoading(false);
+      });
   }, []);
 
   return {
