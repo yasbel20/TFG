@@ -14,6 +14,7 @@ export function setupReveal() {
   let raf;
   const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(updateReveal); };
   window.addEventListener('scroll', onScroll, { passive: true });
-  updateReveal();
+  // Doble rAF: garantiza que el navegador pinta opacity:0 antes de añadir .revealed
+  requestAnimationFrame(() => requestAnimationFrame(updateReveal));
   return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
 }
